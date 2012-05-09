@@ -11,6 +11,24 @@
 -define(is_downcase(S), S >= $a andalso S =< $z).
 -define(is_word(S), ?is_digit(S) orelse ?is_upcase(S) orelse ?is_downcase(S)).
 
+-define(three_chars_op(T1, T2, T3),
+  T1 == $= andalso T2 == $= andalso T3 == $=;
+  T1 == $! andalso T2 == $= andalso T3 == $=).
+
+-define(two_chars_op(T1, T2),
+  T1 == $& andalso T2 == $&; T1 == $| andalso T2 == $|;
+  T1 == $< andalso T2 == $>; T1 == $= andalso T2 == $=;
+  T1 == $! andalso T2 == $=; T1 == $< andalso T2 == $=;
+  T1 == $> andalso T2 == $=; T1 == $+ andalso T2 == $+;
+  T1 == $- andalso T2 == $-; T1 == $* andalso T2 == $*;
+  T1 == $/ andalso T2 == $/; T1 == $< andalso T2 == $-).
+
+-define(one_char_op(T),
+    T == $+; T == $-; T == $*;
+    T == $/; T == $=; T == $|;
+    T == $!; T == $<; T == $>;
+    T == $^; T == $@).
+
 tokenize(String, Line) ->
   tokenize(Line, String, []).
 
@@ -88,24 +106,15 @@ tokenize(Line, ".<<>>" ++ Rest, Tokens) ->
   tokenize(Line, Rest, [tokenize_call_identifier(identifier, Line, '<<>>', Rest),{'.',Line}|Tokens]);
 
 % ## Three Token Operators
-tokenize(Line, [$.,T1,T2,T3|Rest], Tokens) when
-  T1 == $= andalso T2 == $= andalso T3 == $=;
-  T1 == $! andalso T2 == $= andalso T3 == $= ->
+tokenize(Line, [$.,T1,T2,T3|Rest], Tokens) when ?three_chars_op(T1, T2, T3) ->
   tokenize(Line, Rest, [tokenize_call_identifier(identifier, Line, list_to_atom([T1,T2,T3]), Rest),{'.',Line}|Tokens]);
 
 % ## Two Token Operators
-tokenize(Line, [$.,T1,T2|Rest], Tokens) when T1 == $& andalso T2 == $&;
-  T1 == $| andalso T2 == $|; T1 == $< andalso T2 == $>;
-  T1 == $= andalso T2 == $=; T1 == $! andalso T2 == $=;
-  T1 == $< andalso T2 == $=; T1 == $> andalso T2 == $=;
-  T1 == $+ andalso T2 == $+; T1 == $- andalso T2 == $-;
-  T1 == $* andalso T2 == $*; T1 == $/ andalso T2 == $/;
-  T1 == $< andalso T2 == $- ->
+tokenize(Line, [$.,T1,T2|Rest], Tokens) when ?two_chars_op(T1, T2) ->
   tokenize(Line, Rest, [tokenize_call_identifier(identifier, Line, list_to_atom([T1,T2]), Rest),{'.',Line}|Tokens]);
 
 % ## Single Token Operators
-tokenize(Line, [$.,T|Rest], Tokens) when T == $+; T == $-; T == $*;
-  T == $/; T == $=; T == $|; T == $!; T == $<; T == $>; T == $^; T == $@ ->
+tokenize(Line, [$.,T|Rest], Tokens) when ?one_char_op(T) ->
   tokenize(Line, Rest, [tokenize_call_identifier(identifier, Line, list_to_atom([T]), Rest),{'.',Line}|Tokens]);
 
 % Heredocs
@@ -130,7 +139,7 @@ tokenize(Line, [H|T], Tokens) when H == $"; H == $' ->
       case Parts of
         [Bin] when is_binary(Bin) ->
           Atom = binary_to_atom(unescape_chars(Bin), utf8),
-          tokenize(NewLine, Rest, [{kv_identifier,Line,Atom}|Tokens]);
+          tokenize(NewLine, Rest, [{kw_identifier,Line,Atom}|Tokens]);
         _ ->
           { error, { Line, "invalid interpolation in key", [$"|T] } }
       end;
@@ -165,24 +174,15 @@ tokenize(Line, ":<<>>" ++ Rest, Tokens) ->
   tokenize(Line, Rest, [{atom,Line,['<<>>']}|Tokens]);
 
 % ## Three Token Operators
-tokenize(Line, [$:,T1,T2,T3|Rest], Tokens) when
-  T1 == $= andalso T2 == $= andalso T3 == $=;
-  T1 == $! andalso T2 == $= andalso T3 == $= ->
+tokenize(Line, [$:,T1,T2,T3|Rest], Tokens) when ?three_chars_op(T1, T2, T3) ->
   tokenize(Line, Rest, [{atom,Line,[list_to_atom([T1,T2,T3])]}|Tokens]);
 
 % ## Two Token Operators
-tokenize(Line, [$:,T1,T2|Rest], Tokens) when T1 == $& andalso T2 == $&;
-  T1 == $| andalso T2 == $|; T1 == $< andalso T2 == $>;
-  T1 == $= andalso T2 == $=; T1 == $! andalso T2 == $=;
-  T1 == $< andalso T2 == $=; T1 == $> andalso T2 == $=;
-  T1 == $+ andalso T2 == $+; T1 == $- andalso T2 == $-;
-  T1 == $* andalso T2 == $*; T1 == $/ andalso T2 == $/;
-  T1 == $< andalso T2 == $- ->
+tokenize(Line, [$:,T1,T2|Rest], Tokens) when ?two_chars_op(T1, T2) ->
   tokenize(Line, Rest, [{atom,Line,[list_to_atom([T1,T2])]}|Tokens]);
 
 % ## Single Token Operators
-tokenize(Line, [$:,T|Rest], Tokens) when T == $+; T == $-; T == $*;
-  T == $/; T == $=; T == $|; T == $!; T == $<; T == $>; T == $^; T == $@ ->
+tokenize(Line, [$:,T|Rest], Tokens) when ?one_char_op(T) ->
   tokenize(Line, Rest, [{atom,Line,[list_to_atom([T])]}|Tokens]);
 
 % Ambiguous unary/binary operators tokens
@@ -494,12 +494,12 @@ tokenize_any_identifier(Line, String, Acc) ->
     [$:,$:|_] ->
       { Rest, { identifier, Line, list_to_atom(Identifier) } };
     [$:|T] ->
-      { T, { kv_identifier, Line, list_to_atom(Identifier) } };
+      { T, { kw_identifier, Line, list_to_atom(Identifier) } };
     _ ->
       { Rest, tokenize_call_identifier(identifier, Line, list_to_atom(Identifier), Rest) }
   end.
 
-% Tokenize identifiers related to function calls. Doesn't emit kv_identifiers.
+% Tokenize identifiers related to function calls. Doesn't emit kw_identifiers.
 tokenize_call_identifier(Kind, Line, Atom, Rest) ->
   case Rest of
     [$(|_] -> { paren_identifier, Line, Atom };
