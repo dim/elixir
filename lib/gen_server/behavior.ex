@@ -10,7 +10,7 @@ defmodule GenServer.Behavior do
 
   This module also tags the behavior as :gen_server. For more
   information on gen_server, please refer to the Erlang
-  :documentation
+  documentation:
 
   http://www.erlang.org/doc/man/gen_server.html
   http://www.erlang.org/doc/design_principles/gen_server_concepts.html

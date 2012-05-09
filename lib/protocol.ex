@@ -6,7 +6,7 @@ defmodule Protocol do
 
   @doc """
   Handle `defprotocol`. It will define a function for each
-  protocol plus two extra :functions
+  protocol plus two extra functions:
 
   * `__protocol__/1` - returns the protocol name when :name is given,
                        and a keywords list with the protocol functions
