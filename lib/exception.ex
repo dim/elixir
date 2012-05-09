@@ -67,7 +67,7 @@ defmodule Exception do
     if is_list(arity) do
       inspected = lc x in arity, do: inspect(x)
       "#{inspect module}.#{fun}(#{Enum.join(inspected, ", ")})"
-    else:
+    else
       "#{inspect module}.#{fun}/#{arity}"
     end
   end
@@ -95,10 +95,10 @@ defmodule Exception do
       file = to_binary(file)
       if line && line != 0 do
         "#{file}:#{line}: "
-      else:
+      else
         "#{file}: "
       end
-    else:
+    else
       ""
     end
   end
@@ -164,7 +164,7 @@ defexception UndefinedFunctionError, module: nil, function: nil, arity: nil do
     if exception.function do
       formatted = Exception.format_module_fun_arity exception.module, exception.function, to_arity(exception.arity)
       "undefined function: #{formatted}"
-    else:
+    else
       "undefined function"
     end
   end
@@ -178,7 +178,7 @@ defexception FunctionClauseError, module: nil, function: nil, arity: nil do
     if exception.function do
       formatted = Exception.format_module_fun_arity exception.module, exception.function, exception.arity
       "no function clause matching: #{formatted}"
-    else:
+    else
       "no function clause matches"
     end
   end

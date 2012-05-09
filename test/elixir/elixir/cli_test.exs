@@ -78,7 +78,7 @@ defmodule Elixir.CLI.CompileTest do
     assert OS.cmd('bin/elixirc test/elixir/fixtures/compile_sample.exs -o test/tmp/') ==
       'Compiled test/elixir/fixtures/compile_sample.exs\n'
     assert File.regular?("test/tmp/__MAIN__/CompileSample.beam")
-  after:
+  after
     Erlang.file.del_dir("test/tmp/")
   end
 end
@@ -92,7 +92,7 @@ defmodule Elixir.CLI.ParallelCompilerTest do
       "Expected #{inspect output} to contain 'message_from_foo'"
     assert File.regular?("test/tmp/__MAIN__/Foo.beam")
     assert File.regular?("test/tmp/__MAIN__/Bar.beam")
-  after:
+  after
     Erlang.file.del_dir("test/tmp/")
   end
 

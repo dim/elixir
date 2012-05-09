@@ -213,12 +213,12 @@ defmodule Module do
     table = docs_table_for(module)
 
     case { ETS.lookup(table, tuple), doc } do
-    match: { [], _ }
+    match { [], _ }
       ETS.insert(table, { tuple, line, kind, doc })
       :ok
-    match: { _, nil }
+    match { _, nil }
       :ok
-    else:
+    else
       { :error, :existing_doc }
     end
   end
@@ -306,10 +306,10 @@ defmodule Module do
     table = function_table_for(module)
     lc tuple in tuples do
       case ETS.lookup(table, tuple) do
-      match: [clause]
+      match [clause]
         ETS.delete(table, tuple)
         Erlang.elixir_def_overridable.define(module, tuple, clause)
-      else:
+      else
         { name, arity } = tuple
         raise "Cannot make function #{name}/#{arity} overridable because it was not defined"
       end

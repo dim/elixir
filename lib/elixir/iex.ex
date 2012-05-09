@@ -8,9 +8,9 @@ defmodule Elixir.IEx.UnicodeIO do
   """
   def get(cache, _count) do
     prompt = case cache do
-    match: []
+    match []
       "iex> "
-    match: _
+    match _
       "...> "
     end
     :unicode.characters_to_list(Erlang.io.get_line(prompt))
@@ -65,14 +65,14 @@ defmodule Elixir.IEx do
           Erlang.elixir.eval(code, config.binding, counter, config.scope)
         io.put result
         config.binding(new_binding).cache('').scope(scope)
-      rescue: TokenMissingError
+      rescue TokenMissingError
         config.cache(code)
-      rescue: exception
+      rescue exception
         stacktrace = System.stacktrace
         io.error "** (#{inspect exception.__record__(:name)}) #{exception.message}"
         print_stacktrace io, stacktrace
         config.cache('')
-      catch: kind, error
+      catch kind, error
         stacktrace = System.stacktrace
         io.error "** (#{kind}) #{inspect(error)}"
         print_stacktrace io, stacktrace

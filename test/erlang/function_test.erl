@@ -51,7 +51,7 @@ function_call_without_arg_test() ->
   {3, _} = eval("x = fn do: 2 + 1\nx.()").
 
 function_call_do_end_test() ->
-  {[1,[{do,2},{else,3}]], _} = eval("x = fn(a, b, do: [a,b])\nx.(1) do\n2\nelse: 3\nend").
+  {[1,[{do,2}]], _} = eval("x = fn(a, b, do: [a,b])\nx.(1) do\n2\nend").
 
 function_call_with_assignment_test() ->
   {3, [{a,_},{c, 3}]} = eval("a = fn(x, do: x + 2); c = a.(1)").

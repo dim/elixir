@@ -11,12 +11,12 @@ defmodule ExUnit.Runner do
     if config.cases == [] do
       if config.taken_cases > 0 do
         do_loop config
-      elsif: config.sync_cases == []
+      elsif config.sync_cases == []
         call_formatter config, :finish
-      else:
+      else
         do_loop spawn_sync_cases(config)
       end
-    else:
+    else
       do_loop spawn_async_cases(config)
     end
   end
@@ -26,10 +26,10 @@ defmodule ExUnit.Runner do
   # attempt to spawn new ones.
   defp do_loop(config) do
     receive do
-    match: { pid, :each, { test_case, test, final } }
+    match { pid, :each, { test_case, test, final } }
       call_formatter config, { :each, test_case, test, final }
       do_loop config
-    match: { pid, :each_case, test_case }
+    match { pid, :each_case, test_case }
       call_formatter config, { :each_case, test_case }
       start config.increment_taken_cases(-1)
     end
@@ -38,14 +38,14 @@ defmodule ExUnit.Runner do
   # Spawn the maximum possible of cases according to the max_cases value.
   defp spawn_async_cases(config) do
     case config.cases do
-    match: [test_case|t]
+    match [test_case|t]
       if config.taken_cases < config.max_cases do
         spawn_case test_case
         spawn_async_cases config.increment_taken_cases.cases(t)
-      else:
+      else
         config
       end
-    match: []
+    match []
       config
     end
   end
@@ -68,7 +68,7 @@ defmodule ExUnit.Runner do
     test_case.setup_all
     Enum.each tests, run_test(pid, test_case, &1)
     test_case.teardown_all
-  after:
+  after
     pid <- { Process.self, :each_case, test_case }
   end
 
@@ -77,16 +77,16 @@ defmodule ExUnit.Runner do
       partial = try do
         apply test_case, test, []
         nil
-      rescue: error1
+      rescue error1
         { :error, error1, System.stacktrace }
-      catch: kind1, error1
+      catch kind1, error1
         { kind1, error1, System.stacktrace }
       end
 
       partial
-    rescue: error2
+    rescue error2
       { :error, error2, System.stacktrace }
-    catch: kind2, error2
+    catch kind2, error2
       { kind2, error2, System.stacktrace }
     end
 
@@ -107,7 +107,7 @@ defmodule ExUnit.Runner do
     list = atom_to_list(function)
     if match?('test_' ++ _, list) || match?('test ' ++ _, list) do
       tests_for t, [function|acc]
-    else:
+    else
       tests_for t, acc
     end
   end

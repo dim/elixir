@@ -32,7 +32,7 @@ defmodule ExUnit.Case do
   defmacro __using__(module, opts // []) do
     if Keyword.get(opts, :sync, false) do
       ExUnit.Server.add_sync_case(module)
-    else:
+    else
       ExUnit.Server.add_case(module)
     end
 
@@ -63,14 +63,16 @@ defmodule ExUnit.Case do
 
   """
   defmacro test(message, contents) do
+    contents = :elixir_kw_block.pivot(contents, [catch: {1,3}, after: 0, rescue: 1], __FILE__)
+
     contents =
       case contents do
-      match: [do: block]
+      match [do: block]
         quote do
           unquote(contents)
           :ok
         end
-      else:
+      else
         quote do
           try(unquote(contents))
           :ok
@@ -81,7 +83,7 @@ defmodule ExUnit.Case do
       message = unquote(message)
       message = if is_binary(message) do
         :"test #{message}"
-      else:
+      else
         :"test_#{message}"
       end
       def message, [], [], do: unquote(contents)

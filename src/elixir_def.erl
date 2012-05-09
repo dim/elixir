@@ -37,7 +37,7 @@ reset_last(Module) ->
 %%
 %%   if false do
 %%     def bar, do: 1
-%%   else:
+%%   else
 %%     def bar, do: 2
 %%   end
 %%
@@ -71,16 +71,19 @@ store_definition(Kind, Line, Module, Name, Args, Guards, RawExpr, RawS) ->
 
   DS = elixir_variables:deserialize_scope(RawS),
   S = DS#elixir_scope{function={Name,Arity}, module=Module},
+  Filename = S#elixir_scope.filename,
 
   case RawExpr of
     skip_definition -> Expr = nil;
-    [{ do, Expr }] -> [];
-    _ -> Expr = { 'try', Line, [RawExpr] }
+    _ ->
+      Pivots = [{'catch',{1,3}},{'after',0},{'rescue',1}],
+      case elixir_kw_block:pivot(RawExpr, Pivots, Filename) of
+        [{ do, Expr }] -> [];
+        _ -> Expr = { 'try', Line, [RawExpr] }
+      end
   end,
 
   { Function, Defaults, TS } = translate_definition(Kind, Line, Name, Args, Guards, Expr, S),
-
-  Filename      = TS#elixir_scope.filename,
   FunctionTable = table(Module),
 
   %% Compile documentation

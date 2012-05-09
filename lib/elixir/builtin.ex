@@ -818,7 +818,7 @@ defmodule Elixir.Builtin do
       child   = spawn(fn -> current <- { Process.self, 1 + 2 } end)
 
       receive
-      match: { ^child, 3 }
+      match { ^child, 3 }
         IO.puts "Received 3 back"
       end
 
@@ -850,7 +850,7 @@ defmodule Elixir.Builtin do
       child   = spawn_link(fn -> current <- { Process.self, 1 + 2 } end)
 
       receive
-      match: { ^child, 3 }
+      match { ^child, 3 }
         IO.puts "Received 3 back"
       end
 
@@ -1165,9 +1165,9 @@ defmodule Elixir.Builtin do
     end)
 
     opts = case Keyword.key?(opts, :moduledoc) do
-    match: false
+    match false
       Keyword.put(opts, :moduledoc, nil)
-    else:
+    else
       opts
     end
 
@@ -1196,7 +1196,7 @@ defmodule Elixir.Builtin do
     quote do
       in_guard do
         is_tuple(unquote(thing)) and :erlang.element(2, unquote(thing)) == :__exception__
-      else:
+      else
         result = unquote(thing)
         is_tuple(result) and :erlang.element(2, result) == :__exception__
       end
@@ -1220,7 +1220,7 @@ defmodule Elixir.Builtin do
     quote do
       in_guard do
         is_tuple(unquote(thing)) and :erlang.element(1, unquote(thing)) == unquote(kind)
-      else:
+      else
         result = unquote(thing)
         is_tuple(result) and :erlang.element(1, result) == unquote(kind)
       end
@@ -1577,9 +1577,9 @@ defmodule Elixir.Builtin do
   defmacro match?(left, right) do
     quote do
       case unquote(right) do
-      match: unquote(left)
+      match unquote(left)
         true
-      else:
+      else
         false
       end
     end
@@ -1591,9 +1591,9 @@ defmodule Elixir.Builtin do
   ## Examples
 
       case thing do
-      match: { :selector, i, value } when is_integer(i)
+      match { :selector, i, value } when is_integer(i)
         value
-      match: value
+      match value
         value
       end
 
@@ -1607,7 +1607,7 @@ defmodule Elixir.Builtin do
 
       i = 1
       case 10 do
-      match: i
+      match i
         i * 2
       end
 
@@ -1617,19 +1617,19 @@ defmodule Elixir.Builtin do
 
       i = 1
       case 10 do
-      match: ^i
+      match ^i
         i * 2
       end
 
   The example above will actually fail because 10 does not match 1.
 
-  Finally, `case` accepts an `else:` branch as a fallback if none
+  Finally, `case` accepts an `else` branch as a fallback if none
   of the clauses match:
 
       case thing do
-      match: { :selector, i, value } when is_integer(i)
+      match { :selector, i, value } when is_integer(i)
         value
-      else:
+      else
         thing
       end
 
@@ -1644,11 +1644,11 @@ defmodule Elixir.Builtin do
 
       try do
         do_something_that_may_fail(some_arg)
-      rescue: ArgumentError
+      rescue ArgumentError
         IO.puts "Invalid argument given"
-      catch: value
+      catch value
         IO.puts "caught \#{value}"
-      after:
+      after
         IO.puts "This is printed regardless if it failed or succeed"
       end
 
@@ -1669,24 +1669,24 @@ defmodule Elixir.Builtin do
 
       try do
         UndefinedModule.undefined_function
-      rescue: UndefinedFunctionError
+      rescue UndefinedFunctionError
       end
 
       try do
         UndefinedModule.undefined_function
-      rescue: [UndefinedFunctionError]
+      rescue [UndefinedFunctionError]
       end
 
       # rescue and assign to x
       try do
         UndefinedModule.undefined_function
-      rescue: x in [UndefinedFunctionError]
+      rescue x in [UndefinedFunctionError]
       end
 
       # rescue all and assign to x
       try do
         UndefinedModule.undefined_function
-      rescue: x
+      rescue x
       end
 
   ## Variable visibility
@@ -1700,7 +1700,7 @@ defmodule Elixir.Builtin do
         x = 1
         do_something_that_may_fail(same_arg)
         :ok
-      catch: _, _
+      catch _, _
         :failed
       end
 
@@ -1716,13 +1716,13 @@ defmodule Elixir.Builtin do
 
       try do
         exit(1)
-      catch: :exit, 1
+      catch :exit, 1
         IO.puts "Exited with 1"
       end
 
       try do
         error(:sample)
-      catch: :error, :sample
+      catch :error, :sample
         IO.puts "sample error"
       end
 
@@ -1738,11 +1738,11 @@ defmodule Elixir.Builtin do
   ## Examples
 
       receive do
-      match: { :selector, i, value } when is_integer(i)
+      match { :selector, i, value } when is_integer(i)
         value
-      match: value when is_atom(value)
+      match value when is_atom(value)
         value
-      else:
+      else
         IO.puts :standard_error, "Unexpected message received"
       end
 
@@ -1752,13 +1752,13 @@ defmodule Elixir.Builtin do
   received after the specified period of time:
 
       receive do
-      match: { :selector, i, value } when is_integer(i)
+      match { :selector, i, value } when is_integer(i)
         value
-      match: value when is_atom(value)
+      match value when is_atom(value)
         value
-      else:
+      else
         IO.puts :standard_error, "Unexpected message received"
-      after: 5000
+      after 5000
         IO.puts :standard_error, "No message in 5 seconds"
       end
 
@@ -1799,7 +1799,7 @@ defmodule Elixir.Builtin do
   Provides an `if` macro. The macro expects the first argument to
   be a condition and the rest are keywords arguments.
 
-  ## One-liner examples
+  ## One-line examples
 
       if(foo, do: bar)
 
@@ -1810,40 +1810,42 @@ defmodule Elixir.Builtin do
 
       if(foo, do: bar, else: bar)
 
-  ## Key-value blocks examples
+  ## Blocks examples
 
   When several expressions must be passed to if, the most appropriate
-  form is thorugh keywords blocks. The first example above would then
-  be translated to:
+  form is through blocks. The first example above would then be
+  translated to:
 
       if foo do
         bar
       end
 
-  Notice that do/end becomes delimiters. The value given between
-  do/end becomes the expression given to as `do:`. The second example
-  would then translate do:
+  Notice that do/end becomes delimiters. The second example would
+  then translate do:
 
       if foo do
         bar
-      else:
+      else
         baz
       end
 
-  Notice that extra keys follows the regular `else:` form. You can also
-  add extra `elsif:` clauses:
+  This is easy to implement in Elixir thanks to homoiconicity.
+  You can also add extra `elsif` clauses:
 
 
       if foo do
         bar
-      elsif: some_condition
+      elsif some_condition
         bar + baz
-      else:
+      else
         baz
       end
 
   """
-  defmacro if(condition, [{:do,do_clause}|tail]) do
+  defmacro if(condition, opts) do
+    opts = :elixir_kw_block.pivot(opts, [elsif: 1, else: 0], __FILE__)
+    [{:do,do_clause}|tail] = opts
+
     # Transform the condition and the expressions in the
     # do_clause to a keywords block. Get the else clause.
     if_clause   = { :__kwblock__, 0, [ [condition], do_clause ] }
@@ -1907,9 +1909,9 @@ defmodule Elixir.Builtin do
     List.foldl left, right, fn(item, acc) ->
       quote do
         case unquote(acc) do
-        match: [unquote(item)|t]
+        match [unquote(item)|t]
           t
-        match: other when other == [] or other == nil
+        match other when other == [] or other == nil
           unquote(item) = nil
         end
       end
@@ -2001,9 +2003,9 @@ defmodule Elixir.Builtin do
   defmacro :&&.(left, right) do
     quote do
       case unquote(left) do
-      match: andand in [false, nil]
+      match andand in [false, nil]
         andand
-      match: _
+      match _
         unquote(right)
       end
     end
@@ -2028,9 +2030,9 @@ defmodule Elixir.Builtin do
   defmacro :||.(left, right) do
     quote do
       case unquote(left) do
-      match: oror in [false, nil]
+      match oror in [false, nil]
         unquote(right)
-      match: oror
+      match oror
         oror
       end
     end
@@ -2075,11 +2077,11 @@ defmodule Elixir.Builtin do
   defmacro :!.({:!, _, [expr]}) do
     quote do
       case unquote(expr) do
-      match: false
+      match false
         false
-      match: nil
+      match nil
         false
-      else:
+      else
         true
       end
     end
@@ -2088,11 +2090,11 @@ defmodule Elixir.Builtin do
   defmacro :!.(expr) do
     quote do
       case unquote(expr) do
-      match: false
+      match false
         true
-      match: nil
+      match nil
         true
-      else:
+      else
         false
       end
     end
@@ -2110,7 +2112,7 @@ defmodule Elixir.Builtin do
 
       try do
         1 + :foo
-      rescue: x in [BadargError]
+      rescue x in [BadargError]
         IO.puts "that was expected"
         raise x
       end
@@ -2249,22 +2251,22 @@ defmodule Elixir.Builtin do
   #
   #     if foo do
   #       1
-  #     elsif: bar
+  #     elsif bar
   #       2
-  #     else:
+  #     else
   #       3
   #     end
   #
   # Becomes:
   #
   #     case !foo do
-  #     match: false
+  #     match false
   #       1
-  #     match: true
+  #     match true
   #       case !bar do
-  #       match: false
+  #       match false
   #         2
-  #       match: true
+  #       match true
   #         3
   #       end
   #     end
@@ -2272,9 +2274,9 @@ defmodule Elixir.Builtin do
   defp build_if_clauses([{ :match, [condition], clause }|t], acc) do
     new_acc = quote do
       case !unquote(condition) do
-      match: false
+      match false
         unquote(clause)
-      else:
+      else
         unquote(acc)
       end
     end

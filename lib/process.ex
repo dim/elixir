@@ -39,9 +39,9 @@ defmodule Process do
   """
   def get(key, default // nil) do
     case :erlang.get(key) do
-    match: :undefined
+    match :undefined
       default
-    match: value
+    match value
       value
     end
   end

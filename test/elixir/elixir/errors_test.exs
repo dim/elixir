@@ -59,11 +59,6 @@ defmodule Elixir.ErrorsTest do
     assert "nofile:1: no block given to fn" == format_rescue 'fn 1'
   end
 
-  test :unproper_macro do
-    assert "nofile:4: keywords block not supported by Elixir.ErrorsTest.UnproperMacro.unproper/1" ==
-      format_rescue 'defmodule Foo do\nrequire Elixir.ErrorsTest.UnproperMacro\nElixir.ErrorsTest.UnproperMacro.unproper do\nmatch: 1\n2\nmatch: 3\nend\nend'
-  end
-
   test :macro_conflict do
     assert "nofile:1: imported Elixir.Builtin.defrecord/2 conflicts with local function" ==
       format_rescue 'defmodule Foo do\ndefrecord(Elixir.ErrorsTest.MacroConflict, a: 1)\ndef defrecord(_, _), do: OMG\nend'
@@ -135,7 +130,7 @@ defmodule Elixir.ErrorsTest do
 
   test :invalid_kv_for_match do
     assert "nofile:1: invalid key invalid" ==
-      format_rescue 'case true do\ninvalid: 2\nafter: 3\nend'
+      format_rescue 'case true do\ninvalid: 2\nafter 3\nend'
   end
 
   test :cant_define_local_due_to_in_erlang_macros_conflict do
@@ -188,7 +183,7 @@ defmodule Elixir.ErrorsTest do
 
   test :invalid_access_protocol_on_rescue do
     assert "nofile:1: cannot (yet) pattern match against erlang exceptions" ==
-      format_rescue 'try do\n1\nrescue: UndefinedFunctionError[arity: 1]\nfalse\nend'
+      format_rescue 'try do\n1\nrescue UndefinedFunctionError[arity: 1]\nfalse\nend'
   end
 
   test :invalid_bc do
@@ -202,7 +197,7 @@ defmodule Elixir.ErrorsTest do
     result = try do
       Erlang.elixir.eval(expr, [])
       nil
-    rescue: error
+    rescue error
       error.message
     end
 

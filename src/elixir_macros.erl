@@ -54,15 +54,17 @@ translate_macro({'@', Line, [{ Name, _, Args }]}, S) ->
 %% Case
 
 translate_macro({'case', Line, [Expr, RawClauses]}, S) ->
-  Clauses = orddict:erase(do, RawClauses),
+  PivotedClauses = elixir_kw_block:pivot(RawClauses, [{match,1},{else,0}], S#elixir_scope.filename),
+  Clauses = orddict:erase(do, PivotedClauses),
   { TExpr, NS } = translate_each(Expr, S),
   { TClauses, TS } = elixir_clauses:match(Line, Clauses, NS),
   { { 'case', Line, TExpr, TClauses }, TS };
 
 %% Try
 
-translate_macro({'try', Line, [Clauses]}, RawS) ->
+translate_macro({'try', Line, [RawClauses]}, RawS) ->
   S  = RawS#elixir_scope{noname=true},
+  Clauses = elixir_kw_block:pivot(RawClauses, [{'catch',{1,3}},{rescue,1},{'after',0}], S#elixir_scope.filename),
 
   Do = proplists:get_value('do', Clauses, []),
   { TDo, SB } = translate([Do], S),
@@ -83,7 +85,8 @@ translate_macro({'try', Line, [Clauses]}, RawS) ->
 %% Receive
 
 translate_macro({'receive', Line, [RawClauses] }, S) ->
-  Clauses = orddict:erase(do, RawClauses),
+  PivotedClauses = elixir_kw_block:pivot(RawClauses, [{match,1},{else,0},{'after',1}], S#elixir_scope.filename),
+  Clauses = orddict:erase(do, PivotedClauses),
   case orddict:find('after', Clauses) of
     { ok, After } ->
       AClauses = orddict:erase('after', Clauses),

@@ -7,9 +7,9 @@ defmodule Kernel.LoopTest do
     list = [1,2,3]
 
     result = loop list, [] do
-    match: [h|t], acc
+    match [h|t], acc
       recur t, [h*2|acc]
-    match: [], acc
+    match [], acc
       acc
     end
 
@@ -20,15 +20,15 @@ defmodule Kernel.LoopTest do
     list = [[1,2],[2,3],[3,4]]
 
     result = loop list, [] do
-    match: [h|t], acc
+    match [h|t], acc
       result = loop h, 0 do
-      match: [h|t], acc
+      match [h|t], acc
         recur t, acc + h*2
-      match: [], acc
+      match [], acc
         acc
       end
       recur t, [result|acc]
-    match: [], acc
+    match [], acc
       acc
     end
 
@@ -37,9 +37,9 @@ defmodule Kernel.LoopTest do
 
   test :do_loop_base do
     fun = fn do
-    match: { 1, 2 }, []
+    match { 1, 2 }, []
       1
-    match: [], x when x == []
+    match [], x when x == []
       2
     end
 
@@ -54,10 +54,10 @@ defmodule Kernel.LoopTest do
 
     result = loop do
       receive do
-      match: x
+      match x
         Process.put x, -x
         recur
-      after: 0
+      after 0
         :ok
       end
     end
@@ -66,7 +66,7 @@ defmodule Kernel.LoopTest do
     assert Process.get(1) == -1
     assert Process.get(2) == -2
     assert Process.get(3) == -3
-  after:
+  after
     Process.delete(1)
     Process.delete(2)
     Process.delete(3)

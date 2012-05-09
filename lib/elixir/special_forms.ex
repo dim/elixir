@@ -352,9 +352,9 @@ defmodule Elixir.SpecialForms do
   as all clauses expects the same number of arguments:
 
       fun = fn do
-      match: x, y when y < 0
+      match x, y when y < 0
         x - y
-      match: x, y
+      match x, y
         x + y
       end
 
@@ -372,9 +372,9 @@ defmodule Elixir.SpecialForms do
       list = [1,2,3]
 
       loop list, [] do
-      match: [h|t], acc
+      match [h|t], acc
         recur t, [h*2|acc]
-      match: [], acc
+      match [], acc
         acc
       end
       #=> [6,4,2]
@@ -475,7 +475,7 @@ defmodule Elixir.SpecialForms do
          quote do
            in_guard do
              is_tuple(unquote(thing)) and elem(unquote(thing), 2) == :__exception__
-           else:
+           else
              result = unquote(thing)
              is_tuple(result) and elem(result, 2) == :__exception__
            end

@@ -9,14 +9,14 @@ defmodule EnumTest.Common do
     assert Process.get(:times_with_arity) == nil
     assert Enum.times(3, fn do: Process.put(:times_with_arity, :ok)) == 3
     assert Process.get(:times_with_arity) == :ok
-  after:
+  after
     Process.delete(:times_with_arity)
   end
 
   test :times_with_arity_1 do
     assert Enum.times(5, fn(x, do: Process.put(:times_with_arity, x))) == 5
     assert Process.get(:times_with_arity) == 5
-  after:
+  after
     Process.delete(:times_with_arity)
   end
 
@@ -86,7 +86,7 @@ defmodule EnumTest.List do
 
     assert Enum.each([1,2,3], fn(x, do: Process.put(:enum_test_each, x * 2))) == [1,2,3]
     assert Process.get(:enum_test_each) == 6
-  after:
+  after
     Process.delete(:enum_test_each)
   end
 
@@ -239,7 +239,7 @@ defmodule EnumTest.Dict.Common do
         assert 2 == Process.get("one")
         assert 4 == Process.get("two")
         assert 6 == Process.get("three")
-      after:
+      after
         Process.delete("one")
         Process.delete("two")
         Process.delete("three")

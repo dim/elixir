@@ -246,7 +246,8 @@ translate_each({quote, _Line, [[{do,Exprs}|T]]}, S) ->
 translate_each({quote, Line, [_]}, S) ->
   syntax_error(Line, S#elixir_scope.filename, "invalid args for quote");
 
-translate_each({in_guard, _, [[{do,Guard},{else,Else}]]}, S) ->
+translate_each({in_guard, _, [Opts]}, S) ->
+  [{do,Guard},{else,Else}] = elixir_kw_block:pivot(Opts, [{else,0}], S#elixir_scope.filename),
   case S#elixir_scope.guard of
     true  -> translate_each(Guard, S);
     false -> translate_each(Else, S)
@@ -256,10 +257,14 @@ translate_each({in_guard, _, [[{do,Guard},{else,Else}]]}, S) ->
 
 translate_each({fn, Line, RawArgs}, S) when is_list(RawArgs) ->
   Clauses = case lists:split(length(RawArgs) - 1, RawArgs) of
+    { [], [KV] } when is_list(KV) ->
+      Pivot = elixir_kw_block:pivot(KV, [{match,{1,infinity}}], S#elixir_scope.filename),
+      case Pivot of
+        [{do,Expr}] -> [{match,[],Expr}];
+        _ -> elixir_kw_block:decouple(orddict:erase(do, Pivot))
+      end;
     { Args, [[{do,Expr}]] } ->
       [{match,Args,Expr}];
-    { [], [KV] } when is_list(KV) ->
-      elixir_kw_block:decouple(orddict:erase(do, KV));
     _ ->
       syntax_error(Line, S#elixir_scope.filename, "no block given to fn")
   end,
@@ -280,11 +285,13 @@ translate_each({loop, Line, RawArgs}, S) when is_list(RawArgs) ->
       %% Generate a variable that will store the function
       { FunVar, VS }  = elixir_variables:build_ex(Line, S),
 
+      Pivot = elixir_kw_block:pivot(KV, [{match,{1,infinity}}], S#elixir_scope.filename),
+
       %% If there are no args and no match clause, generate one
-      KVFinal = case { Args, KV } of
+      KVFinal = case { Args, Pivot } of
         { [], [{do, SingleBlock}] } ->
           [{match, SingleBlock}];
-        _ -> orddict:erase(do, KV)
+        _ -> orddict:erase(do, Pivot)
       end,
 
       %% Add this new variable to all match clauses

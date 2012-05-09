@@ -39,10 +39,10 @@ defimpl Binary.Inspect, for: Atom do
 
     if valid_identifier?(binary) == <<>> do
       ":" <> binary
-    elsif: valid_ref_identifier?(binary) == <<>>
+    elsif valid_ref_identifier?(binary) == <<>>
       "__MAIN__." <> rest = binary
       rest
-    else:
+    else
       ":" <> Binary.escape(binary, ?")
     end
   end
@@ -89,7 +89,7 @@ defimpl Binary.Inspect, for: BitString do
   def inspect(thing) when is_binary(thing) do
     if Binary.printable?(thing) do
       Binary.escape(thing, ?")
-    else:
+    else
       as_bitstring(thing)
     end
   end
@@ -131,7 +131,7 @@ defimpl Binary.Inspect, for: List do
   def inspect(thing) do
     if Erlang.io_lib.printable_list(thing) do
       Binary.escape(list_to_binary(thing), ?')
-    else:
+    else
       container_join(thing, "[", "]")
     end
   end
@@ -182,7 +182,7 @@ defimpl Binary.Inspect, for: Tuple do
     if is_record?(name) do
       fields = lc { field, _ } in name.__record__(:fields), do: field
       Binary.Inspect.Atom.inspect(name) <> records_join(fields, tail, "[", "]")
-    else:
+    else
       Binary.Inspect.List.container_join(list, "{", "}")
     end
   end

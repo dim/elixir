@@ -51,11 +51,11 @@ defmodule Elixir.ParallelCompiler do
       try do
         if output do
           Erlang.elixir_compiler.file_to_path(h, output)
-        else:
+        else
           Erlang.elixir_compiler.file(h)
         end
         parent <- { :compiled, Process.self(), h }
-      catch: kind, reason
+      catch kind, reason
         parent <- { :failure, Process.self(), kind, reason, System.stacktrace }
       end
     end
@@ -80,21 +80,21 @@ defmodule Elixir.ParallelCompiler do
   # Wait for messages from child processes
   defp wait_for_messages(files, output, callback, waiting, queued, result) do
     receive do
-    match: { :compiled, child, file }
+    match { :compiled, child, file }
       callback.(list_to_binary(file))
       new_queued  = List.keydelete(queued, child, 1)
       # Sometimes we may have spurious entries in the waiting
       # list because someone invoked try/rescue UndefinedFunctionError
       new_waiting = List.keydelete(waiting, child, 1)
       spawn_compilers(files, output, callback, new_waiting, new_queued, result)
-    match: { :module_available, child, module, binary }
+    match { :module_available, child, module, binary }
       new_waiting = release_waiting_processes(module, waiting)
       new_result  = [{module, binary}|result]
       wait_for_messages(files, output, callback, new_waiting, queued, new_result)
-    match: { :waiting, child, on }
+    match { :waiting, child, on }
       new_waiting = Orddict.store(child, on, waiting)
       spawn_compilers(files, output, callback, new_waiting, queued, result)
-    match: { :failure, child, kind, reason, stacktrace }
+    match { :failure, child, kind, reason, stacktrace }
       extra = if match?({^child, module}, List.keyfind(waiting, child, 1)) do
         " (undefined module #{inspect module})"
       end
@@ -111,7 +111,7 @@ defmodule Elixir.ParallelCompiler do
       if waiting_module == module do
         child <- { :release, Process.self() }
         false
-      else:
+      else
         true
       end
     end

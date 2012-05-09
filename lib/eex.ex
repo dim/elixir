@@ -50,7 +50,7 @@ defmodule EEx do
 
       <%= if true do %>
         It is obviously true
-      <% else: %>
+      <% else %>
         This will never appear
       <% end %>
 

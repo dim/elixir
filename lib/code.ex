@@ -90,10 +90,10 @@ defmodule Code do
     file = find_file(file, relative_to)
 
     case server_call { :loaded, file } do
-    match: :ok
+    match :ok
       Erlang.elixir_compiler.file to_char_list(file)
       file
-    match: :duplicated
+    match :duplicated
       nil
     end
   end
@@ -153,17 +153,17 @@ defmodule Code do
 
     file = if relative_to do
       File.expand_path(file, relative_to)
-    else:
+    else
       File.expand_path(file)
     end
 
     if File.regular?(file) do
       file
-    else:
+    else
       prefix = "#{file}.exs"
       if File.regular?(prefix) do
         prefix
-      else:
+      else
         raise ArgumentError, message: "could not load #{file}"
       end
     end
