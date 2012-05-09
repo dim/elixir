@@ -16,7 +16,7 @@ defmodule Dict.Common do
       ## Examples
 
           #{unquote(inspect(__MODULE__))}.new [{:b,1},{:a,2}]
-          #=> [a: 1, b: 2]
+          #=> [:a 1, :b 2]
 
       """
       def new(pairs) do

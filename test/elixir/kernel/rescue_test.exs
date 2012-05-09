@@ -61,7 +61,7 @@ defmodule Kernel.RescueTest do
 
   test :rescue_argument_error_from_elixir do
     result = try do
-     raise ArgumentError, message: ""
+     raise ArgumentError, :message ""
     rescue ArgumentError
      true
     end
@@ -94,10 +94,10 @@ defmodule Kernel.RescueTest do
   end
 
   test :rescue_defined_variable do
-    var = Protocol.UndefinedError[protocol: Foo]
+    var = Protocol.UndefinedError[:protocol Foo]
 
     result = try do
-      raise Protocol.UndefinedError, protocol: Foo
+      raise Protocol.UndefinedError, :protocol Foo
     rescue ^var
       true
     end
@@ -109,7 +109,7 @@ defmodule Kernel.RescueTest do
     expected = RuntimeError
 
     result = try do
-      raise RuntimeError, message: "an exception"
+      raise RuntimeError, :message "an exception"
     rescue x in [expected, AnotherError]
       x.message
     catch :error, _
@@ -180,7 +180,7 @@ defmodule Kernel.RescueTest do
   end
 
   test :badarity_error do
-    fun    = fn(x, do: x)
+    fun    = fn(x, :do x)
     string = "bad arity error: #{inspect(fun)} called with [1,2]"
 
     result = try do
@@ -250,15 +250,15 @@ defmodule Kernel.RescueTest do
 
   test :pattern_matching do
     result = try do
-      raise Protocol.UndefinedError, protocol: Foo
-    rescue Protocol.UndefinedError[protocol: Bar]
+      raise Protocol.UndefinedError, :protocol Foo
+    rescue Protocol.UndefinedError[:protocol Bar]
       false
-    rescue Protocol.UndefinedError[protocol: Foo] = x
+    rescue Protocol.UndefinedError[:protocol Foo] = x
       x.message
     end
 
     assert result == "protocol Foo not implemented for nil"
   end
 
-  defp zero(0), do: 0
+  defp zero(0), :do 0
 end

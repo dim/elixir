@@ -133,20 +133,20 @@ defmodule ListTest do
   end
 
   test :keyfind do
-    assert List.keyfind([a: 1, b: 2], :a, 1) == { :a, 1 }
-    assert List.keyfind([a: 1, b: 2], 2, 2) == { :b, 2 }
-    assert List.keyfind([a: 1, b: 2], :c, 1) == nil
+    assert List.keyfind([:a 1, :b 2], :a, 1) == { :a, 1 }
+    assert List.keyfind([:a 1, :b 2], 2, 2) == { :b, 2 }
+    assert List.keyfind([:a 1, :b 2], :c, 1) == nil
   end
 
   test :keymember? do
-    assert List.keymember?([a: 1, b: 2], :a, 1) == true
-    assert List.keymember?([a: 1, b: 2], 2, 2) == true
-    assert List.keymember?([a: 1, b: 2], :c, 1) == false
+    assert List.keymember?([:a 1, :b 2], :a, 1) == true
+    assert List.keymember?([:a 1, :b 2], 2, 2) == true
+    assert List.keymember?([:a 1, :b 2], :c, 1) == false
   end
 
   test :keydelete do
-    assert List.keydelete([a: 1, b: 2], :a, 1) == [{ :b, 2 }]
-    assert List.keydelete([a: 1, b: 2], 2, 2) == [{ :a, 1 }]
-    assert List.keydelete([a: 1, b: 2], :c, 1) == [{ :a, 1 }, { :b, 2 }]
+    assert List.keydelete([:a 1, :b 2], :a, 1) == [{ :b, 2 }]
+    assert List.keydelete([:a 1, :b 2], 2, 2) == [{ :a, 1 }]
+    assert List.keydelete([:a 1, :b 2], :c, 1) == [{ :a, 1 }, { :b, 2 }]
   end
 end

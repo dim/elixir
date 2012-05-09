@@ -48,7 +48,7 @@ defmodule Kernel.PartialApplicationTest do
   end
 
   test :partial_with_internal_macro do
-    fun = if(&1, do: 1, else: 2)
+    fun = if(&1, :do 1, :else 2)
     assert fun.(20) == 1
     assert fun.(nil) == 2
   end

@@ -6,8 +6,8 @@ defmodule KeywordTest do
   test :from_enum do
     list = [{:b,2},{:a,1},{:c,3}]
     dict = Orddict.new list
-    assert Keyword.from_enum(list) == [a: 1, b: 2, c: 3]
-    assert Keyword.from_enum(dict) == [a: 1, b: 2, c: 3]
+    assert Keyword.from_enum(list) == [:a 1, :b 2, :c 3]
+    assert Keyword.from_enum(dict) == [:a 1, :b 2, :c 3]
   end
 
   test :new do
@@ -15,11 +15,11 @@ defmodule KeywordTest do
   end
 
   test :new_with_pairs do
-    assert Keyword.new([{:second_key, 2}, {:first_key, 1}]) == [first_key: 1, second_key: 2]
+    assert Keyword.new([{:second_key, 2}, {:first_key, 1}]) == [:first_key 1, :second_key 2]
   end
 
   test :new_with_function do
-    assert Keyword.new([:a, :b], fn(x) -> { x, x } end) == [a: :a, b: :b]
+    assert Keyword.new([:a, :b], fn(x) -> { x, x } end) == [:a :a, :b :b]
   end
 
   test :get do
@@ -40,37 +40,37 @@ defmodule KeywordTest do
   end
 
   test :delete do
-    assert Keyword.delete(create_keywords, :second_key) == [first_key: 1]
-    assert Keyword.delete(create_keywords, :other_key) == [first_key: 1, second_key: 2]
+    assert Keyword.delete(create_keywords, :second_key) == [:first_key 1]
+    assert Keyword.delete(create_keywords, :other_key) == [:first_key 1, :second_key 2]
     assert Keyword.delete(create_empty_keywords, :other_key) == []
   end
 
   test :put do
-    assert Keyword.put(create_empty_keywords, :first_key, 1) == [first_key: 1]
-    assert Keyword.put(create_keywords, :first_key, 1) == [first_key: 1, second_key: 2]
+    assert Keyword.put(create_empty_keywords, :first_key, 1) == [:first_key 1]
+    assert Keyword.put(create_keywords, :first_key, 1) == [:first_key 1, :second_key 2]
   end
 
   test :merge do
-    assert Keyword.merge(create_empty_keywords, create_keywords) == [first_key: 1, second_key: 2]
-    assert Keyword.merge(create_keywords, create_empty_keywords) == [first_key: 1, second_key: 2]
-    assert Keyword.merge(create_keywords, create_keywords) == [first_key: 1, second_key: 2]
+    assert Keyword.merge(create_empty_keywords, create_keywords) == [:first_key 1, :second_key 2]
+    assert Keyword.merge(create_keywords, create_empty_keywords) == [:first_key 1, :second_key 2]
+    assert Keyword.merge(create_keywords, create_keywords) == [:first_key 1, :second_key 2]
     assert Keyword.merge(create_empty_keywords, create_empty_keywords) == []
   end
 
   test :merge_with_function do
-    result = Keyword.merge [a: 1, b: 2], [a: 3, d: 4], fn(_k, v1, v2) ->
+    result = Keyword.merge [:a 1, :b 2], [:a 3, :d 4], fn(_k, v1, v2) ->
       v1 + v2
     end
-    assert result == [a:4, b:2, d: 4]
+    assert result == [:a 4, :b 2, :d 4]
   end
 
   test :key do
-    assert Keyword.key?([a: 1], :a) == true
-    assert Keyword.key?([a: 1], :b) == false
+    assert Keyword.key?([:a 1], :a) == true
+    assert Keyword.key?([:a 1], :b) == false
   end
 
-  defp create_empty_keywords, do: []
-  defp create_keywords, do: [first_key: 1, second_key: 2]
+  defp create_empty_keywords, :do []
+  defp create_keywords, :do [:first_key 1, :second_key 2]
 end
 
 defmodule Keyword.DuplicatedTest do
@@ -104,14 +104,14 @@ defmodule Keyword.DuplicatedTest do
   end
 
   test :delete do
-    assert Keyword.delete(create_keywords, :first_key) == [second_key: 2]
+    assert Keyword.delete(create_keywords, :first_key) == [:second_key 2]
     assert Keyword.delete(create_keywords, :other_key) == create_keywords
     assert Keyword.delete(create_empty_keywords, :other_key) == []
   end
 
   test :put do
-    assert Keyword.put(create_empty_keywords, :first_key, 1) == [first_key: 1]
-    assert Keyword.put(create_keywords, :first_key, 1) == [first_key: 1, second_key: 2]
+    assert Keyword.put(create_empty_keywords, :first_key, 1) == [:first_key 1]
+    assert Keyword.put(create_keywords, :first_key, 1) == [:first_key 1, :second_key 2]
   end
 
   test :merge do
@@ -119,22 +119,22 @@ defmodule Keyword.DuplicatedTest do
     assert Keyword.merge(create_keywords, create_empty_keywords) == create_keywords
     assert Keyword.merge(create_keywords, create_keywords) == create_keywords
     assert Keyword.merge(create_empty_keywords, create_empty_keywords) == []
-    assert Keyword.merge(create_keywords, [first_key: 0]) == [first_key: 0, first_key: 2, second_key: 2]
-    assert Keyword.merge(create_keywords, [first_key: 0, first_key: 3]) == [first_key: 0, first_key: 3, second_key: 2]
+    assert Keyword.merge(create_keywords, [:first_key 0]) == [:first_key 0, :first_key 2, :second_key 2]
+    assert Keyword.merge(create_keywords, [:first_key 0, :first_key 3]) == [:first_key 0, :first_key 3, :second_key 2]
   end
 
   test :merge_with_function do
-    result = Keyword.merge [a: 1, b: 2], [a: 3, d: 4], fn(_k, v1, v2) ->
+    result = Keyword.merge [:a 1, :b 2], [:a 3, :d 4], fn(_k, v1, v2) ->
       v1 + v2
     end
-    assert result == [a:4, b:2, d: 4]
+    assert result == [:a 4, :b 2, :d 4]
   end
 
   test :key do
-    assert Keyword.key?([a: 1], :a) == true
-    assert Keyword.key?([a: 1], :b) == false
+    assert Keyword.key?([:a 1], :a) == true
+    assert Keyword.key?([:a 1], :b) == false
   end
 
-  defp create_empty_keywords, do: []
-  defp create_keywords, do: [first_key: 1, first_key: 2, second_key: 2]
+  defp create_empty_keywords, :do []
+  defp create_keywords, :do [:first_key 1, :first_key 2, :second_key 2]
 end

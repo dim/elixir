@@ -24,7 +24,7 @@ defmodule EEx.Engine do
   The default implementation simply concatenates text to the buffer.
   """
   def handle_text(buffer, text) do
-    quote do: unquote(buffer) <> unquote(text)
+    quote :do unquote(buffer) <> unquote(text)
   end
 
   @doc """
@@ -52,6 +52,6 @@ defmodule EEx.Engine do
   end
 
   def behaviour_info(:callbacks) do
-    [handle_text: 2, handle_expr: 3]
+    [:handle_text 2, :handle_expr 3]
   end
 end

@@ -42,7 +42,7 @@ defmodule ExUnit do
     ExUnit.Server.start_link
     configure(options)
     System.at_exit fn(status) ->
-      if status == 0, do: ExUnit.run
+      if status == 0, :do ExUnit.run
     end
   end
 
@@ -51,7 +51,7 @@ defmodule ExUnit do
 
   ## Options
 
-  ExUnit supports the following options given to start:
+  ExUnit supports the following options given to :start
 
   * `:formatter` - The formatter that will print results
   * `:max_cases` - Maximum number of cases to run in parallel
@@ -69,6 +69,6 @@ defmodule ExUnit do
     config = ExUnit.Runner.Config.new ExUnit.Server.options
     config = config.formatter(config.formatter.start)
     failures = ExUnit.Runner.start config
-    if failures > 0, do: halt(1), else: halt(0)
+    if failures > 0, :do halt(1), :else halt(0)
   end
 end

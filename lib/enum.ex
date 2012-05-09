@@ -28,14 +28,14 @@ defprotocol Enum.Iterator do
 
   In order to retrieve this iterator function, Elixir invokes
   `Enum.Iterator.iterator(collection)` which should return a
-  tuple with two elements: the first element is the iterator
+  tuple with two :elements the first element is the iterator
   function and the second is the first step of iteration.
 
   As an example, here is the implementation of iterator for lists:
 
-      def iterator(list),   do: { iterate(&1), iterate(list) }
-      defp iterate([h|t]),  do: { h, t }
-      defp iterate([]),     do: :stop
+      def iterator(list),   :do { iterate(&1), iterate(list) }
+      defp iterate([h|t]),  :do { h, t }
+      defp iterate([]),     :do :stop
 
   """
   def iterator(collection)
@@ -78,8 +78,8 @@ defprotocol Enum.OrdIterator do
 end
 
 defmodule Enum do
-  require Enum.Iterator, as: I
-  require Enum.OrdIterator, as: O
+  require Enum.Iterator, :as I
+  require Enum.OrdIterator, :as O
 
   @moduledoc """
   Provides a set of algorithms that enumerate over collections according to the
@@ -87,7 +87,7 @@ defmodule Enum do
   flavours. If a given collection implements the mentioned protocol (like
   list, for instance), you can do
 
-      Enum.map [1,2,3], fn(x, do: x * 2)
+      Enum.map [1,2,3], fn(x, :do x * 2)
 
   Depending on the type of the collection, the user-provided function will
   accept a certain type of argument. For dicts, the argument is always a
@@ -101,10 +101,10 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.all? [2,4,6], fn(x, do: rem(x, 2) == 0)
+      Enum.all? [2,4,6], fn(x, :do rem(x, 2) == 0)
       #=> true
 
-      Enum.all? [2,3,4], fn(x, do: rem(x, 2) == 0)
+      Enum.all? [2,3,4], fn(x, :do rem(x, 2) == 0)
       #=> false
 
   If no function is given, it defaults to checking if
@@ -114,7 +114,7 @@ defmodule Enum do
       Enum.all? [1,nil,3] #=> false
 
   """
-  def all?(collection, fun // fn(x, do: x)) do
+  def all?(collection, fun // fn(x, :do x)) do
     { iterator, pointer } = I.iterator(collection)
     do_all?(pointer, iterator, fun)
   end
@@ -125,10 +125,10 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.any? [2,4,6], fn(x, do: rem(x, 2) == 1)
+      Enum.any? [2,4,6], fn(x, :do rem(x, 2) == 1)
       #=> false
 
-      Enum.any? [2,3,4], fn(x, do: rem(x, 2) == 1)
+      Enum.any? [2,3,4], fn(x, :do rem(x, 2) == 1)
       #=> true
 
   If no function is given, it defaults to checking if
@@ -138,7 +138,7 @@ defmodule Enum do
       Enum.any? [false,true,false]  #=> true
 
   """
-  def any?(collection, fun // fn(x, do: x)) do
+  def any?(collection, fun // fn(x, :do x)) do
     { iterator, pointer } = I.iterator(collection)
     do_any?(pointer, iterator, fun)
   end
@@ -164,7 +164,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.drop_while [1,2,3,4,5], fn(x, do: x < 3)
+      Enum.drop_while [1,2,3,4,5], fn(x, :do x < 3)
       #=> [3,4,5]
   """
   def drop_while(collection, fun) do
@@ -179,7 +179,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.each ['some', 'example'], fn(x, do: IO.puts x)
+      Enum.each ['some', 'example'], fn(x, :do IO.puts x)
 
   """
   def each(collection, fun) do
@@ -212,7 +212,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.filter [1, 2, 3], fn(x, do: rem(x, 2) == 0)
+      Enum.filter [1, 2, 3], fn(x, :do rem(x, 2) == 0)
       #=> [2]
 
   """
@@ -226,7 +226,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.filter_map [1, 2, 3], fn(x, do: rem(x, 2) == 0), &1 * 2
+      Enum.filter_map [1, 2, 3], fn(x, :do rem(x, 2) == 0), &1 * 2
       #=> [4]
 
   """
@@ -241,13 +241,13 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.find [2,4,6], fn(x, do: rem(x, 2) == 1)
+      Enum.find [2,4,6], fn(x, :do rem(x, 2) == 1)
       # => nil
 
-      Enum.find [2,4,6], 0, fn(x, do: rem(x, 2) == 1)
+      Enum.find [2,4,6], 0, fn(x, :do rem(x, 2) == 1)
       # => 0
 
-      Enum.find [2,3,4], fn(x, do: rem(x, 2) == 1)
+      Enum.find [2,3,4], fn(x, :do rem(x, 2) == 1)
       # => 3
 
   """
@@ -262,13 +262,13 @@ defmodule Enum do
 
     ## Examples
 
-        Enum.find_value [2,4,6], fn(x, do: rem(x, 2) == 1)
+        Enum.find_value [2,4,6], fn(x, :do rem(x, 2) == 1)
         # => nil
 
-        Enum.find_value [2,4,6], 0, fn(x, do: rem(x, 2) == 1)
+        Enum.find_value [2,4,6], 0, fn(x, :do rem(x, 2) == 1)
         # => 0
 
-        Enum.find_value [2,3,4], fn(x, do: rem(x, 2) == 1)
+        Enum.find_value [2,3,4], fn(x, :do rem(x, 2) == 1)
         # => true
 
   """
@@ -314,15 +314,15 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.map [1, 2, 3], fn(x, do: x * 2)
+      Enum.map [1, 2, 3], fn(x, :do x * 2)
       #=> [2, 4, 6]
 
-      Enum.map [a: 1, b: 2], fn({k, v}, do: { k, -v })
-      #=> [a: -1, b: -2]
+      Enum.map [:a 1, :b 2], fn({k, v}, :do { k, -v })
+      #=> [:a -1, :b -2]
 
   """
   def map(collection, fun) when is_list(collection) do
-    lc item in collection, do: fun.(item)
+    lc item in collection, :do fun.(item)
   end
 
   def map(collection, fun) do
@@ -371,7 +371,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.map_reduce [1, 2, 3], 0, fn(x, acc, do: { x * 2, x + acc })
+      Enum.map_reduce [1, 2, 3], 0, fn(x, acc, :do { x * 2, x + acc })
       #=> { [2, 4, 6], 6 }
 
   """
@@ -391,7 +391,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.partition [1, 2, 3], fn(x, do: rem(x, 2) == 0)
+      Enum.partition [1, 2, 3], fn(x, :do rem(x, 2) == 0)
       #=> { [2], [1,3] }
 
   """
@@ -407,7 +407,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.reduce [1, 2, 3], 0, fn(x, acc, do: x + acc)
+      Enum.reduce [1, 2, 3], 0, fn(x, acc, :do x + acc)
       #=> 6
 
   """
@@ -490,11 +490,11 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.take_while [1,2,3], fn(x, do: x < 3)
+      Enum.take_while [1,2,3], fn(x, :do x < 3)
       #=> [1, 2]
 
   """
-  def take_while(collection, fun // fn(x, do: x)) do
+  def take_while(collection, fun // fn(x, :do x)) do
     { iterator, pointer } = O.iterator(collection)
     do_take_while(pointer, iterator, fun)
   end
@@ -505,7 +505,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.times 3, fn(x, do: IO.puts x)
+      Enum.times 3, fn(x, :do IO.puts x)
       1
       2
       3
@@ -528,7 +528,7 @@ defmodule Enum do
 
   ## Examples
 
-      Enum.times 5, 0, fn(x, acc, do: acc + x)
+      Enum.times 5, 0, fn(x, acc, :do acc + x)
       #=> 15
 
   """
@@ -866,34 +866,34 @@ defmodule Enum do
   end
 end
 
-defimpl Enum.Iterator, for: List do
-  def iterator(list),  do: { iterate(&1), iterate(list) }
-  defp iterate([h|t]), do: { h, t }
-  defp iterate([]),    do: :stop # The :stop atom is the end of the iteration.
+defimpl Enum.Iterator, :for List do
+  def iterator(list),  :do { iterate(&1), iterate(list) }
+  defp iterate([h|t]), :do { h, t }
+  defp iterate([]),    :do :stop # The :stop atom is the end of the iteration.
 end
 
-defimpl Enum.OrdIterator, for: List do
+defimpl Enum.OrdIterator, :for List do
   def iterator(list) do
     Enum.Iterator.List.iterator(list)
   end
 
-  def to_list(h, next), do: [h|next]
+  def to_list(h, next), :do [h|next]
 end
 
-defimpl Enum.Iterator, for: HashDict.Record do
-  def iterator(dict), do: Enum.Iterator.List.iterator(to_list(dict))
-  defp to_list(dict), do: Dict.HashDict.Record.to_list(dict)
+defimpl Enum.Iterator, :for HashDict.Record do
+  def iterator(dict), :do Enum.Iterator.List.iterator(to_list(dict))
+  defp to_list(dict), :do Dict.HashDict.Record.to_list(dict)
 end
 
-defimpl Enum.Iterator, for: Orddict.Record do
-  def iterator(dict), do: Enum.Iterator.List.iterator(to_list(dict))
-  defp to_list(dict), do: Dict.Orddict.Record.to_list(dict)
+defimpl Enum.Iterator, :for Orddict.Record do
+  def iterator(dict), :do Enum.Iterator.List.iterator(to_list(dict))
+  defp to_list(dict), :do Dict.Orddict.Record.to_list(dict)
 end
 
-defimpl Enum.OrdIterator, for: Orddict.Record do
+defimpl Enum.OrdIterator, :for Orddict.Record do
   def iterator(dict) do
     Enum.Iterator.Orddict.Record.iterator(dict)
   end
 
-  def to_list(h, next), do: [h|next]
+  def to_list(h, next), :do [h|next]
 end

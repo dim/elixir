@@ -2,7 +2,7 @@ Code.require_file "../../test_helper", __FILE__
 
 defmodule EEx.TokenizerTest do
   use ExUnit.Case
-  require EEx.Tokenizer, as: T
+  require EEx.Tokenizer, :as T
 
   test "simple chars lists" do
     assert T.tokenize('foo', 1) == [ { :text, 1, "foo" } ]

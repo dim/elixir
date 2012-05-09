@@ -40,10 +40,10 @@ defmodule ExUnit.Case do
       import ExUnit.Assertions
       import ExUnit.Case
 
-      def setup_all, do: :ok
-      def teardown_all, do: :ok
+      def setup_all, :do :ok
+      def teardown_all, :do :ok
 
-      defoverridable [setup_all: 0, teardown_all: 0]
+      defoverridable [:setup_all 0, :teardown_all 0]
     end
   end
 
@@ -63,11 +63,11 @@ defmodule ExUnit.Case do
 
   """
   defmacro test(message, contents) do
-    contents = :elixir_kw_block.pivot(contents, [catch: {1,3}, after: 0, rescue: 1], __FILE__)
+    contents = :elixir_kw_block.pivot(contents, [:catch {1,3}, :after 0, :rescue 1], __FILE__)
 
     contents =
       case contents do
-      match [do: block]
+      match [:do block]
         quote do
           unquote(contents)
           :ok
@@ -86,7 +86,7 @@ defmodule ExUnit.Case do
       else
         :"test_#{message}"
       end
-      def message, [], [], do: unquote(contents)
+      def message, [], [], :do unquote(contents)
     end
   end
 end

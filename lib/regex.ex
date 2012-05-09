@@ -219,23 +219,23 @@ defmodule Regex do
 
   @doc false
   # Unescape map function used by Binary.unescape.
-  def unescape_map(?f), do: ?\f
-  def unescape_map(?n), do: ?\n
-  def unescape_map(?r), do: ?\r
-  def unescape_map(?t), do: ?\t
-  def unescape_map(?v), do: ?\v
-  def unescape_map(_),  do: false
+  def unescape_map(?f), :do ?\f
+  def unescape_map(?n), :do ?\n
+  def unescape_map(?r), :do ?\r
+  def unescape_map(?t), :do ?\t
+  def unescape_map(?v), :do ?\v
+  def unescape_map(_),  :do false
 
   # Private Helpers
 
-  defp return_for(element) when is_binary(element), do: :binary
-  defp return_for(element) when is_list(element),   do: :list
+  defp return_for(element) when is_binary(element), :do :binary
+  defp return_for(element) when is_list(element),   :do :list
 
-  defp translate_options(<<?u, t|:binary>>), do: [:unicode|translate_options(t)]
-  defp translate_options(<<?i, t|:binary>>), do: [:caseless|translate_options(t)]
-  defp translate_options(<<?x, t|:binary>>), do: [:extended|translate_options(t)]
-  defp translate_options(<<?f, t|:binary>>), do: [:firstline|translate_options(t)]
-  defp translate_options(<<?r, t|:binary>>), do: [:ungreedy|translate_options(t)]
-  defp translate_options(<<?m, t|:binary>>), do: [:dotall,{:newline,:anycrlf}|translate_options(t)]
-  defp translate_options(<<>>), do: []
+  defp translate_options(<<?u, t|:binary>>), :do [:unicode|translate_options(t)]
+  defp translate_options(<<?i, t|:binary>>), :do [:caseless|translate_options(t)]
+  defp translate_options(<<?x, t|:binary>>), :do [:extended|translate_options(t)]
+  defp translate_options(<<?f, t|:binary>>), :do [:firstline|translate_options(t)]
+  defp translate_options(<<?r, t|:binary>>), :do [:ungreedy|translate_options(t)]
+  defp translate_options(<<?m, t|:binary>>), :do [:dotall,{:newline,:anycrlf}|translate_options(t)]
+  defp translate_options(<<>>), :do []
 end

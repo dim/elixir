@@ -5,9 +5,9 @@ defmodule ExUnit.Formatter do
 
   use GenServer.Behavior
 
-  defrecord Config, counter: 0, failures: []
+  defrecord Config, :counter 0, :failures []
 
-  import Exception, only: [format_stacktrace: 1]
+  import Exception, :only [:format_stacktrace 1]
 
   def start do
     { :ok, pid } = Erlang.gen_server.start_link(__MODULE__, [], [])
@@ -43,8 +43,8 @@ defmodule ExUnit.Formatter do
 
   defp print_failure({test_case, test, { kind, reason, stacktrace }}, acc) do
     IO.puts "#{acc}) #{test} (#{inspect test_case})"
-    IO.puts "  ** #{format_catch(kind, reason)}\n  stacktrace:"
-    Enum.each filter_stacktrace(stacktrace), fn(s, do: IO.puts "    #{format_stacktrace(s)}")
+    IO.puts "  ** #{format_catch(kind, reason)}\n  :stacktrace"
+    Enum.each filter_stacktrace(stacktrace), fn(s, :do IO.puts "    #{format_stacktrace(s)}")
     IO.print "\n"
     acc + 1
   end
@@ -57,7 +57,7 @@ defmodule ExUnit.Formatter do
     "(#{kind}) #{inspect(reason)}"
   end
 
-  defp filter_stacktrace([{ ExUnit.Assertions, _, _, _ }|t]), do: filter_stacktrace(t)
-  defp filter_stacktrace([h|t]), do: [h|filter_stacktrace(t)]
-  defp filter_stacktrace([]), do: []
+  defp filter_stacktrace([{ ExUnit.Assertions, _, _, _ }|t]), :do filter_stacktrace(t)
+  defp filter_stacktrace([h|t]), :do [h|filter_stacktrace(t)]
+  defp filter_stacktrace([]), :do []
 end

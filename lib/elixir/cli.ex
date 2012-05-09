@@ -1,17 +1,17 @@
-defrecord Elixir.CLI.Config, commands: [], close: [],
-  output: '.', compile: [], halt: true, compiler_options: []
+defrecord Elixir.CLI.Config, :commands [], :close [],
+  :output '.', :compile [], :halt true, :compiler_options []
 
 defmodule Elixir.CLI do
   @moduledoc false
 
-  import Exception, only: [format_stacktrace: 1]
+  import Exception, :only [:format_stacktrace 1]
 
   # Invoked directly from erlang boot process. It parses all argv
   # options and execute them in the order they are specified.
   def process_argv(options) do
     { config, argv } = process_options(options, Elixir.CLI.Config.new)
 
-    argv = lc arg in argv, do: list_to_binary(arg)
+    argv = lc arg in argv, :do list_to_binary(arg)
     Erlang.gen_server.call(:elixir_code_server, { :argv, argv })
 
     all_commands = List.reverse(config.commands) ++ List.reverse(config.close)
@@ -75,7 +75,7 @@ defmodule Elixir.CLI do
   end
 
   defp print_stacktrace(stacktrace) do
-    Enum.each stacktrace, fn(s, do: IO.puts :standard_error, "    #{format_stacktrace(s)}")
+    Enum.each stacktrace, fn(s, :do IO.puts :standard_error, "    #{format_stacktrace(s)}")
   end
 
   # Process shared options
@@ -152,17 +152,17 @@ defmodule Elixir.CLI do
   end
 
   defp process_compiler(['--docs'|t], config) do
-    process_compiler t, config.merge_compiler_options(docs: true)
+    process_compiler t, config.merge_compiler_options(:docs true)
   end
 
   defp process_compiler(['--debug-info'|t], config) do
-    process_compiler t, config.merge_compiler_options(debug_info: true)
+    process_compiler t, config.merge_compiler_options(:debug_info true)
   end
 
   # This option is used internally so we can compile
   # Elixir with Elixir without raising module conflicts
   defp process_compiler(['--ignore-module-conflict'|t], config) do
-    process_compiler t, config.merge_compiler_options(ignore_module_conflict: true)
+    process_compiler t, config.merge_compiler_options(:ignore_module_conflict true)
   end
 
   defp process_compiler([h|t] = list, config) do
@@ -170,7 +170,7 @@ defmodule Elixir.CLI do
     match '-' ++ _
       shared_option? list, config, process_compiler(&1, &2)
     else
-      pattern = if File.dir?(h), do: '#{h}/**/*.ex', else: h
+      pattern = if File.dir?(h), :do '#{h}/**/*.ex', :else h
       process_compiler t, config.prepend_compile [pattern]
     end
   end
@@ -211,8 +211,8 @@ defmodule Elixir.CLI do
   # Responsible for spawning requires in parallel
   # For now, we spawn at maximum four process at the same time
 
-  defp spawn_requires([], []),      do: :done
-  defp spawn_requires([], waiting), do: wait_for_messages([], waiting)
+  defp spawn_requires([], []),      :do :done
+  defp spawn_requires([], waiting), :do wait_for_messages([], waiting)
 
   defp spawn_requires(files, waiting) when length(waiting) >= 4 do
     wait_for_messages(files, waiting)

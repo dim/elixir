@@ -1,11 +1,11 @@
-defexception EEx.SyntaxError, message: nil
+defexception EEx.SyntaxError, :message nil
 
 defmodule EEx do
   @moduledoc %B"""
   EEx stands for Embedded Elixir. It allows you to embed
   Elixir code inside a string in a robust way:
 
-      EEx.eval_string "foo <%= bar %>", [bar: "baz"]
+      EEx.eval_string "foo <%= bar %>", [:bar "baz"]
       #=> "foo baz"
 
   ## API
@@ -68,7 +68,7 @@ defmodule EEx do
 
   It also adds defines a macro named `@` that allows easy access:
 
-      EEx.eval_string "<%= @foo %>", assigns: [foo: 1]
+      EEx.eval_string "<%= @foo %>", :assigns [:foo 1]
       # => 1
 
   In other words, <%= @foo %> is simply translated to:
@@ -98,7 +98,7 @@ defmodule EEx do
     quote do
       EEx.function_from_quoted(__MODULE__, unquote(kind), unquote(name),
         unquote(args), EEx.compile_string(unquote(source), unquote(options)),
-        line: __LINE__, file: __FILE__)
+        :line __LINE__, :file __FILE__)
     end
   end
 
@@ -129,7 +129,7 @@ defmodule EEx do
     quote do
       EEx.function_from_quoted(__MODULE__, unquote(kind), unquote(name),
         unquote(args), EEx.compile_file(unquote(filename), unquote(options)),
-        line: __LINE__, file: __FILE__)
+        :line __LINE__, :file __FILE__)
     end
   end
 
@@ -155,7 +155,7 @@ defmodule EEx do
 
   ## Examples
 
-      EEx.eval_string "foo <%= bar %>", [bar: "baz"]
+      EEx.eval_string "foo <%= bar %>", [:bar "baz"]
       #=> "foo baz"
 
   """
@@ -173,7 +173,7 @@ defmodule EEx do
       foo <%= bar %>
 
       # iex
-      EEx.eval_file "sample.ex", [bar: "baz"]
+      EEx.eval_file "sample.ex", [:bar "baz"]
       #=> "foo baz"
 
   """
@@ -189,7 +189,7 @@ defmodule EEx do
   def function_from_quoted(module, kind, name, args, source, info) do
     args  = Enum.map args, fn(arg) -> { arg, 0, nil } end
     quote = quote do
-      unquote(kind).(unquote(name).(unquote_splicing(args)), do: unquote(source))
+      unquote(kind).(unquote(name).(unquote_splicing(args)), :do unquote(source))
     end
     Module.eval_quoted module, quote, [], info
   end

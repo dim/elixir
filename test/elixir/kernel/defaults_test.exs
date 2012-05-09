@@ -9,5 +9,5 @@ defmodule Kernel.DefaultsTest do
   end
 
   defp a_number(x // 0)
-  defp a_number(x), do: x + 13
+  defp a_number(x), :do x + 13
 end

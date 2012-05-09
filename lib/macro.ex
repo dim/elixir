@@ -25,8 +25,8 @@ defmodule Macro do
   end
 
   def escape(list) when is_list(list) do
-    lc item in list, do: escape(item)
+    lc item in list, :do escape(item)
   end
 
-  def escape(other), do: other
+  def escape(other), :do other
 end

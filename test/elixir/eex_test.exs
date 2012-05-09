@@ -55,7 +55,7 @@ defmodule EExTest do
   end
 
   test "evaluates with require code" do
-    assert_eval "foo 1,2,3", "foo <% require Enum, as: E %><%= E.join [1,2,3], \",\" %>"
+    assert_eval "foo 1,2,3", "foo <% require Enum, :as E %><%= E.join [1,2,3], \",\" %>"
   end
 
   test "evaluates with end of token" do

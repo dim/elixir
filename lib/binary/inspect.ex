@@ -1,4 +1,4 @@
-import Elixir.Builtin, except: [inspect: 1]
+import Elixir.Builtin, :except [:inspect 1]
 
 defprotocol Binary.Inspect do
   @moduledoc """
@@ -15,7 +15,7 @@ defprotocol Binary.Inspect do
   def inspect(thing)
 end
 
-defimpl Binary.Inspect, for: Atom do
+defimpl Binary.Inspect, :for Atom do
   @doc """
   Represents the atom as an Elixir term.
   The atoms false, true and nil are simply
@@ -29,10 +29,10 @@ defimpl Binary.Inspect, for: Atom do
       inspect(Foo.Bar) #=> "Foo.Bar"
 
   """
-  def inspect(false), do: "false"
-  def inspect(true),  do: "true"
-  def inspect(nil),   do: "nil"
-  def inspect(:""),   do: ":\"\""
+  def inspect(false), :do "false"
+  def inspect(true),  :do "true"
+  def inspect(nil),   :do "nil"
+  def inspect(:""),   :do ":\"\""
 
   def inspect(atom) do
     binary = atom_to_binary(atom)
@@ -61,7 +61,7 @@ defimpl Binary.Inspect, for: Atom do
     valid_ref_piece? valid_identifier?(t)
   end
 
-  defp valid_ref_piece?(else), do: else
+  defp valid_ref_piece?(else), :do else
 
   # Detect if atom is :letter_or_underscore
 
@@ -72,10 +72,10 @@ defimpl Binary.Inspect, for: Atom do
     valid_identifier? t
   end
 
-  defp valid_identifier?(else), do: else
+  defp valid_identifier?(else), :do else
 end
 
-defimpl Binary.Inspect, for: BitString do
+defimpl Binary.Inspect, :for BitString do
   @doc %B"""
   Represents the string as itself escaping
   all necessary characters.
@@ -105,13 +105,13 @@ defimpl Binary.Inspect, for: BitString do
     list_to_binary List.reverse(replace(erlang, []))
   end
 
-  defp replace([?:|t], acc),                do: replace(t, [?||acc])
-  defp replace([h|t], acc) when is_list(h), do: replace(t, replace(h, acc))
-  defp replace([h|t], acc),                 do: replace(t, [h|acc])
-  defp replace([], acc),                    do: acc
+  defp replace([?:|t], acc),                :do replace(t, [?||acc])
+  defp replace([h|t], acc) when is_list(h), :do replace(t, replace(h, acc))
+  defp replace([h|t], acc),                 :do replace(t, [h|acc])
+  defp replace([], acc),                    :do acc
 end
 
-defimpl Binary.Inspect, for: List do
+defimpl Binary.Inspect, :for List do
 
   @doc %B"""
   Represents a list checking if it can be printed or not.
@@ -126,7 +126,7 @@ defimpl Binary.Inspect, for: List do
 
   """
 
-  def inspect([]), do: "[]"
+  def inspect([]), :do "[]"
 
   def inspect(thing) do
     if Erlang.io_lib.printable_list(thing) do
@@ -156,7 +156,7 @@ defimpl Binary.Inspect, for: List do
   end
 end
 
-defimpl Binary.Inspect, for: Tuple do
+defimpl Binary.Inspect, :for Tuple do
   @doc """
   Inspect tuples. If the tuple represents a record,
   it shows it nicely formatted using the access syntax.
@@ -164,14 +164,14 @@ defimpl Binary.Inspect, for: Tuple do
   ## Examples
 
       inspect({1,2,3})            #=> "{1,2,3}"
-      inspect(ArgumentError.new)  #=> ArgumentError[message: "argument error"]
+      inspect(ArgumentError.new)  #=> ArgumentError[:message "argument error"]
 
   """
-  def inspect({}), do: "{}"
+  def inspect({}), :do "{}"
 
   def inspect(exception) when is_exception(exception) do
     [name,_|tail] = tuple_to_list(exception)
-    [_|fields]    = lc { field, _ } in name.__record__(:fields), do: field
+    [_|fields]    = lc { field, _ } in name.__record__(:fields), :do field
     Binary.Inspect.Atom.inspect(name) <> records_join(fields, tail, "[", "]")
   end
 
@@ -180,7 +180,7 @@ defimpl Binary.Inspect, for: Tuple do
     [name|tail] = list
 
     if is_record?(name) do
-      fields = lc { field, _ } in name.__record__(:fields), do: field
+      fields = lc { field, _ } in name.__record__(:fields), :do field
       Binary.Inspect.Atom.inspect(name) <> records_join(fields, tail, "[", "]")
     else
       Binary.Inspect.List.container_join(list, "{", "}")
@@ -195,11 +195,11 @@ defimpl Binary.Inspect, for: Tuple do
   end
 
   defp records_join([f], [v], acc, last) do
-    acc <> atom_to_binary(f, :utf8) <> ": " <> Binary.Inspect.inspect(v) <> last
+    acc <> ":" <> atom_to_binary(f, :utf8) <> " " <> Binary.Inspect.inspect(v) <> last
   end
 
   defp records_join([fh|ft], [vh|vt], acc, last) do
-    acc <> atom_to_binary(fh, :utf8) <> ": " <> Binary.Inspect.inspect(vh) <> ","
+    acc <> ":" <> atom_to_binary(fh, :utf8) <> " " <> Binary.Inspect.inspect(vh) <> ","
     records_join(ft, vt, acc, last)
   end
 
@@ -208,7 +208,7 @@ defimpl Binary.Inspect, for: Tuple do
   end
 end
 
-defimpl Binary.Inspect, for: Number do
+defimpl Binary.Inspect, :for Number do
   @doc """
   Represents the number as a binary.
 
@@ -226,7 +226,7 @@ defimpl Binary.Inspect, for: Number do
   end
 end
 
-defimpl Binary.Inspect, for: Regex do
+defimpl Binary.Inspect, :for Regex do
   @doc %B"""
   Represents the Regex using the `%r""` syntax.
 
@@ -240,7 +240,7 @@ defimpl Binary.Inspect, for: Regex do
   end
 end
 
-defimpl Binary.Inspect, for: Any do
+defimpl Binary.Inspect, :for Any do
   @doc """
   For all other terms not implemented, we use the default
   Erlang representation.

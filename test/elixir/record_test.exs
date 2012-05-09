@@ -1,16 +1,16 @@
 Code.require_file "../test_helper", __FILE__
 
 defrecord RecordTest.FileInfo,
-  Record.extract(:file_info, from_lib: "kernel/include/file.hrl")
+  Record.extract(:file_info, :from_lib "kernel/include/file.hrl")
 
 name = RecordTest.DynamicName
-defrecord name, a: 0, b: 1
+defrecord name, :a 0, :b 1
 
 defmodule RecordTest do
   use ExUnit.Case
 
   test :record_constructor_with_dict do
-    record   = RecordTest.FileInfo.new(type: :regular)
+    record   = RecordTest.FileInfo.new(:type :regular)
     assert record.type == :regular
     assert record.access == nil
   end

@@ -1,4 +1,4 @@
-import Elixir.Builtin, except: [access: 2]
+import Elixir.Builtin, :except [:access 2]
 
 defprotocol Access do
   @moduledoc """
@@ -19,7 +19,7 @@ defprotocol Access do
   def access(element, qualifier)
 end
 
-defimpl Access, for: Tuple do
+defimpl Access, :for Tuple do
   @doc """
   Access the tuple via an integer. Negative indexes
   performs an inverted lookup, for example, -1 can be
@@ -40,7 +40,7 @@ defimpl Access, for: Tuple do
     size     = tuple_size(tuple)
     position = integer + size + 1
     if position > size or position < 1,
-      do: nil, else: :erlang.element(position, tuple)
+      [:do nil, :else :erlang.element(position, tuple)]
   end
 
   def access(_tuple, integer) when is_integer(integer) do
@@ -48,7 +48,7 @@ defimpl Access, for: Tuple do
   end
 end
 
-defimpl Access, for: List do
+defimpl Access, :for List do
   @doc """
   Access the list via a predicate.
 
@@ -68,7 +68,7 @@ defimpl Access, for: List do
       list = 'sample'
       list[%r/a/] #=> 'a'
 
-      keywords = [a: 1, b: 2]
+      keywords = [:a 1, :b 2]
       keywords[:a] #=> 1
 
   """
@@ -92,13 +92,13 @@ defimpl Access, for: List do
 
   ## Helpers
 
-  defp atom_access([{k, _}|_], key) when key < k, do: nil
-  defp atom_access([{k, _}|d], key) when key > k, do: atom_access(d, key)
-  defp atom_access([{_k, value}|_], _key),        do: value
-  defp atom_access([], _),                        do: nil
+  defp atom_access([{k, _}|_], key) when key < k, :do nil
+  defp atom_access([{k, _}|d], key) when key > k, :do atom_access(d, key)
+  defp atom_access([{_k, value}|_], _key),        :do value
+  defp atom_access([], _),                        :do nil
 end
 
-defimpl Access, for: BitString do
+defimpl Access, :for BitString do
   @doc """
   Access the binary via a predicate.
 
@@ -124,7 +124,7 @@ defimpl Access, for: BitString do
   end
 end
 
-defimpl Access, for: Atom do
+defimpl Access, :for Atom do
   @doc """
   Access the atom via keywords. Different from other
   implementations, the Access protocol for atoms is
@@ -137,7 +137,7 @@ defimpl Access, for: Atom do
 
   ## Examples
 
-      def increment(State[counter: counter] = state) do
+      def increment(State[:counter counter] = state) do
         state.counter(counter + 1)
       end
 
@@ -145,7 +145,7 @@ defimpl Access, for: Atom do
   to match the counter field in the record State. Considering
   the record definition is as follows:
 
-      defrecord State, counter: 0, other: nil
+      defrecord State, :counter 0, :other nil
 
   The clause above is translated to:
 
@@ -158,7 +158,7 @@ defimpl Access, for: Atom do
   a new record:
 
       def new_state(counter) do
-        State[counter: counter]
+        State[:counter counter]
       end
 
   All fields not specified on creation defaults to their
@@ -169,7 +169,7 @@ defimpl Access, for: Atom do
   end
 end
 
-defimpl Access, for: Function do
+defimpl Access, :for Function do
   @doc """
   The Access protocol for functions simply invokes
   the function passing the item as argument. This

@@ -1,9 +1,9 @@
 defmodule File do
-  require Erlang.file,     as: F
-  require Erlang.filename, as: FN
-  require Erlang.filelib,  as: FL
+  require Erlang.file,     :as F
+  require Erlang.filename, :as FN
+  require Erlang.filelib,  :as FL
 
-  defrecord Info, Record.extract(:file_info, from_lib: "kernel/include/file.hrl"), moduledoc: """
+  defrecord Info, Record.extract(:file_info, :from_lib "kernel/include/file.hrl"), :moduledoc """
   A record responsible to hold file information. Its fields are:
 
   * `size` - Size of file in bytes.
@@ -34,7 +34,7 @@ defmodule File do
   `:universal`, or `:posix`. Default is `:local`.
   """
 
-  defexception Error, reason: nil, action: "", path: nil do
+  defexception Error, :reason nil, :action "", :path nil do
     def message(exception) do
       formatted = list_to_binary(F.format_error(exception.reason))
       "could not #{exception.action} #{exception.path}: #{formatted}"
@@ -181,7 +181,7 @@ defmodule File do
   Returns `{:ok, binary}`, where `binary` is a binary data object that contains the contents
   of `filename`, or `{:error, reason}` if an error occurs.
 
-  Typical error reasons:
+  Typical error :reasons
 
   * :enoent - The file does not exist.
   * :eacces - Missing permission for reading the file,
@@ -206,7 +206,7 @@ defmodule File do
     match { :ok, binary }
       binary
     match { :error, reason }
-      raise File.Error, reason: reason, action: "read file", path: to_binary(path)
+      raise File.Error, :reason reason, :action "read file", :path to_binary(path)
     end
   end
 
@@ -251,7 +251,7 @@ defmodule File do
   ## Examples
 
   Imagine you have a directory called `projects` with three Elixir projects
-  inside of it: `elixir`, `exdoc` and `dynamo`. You can find all `.beam` files
+  inside of :it `elixir`, `exdoc` and `dynamo`. You can find all `.beam` files
   inside their ebin directories all projects as follows:
 
       File.wildcard("projects/*/ebin/**/*.beam")
@@ -294,14 +294,14 @@ defmodule File do
     match {:ok, info}
       info
     match {:error, reason}
-      raise File.Error, reason: reason, action: "read file info", path: to_binary(path)
+      raise File.Error, :reason reason, :action "read file info", :path to_binary(path)
     end
   end
 
   ## Helpers
 
   # Normalize the given path by removing "..".
-  defp normalize(path), do: normalize(split(path), [])
+  defp normalize(path), :do normalize(split(path), [])
 
   defp normalize([top|t], [_|acc]) when top == ".." or top == '..' do
     normalize t, acc

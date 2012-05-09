@@ -1,17 +1,17 @@
 Code.require_file "../test_helper", __FILE__
 
 defmodule ModuleTest.ToBeUsed do
-  def value, do: 1
+  def value, :do 1
 
   defmacro __using__(target, _) do
-    Module.merge_data target, has_callback: false
+    Module.merge_data target, :has_callback false
     Module.add_compile_callback(target, __MODULE__)
     Module.add_compile_callback(target, __MODULE__, :callback)
-    quote do: (def line, do: __LINE__)
+    quote :do (def line, :do __LINE__)
   end
 
   def __compiling__(target) do
-    Module.merge_data target, compiling: true
+    Module.merge_data target, :compiling true
   end
 
   defmacro callback(target) do
@@ -21,14 +21,14 @@ defmodule ModuleTest.ToBeUsed do
       name  = :original_value
       args  = [1]
       guard = []
-      def name, args, guard, do: unquote(value)
+      def name, args, guard, :do unquote(value)
     end
   end
 end
 
 defmodule ModuleTest.ToUse do
   30 = __LINE__ # Moving the next line around can make tests fail
-  def original_value(2), do: true
+  def original_value(2), :do true
   use ModuleTest.ToBeUsed
 end
 
@@ -39,7 +39,7 @@ defmodule ModuleTest.DuplicateAttribute do
 end
 
 defmodule ModuleTest.DefinedFunctions do
-  def foo(1,2,3), do: 4
+  def foo(1,2,3), :do 4
   @defined_functions Module.defined_functions __MODULE__
   @defined_def  Module.defined_functions __MODULE__, :def
   @defined_defp Module.defined_functions __MODULE__, :defp
@@ -57,17 +57,17 @@ defmodule ModuleTest do
   false = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }, :defp
   false = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }, :defmacro
 
-  contents = quote do: (def eval_quoted_info, do: { __MODULE__, __FILE__, __LINE__ })
-  Module.eval_quoted __MODULE__, contents, [], file: "sample.ex", line: 13
+  contents = quote :do (def eval_quoted_info, :do { __MODULE__, __FILE__, __LINE__ })
+  Module.eval_quoted __MODULE__, contents, [], :file "sample.ex", :line 13
 
   true  = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }
   true  = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }, :def
   false = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }, :defp
   false = Module.function_defined? __MODULE__, { :eval_quoted_info, 0 }, :defmacro
 
-  Module.merge_data __MODULE__, value: 1
-  Module.merge_data __MODULE__, other_value: 1
-  Module.merge_data __MODULE__, other_value: 2
+  Module.merge_data __MODULE__, :value 1
+  Module.merge_data __MODULE__, :other_value 1
+  Module.merge_data __MODULE__, :other_value 2
 
   nil = __FUNCTION__
 
@@ -84,7 +84,7 @@ defmodule ModuleTest do
   end
 
   test :merge_data do
-    assert __MODULE__.__info__(:data) == [other_value: 2, value: 1]
+    assert __MODULE__.__info__(:data) == [:other_value 2, :value 1]
   end
 
   test :compile_callback_hook do

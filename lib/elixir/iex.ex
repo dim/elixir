@@ -33,20 +33,20 @@ defmodule Elixir.IEx.UnicodeIO do
   end
 end
 
-defrecord Elixir.IEx.Config, io: nil, binding: nil, cache: '', counter: 0, scope: nil
+defrecord Elixir.IEx.Config, :io nil, :binding nil, :cache '', :counter 0, :scope nil
 
 defmodule Elixir.IEx do
   @moduledoc false
 
-  import Exception, only: [format_stacktrace: 1]
+  import Exception, :only [:format_stacktrace 1]
 
   def start(binding // [], io // Elixir.IEx.UnicodeIO) do
     IO.puts "Interactive Elixir (#{System.version}) - press Ctrl+C to exit"
     scope  = Erlang.elixir.scope_for_eval(
-      file: 'iex',
-      delegate_locals_to: __MODULE__
+      :file 'iex',
+      :delegate_locals_to __MODULE__
     )
-    config = Elixir.IEx.Config.new(io: io, binding: binding, scope: scope)
+    config = Elixir.IEx.Config.new(:io io, :binding binding, :scope scope)
     function = fn -> do_loop(config) end
     Erlang.user_drv.start([:"tty_sl -c -e", {:erlang, :spawn, [function]}])
   end
@@ -83,6 +83,6 @@ defmodule Elixir.IEx do
   end
 
   defp print_stacktrace(io, stacktrace) do
-    Enum.each stacktrace, fn(s, do: io.error "    #{format_stacktrace(s)}")
+    Enum.each stacktrace, fn(s, :do io.error "    #{format_stacktrace(s)}")
   end
 end

@@ -1,4 +1,4 @@
-defexception ExUnit.AssertionError, message: "assertion failed"
+defexception ExUnit.AssertionError, :message "assertion failed"
 
 defmodule ExUnit.Assertions do
   @moduledoc """
@@ -48,15 +48,16 @@ defmodule ExUnit.Assertions do
 
   """
   def assert(expected, message) when is_binary(message) do
-    unless expected, do:
-      raise ExUnit.AssertionError, message: message
+    unless expected do
+      raise ExUnit.AssertionError, :message message
+    end
     true
   end
 
   ## START HELPERS
 
   defmacrop negation?(op) do
-    quote do: (var!(op) == :! or var!(op) == :not)
+    quote :do (var!(op) == :! or var!(op) == :not)
   end
 
   defp translate_assertion({ :==, _, [left, right] }) do
@@ -153,7 +154,7 @@ defmodule ExUnit.Assertions do
         unquote(expected) = unquote(received)
         true
       rescue x in [MatchError]
-        raise ExUnit.AssertionError, message: x.message
+        raise ExUnit.AssertionError, :message x.message
       end
     end
   end

@@ -27,8 +27,9 @@ defmodule EEx.Tokenizer do
     expr  = List.reverse(expr)
 
     # If it isn't a start or end token, it may be a middle token.
-    if token == :expr, do:
+    if token == :expr do
       token = middle_expr_token_name(expr)
+    end
 
     acc = tokenize_text(current_line, buffer, acc)
     tokenize rest, new_line, new_line, [], [ { token, line, marker, expr } | acc]
@@ -73,7 +74,7 @@ defmodule EEx.Tokenizer do
   # Raise an error if the %> is not found
 
   defp tokenize_expr([], _line, buffer) do
-    raise EEx.SyntaxError, message: "invalid token: #{inspect List.reverse(buffer)}"
+    raise EEx.SyntaxError, :message "invalid token: #{inspect List.reverse(buffer)}"
   end
 
   # Receive an expression content and check
@@ -94,7 +95,7 @@ defmodule EEx.Tokenizer do
   end
 
   defp tip_expr_token_name('dne' ++ t) do
-    if only_spaces?(t), do: :end_expr, else: :expr
+    if only_spaces?(t), :do :end_expr, :else :expr
   end
 
   defp tip_expr_token_name(_) do
@@ -102,14 +103,14 @@ defmodule EEx.Tokenizer do
   end
 
   # Receive an expression contents and see if it matches
-  # a keyword block syntax, like elsif: foo.
+  # a keyword block syntax, like :elsif foo.
 
   defp middle_expr_token_name([h|t]) when h in [?\s, ?\t] do
     middle_expr_token_name(t)
   end
 
   defp middle_expr_token_name([h|t]) when h >= ?a and h <= ?z do
-    if valid_key_identifier?(t), do: :middle_expr, else: :expr
+    if valid_key_identifier?(t), :do :middle_expr, :else :expr
   end
 
   defp middle_expr_token_name(_) do
@@ -131,8 +132,8 @@ defmodule EEx.Tokenizer do
     false
   end
 
-  defp only_spaces?([h|t]) when h in [?\s, ?\t], do: only_spaces?(t)
-  defp only_spaces?(other), do: other == []
+  defp only_spaces?([h|t]) when h in [?\s, ?\t], :do only_spaces?(t)
+  defp only_spaces?(other), :do other == []
 
   # Tokenize the buffered text by appending
   # it to the given accumulator.

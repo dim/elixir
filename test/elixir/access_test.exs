@@ -3,7 +3,7 @@ Code.require_file "../test_helper", __FILE__
 defmodule Access.TupleTest do
   use ExUnit.Case
 
-  defrecord Config, other: { :a, :b, :c }
+  defrecord Config, :other { :a, :b, :c }
 
   test :literal do
     assert { :a, :b, :c }[1] == :a
@@ -46,13 +46,13 @@ defmodule Access.ListTest do
   end
 
   test :atom do
-    list = [foo: "bar"]
+    list = [:foo "bar"]
     assert list[:foo] == "bar"
     assert list[:bar] == nil
   end
 
   test :access do
-    assert List.access([foo: :bar ], :foo) == :bar
+    assert List.access([:foo :bar ], :foo) == :bar
   end
 end
 
@@ -77,16 +77,16 @@ end
 defmodule Access.AtomTest do
   use ExUnit.Case
 
-  defrecord Config, integer: 0
+  defrecord Config, :integer 0
 
   test :keywords do
     assert Config[] == { Config, 0 }
-    assert Config[integer: 1] == { Config, 1 }
+    assert Config[:integer 1] == { Config, 1 }
   end
 
   test :in_guard_with_variable do
     assert get_var(Config.new) == 0
-    assert get_var(Config.new(integer: 1)) == 1
+    assert get_var(Config.new(:integer 1)) == 1
   end
 
   test :in_guard_with_record_match do
@@ -97,23 +97,23 @@ defmodule Access.AtomTest do
 
   test :in_guard_with_field_match do
     assert is_zero(Config.new) == true
-    assert is_zero(Config.new(integer: 1)) == false
+    assert is_zero(Config.new(:integer 1)) == false
   end
 
   test :match do
-    assert_match Config[integer: 1], Config.new(integer: 1)
-    refute_match Config[integer: 1], Config.new(integer: 0)
+    assert_match Config[:integer 1], Config.new(:integer 1)
+    refute_match Config[:integer 1], Config.new(:integer 0)
   end
 
-  defp get_var(Config[integer: integer]) do
+  defp get_var(Config[:integer integer]) do
     integer
   end
 
-  defp is_zero(Config[integer: 0]), do: true
-  defp is_zero(Config[integer: _]),  do: false
+  defp is_zero(Config[:integer 0]), :do true
+  defp is_zero(Config[:integer _]),  :do false
 
-  defp is_config(Config[]), do: true
-  defp is_config(_), do: false
+  defp is_config(Config[]), :do true
+  defp is_config(_), :do false
 end
 
 defmodule Access.FunctionTest do

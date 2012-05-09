@@ -17,19 +17,19 @@ defmodule Kernel.Overridable do
     { super?, 2 }
   end
 
-  defoverridable [sample: 0, with_super: 0, without_super: 0, explicit_nested_super: 0]
+  defoverridable [:sample 0, :with_super 0, :without_super 0, :explicit_nested_super 0]
 
   def explicit_nested_super do
     { super, super?, 1 }
   end
 
-  defoverridable [explicit_nested_super: 0]
+  defoverridable [:explicit_nested_super 0]
 
   def implicit_nested_super do
     { super?, 1 }
   end
 
-  defoverridable [implicit_nested_super: 0]
+  defoverridable [:implicit_nested_super 0]
 
   def implicit_nested_super do
     { super, super?, 0 }
@@ -51,8 +51,8 @@ defmodule Kernel.Overridable do
     13
   end
 
-  defoverridable [implicit_nested_super: 0, super_with_implicit_args: 2,
-    super_with_explicit_args: 2, many_clauses: 1]
+  defoverridable [:implicit_nested_super 0, :super_with_implicit_args 2,
+    :super_with_explicit_args 2, :many_clauses 1]
 
   def without_super do
     :without_super
@@ -88,7 +88,7 @@ defmodule Kernel.Overridable do
 end
 
 defmodule Kernel.OverridableTest do
-  require Kernel.Overridable, as: Overridable
+  require Kernel.Overridable, :as Overridable
   use ExUnit.Case
 
   test "overridable is made concrete if no other is defined" do
@@ -135,7 +135,7 @@ defmodule Kernel.OverridableTest do
 
   test "invalid super call" do
     try do
-      Erlang.elixir.eval 'defmodule Foo.Forwarding do\ndef bar, do: 1\ndefoverridable [bar: 0]\ndef foo, do: super\nend', []
+      Erlang.elixir.eval 'defmodule Foo.Forwarding do\ndef bar, :do 1\ndefoverridable [:bar 0]\ndef foo, :do super\nend', []
       flunk "expected eval to fail"
     rescue error
       assert error.message == ("nofile:4: no super defined for foo/0 in module 'Foo.Forwarding'. " <>

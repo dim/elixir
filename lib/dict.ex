@@ -14,7 +14,7 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.keys [a: 1, b: 2]  #=> [:a,:b]
+      Dict.keys [:a 1, :b 2]  #=> [:a,:b]
 
   """
   def keys(dict)
@@ -24,7 +24,7 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.values [a: 1, b: 2]  #=> [1,2]
+      Dict.values [:a 1, :b 2]  #=> [1,2]
 
   """
   def values(dict)
@@ -34,7 +34,7 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.size [a: 1, b: 2]  #=> 2
+      Dict.size [:a 1, :b 2]  #=> 2
 
   """
   def size(dict)
@@ -44,8 +44,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.has_key?([a:, 1], :a)  #=> true
-      Dict.has_key?([a:, 1], :b)  #=> false
+      Dict.has_key?([:a, 1], :a)  #=> true
+      Dict.has_key?([:a, 1], :b)  #=> false
 
   """
   def has_key?(dict, key)
@@ -56,9 +56,9 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.get [a: 1], :a     #=> 1
-      Dict.get [a: 1], :b     #=> nil
-      Dict.get [a: 1], :b, 3  #=> 3
+      Dict.get [:a 1], :a     #=> 1
+      Dict.get [:a 1], :b     #=> nil
+      Dict.get [:a 1], :b, 3  #=> 3
 
   """
   def get(dict, key)
@@ -70,8 +70,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.put [a: 1, b: 2], :a, 3
-      #=> [a: 3, b: 2]
+      Dict.put [:a 1, :b 2], :a, 3
+      #=> [:a 3, :b 2]
 
   """
   def put(dict, key, val)
@@ -82,8 +82,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.delete [a: 1, b: 2], :a  #=> [b: 2]
-      Dict.delete [b: 2], :a        #=> [b: 2]
+      Dict.delete [:a 1, :b 2], :a  #=> [:b 2]
+      Dict.delete [:b 2], :a        #=> [:b 2]
 
   """
   def delete(dict, key)
@@ -94,8 +94,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.merge [a: 1, b: 2], [a: 3, d: 4]
-      #=> [a:3, b:2, d: 4]
+      Dict.merge [:a 1, :b 2], [:a 3, :d 4]
+      #=> [:a3, :b2, :d 4]
 
   """
   def merge(dict1, dict2)
@@ -106,10 +106,10 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.merge [a: 1, b: 2], [a: 3, d: 4], fn(_k, v1, v2) ->
+      Dict.merge [:a 1, :b 2], [:a 3, :d 4], fn(_k, v1, v2) ->
         v1 + v2
       end
-      #=> [a: 4, b: 2, d: 4]
+      #=> [:a 4, :b 2, :d 4]
 
   """
   def merge(dict1, dict2, fun)
@@ -120,8 +120,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.update [a: 1, b: 2], :a, fn(val) -> -val end
-      #=> [a: -1, b: 2]
+      Dict.update [:a 1, :b 2], :a, fn(val) -> -val end
+      #=> [:a -1, :b 2]
 
   """
   def update(dict, key, fun)
@@ -133,8 +133,8 @@ defprotocol Dict do
 
   ## Examples
 
-      Dict.update [a: 1, b: 2], :c, 3, fn(val) -> -val end
-      #=> [a: 1, b: 2, c: 3]
+      Dict.update [:a 1, :b 2], :c, 3, fn(val) -> -val end
+      #=> [:a 1, :b 2, :c 3]
 
   """
   def update(dict, key, initial, fun)

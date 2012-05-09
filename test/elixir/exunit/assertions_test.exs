@@ -1,13 +1,13 @@
 Code.require_file "../../test_helper", __FILE__
 
 defmodule ExUnit.AssertionsTest.Value do
-  def tuple, do: { 2, 1 }
+  def tuple, :do { 2, 1 }
 end
 
 refer ExUnit.AssertionsTest.Value
 
 defmodule ExUnit.AssertionsTest do
-  use ExUnit.Case, sync: false
+  use ExUnit.Case, :sync false
 
   test :assert_when_value_is_true do
     true = assert true
@@ -138,7 +138,7 @@ defmodule ExUnit.AssertionsTest do
 
   test :assert_raise_when_error do
     error = assert_raise ArgumentError, fn ->
-      raise ArgumentError, message: "test error"
+      raise ArgumentError, :message "test error"
     end
 
     "test error" = error.message

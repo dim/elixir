@@ -35,7 +35,7 @@ defmodule List do
   Concatenates the list on the right with the list on the left.
 
   This function produces the same result the `++` operator. The only difference
-  is a minor optimization: when the first list contains only one element, we
+  is a minor :optimization when the first list contains only one element, we
   simply add it as a head to the second list.
 
   ## Examples
@@ -130,7 +130,7 @@ defmodule List do
       #=> [3,2,1]
 
   """
-  defdelegate [reverse: 1], to: Erlang.lists
+  defdelegate [:reverse 1], :to Erlang.lists
 
   @doc """
   Returns the last element in `list` or nil if the `list` is empty.
@@ -145,9 +145,9 @@ defmodule List do
       #=> 3
 
   """
-  def last([]), do: nil
+  def last([]), :do nil
 
-  defdelegate [last: 1], to: Erlang.lists
+  defdelegate [:last 1], :to Erlang.lists
 
   @doc """
   Checks if the given `term` is included in the list.
@@ -174,13 +174,13 @@ defmodule List do
 
   ## Examples
 
-      List.keyfind([a: 1, b: 2], :a, 1)
+      List.keyfind([:a 1, :b 2], :a, 1)
       #=> { :a, 1 }
 
-      List.keyfind([a: 1, b: 2], 2, 2)
+      List.keyfind([:a 1, :b 2], 2, 2)
       #=> { :b, 2 }
 
-      List.keyfind([a: 1, b: 2], :c, 1)
+      List.keyfind([:a 1, :b 2], :c, 1)
       #=> nil
 
   """
@@ -195,13 +195,13 @@ defmodule List do
 
   ## Examples
 
-      List.keymember?([a: 1, b: 2], :a, 1)
+      List.keymember?([:a 1, :b 2], :a, 1)
       #=> true
 
-      List.keymember?([a: 1, b: 2], 2, 2)
+      List.keymember?([:a 1, :b 2], 2, 2)
       #=> true
 
-      List.keymember?([a: 1, b: 2], :c, 1)
+      List.keymember?([:a 1, :b 2], :c, 1)
       #=> false
 
   """
@@ -216,13 +216,13 @@ defmodule List do
 
   ## Examples
 
-      List.keydelete([a: 1, b: 2], :a, 1)
+      List.keydelete([:a 1, :b 2], :a, 1)
       #=> [{ :b, 2 }]
 
-      List.keydelete([a: 1, b: 2], 2, 2)
+      List.keydelete([:a 1, :b 2], 2, 2)
       #=> [{ :a, 1 }]
 
-      List.keydelete([a: 1, b: 2], :c, 1)
+      List.keydelete([:a 1, :b 2], :c, 1)
       #=> [{ :a, 1 }, { :b, 2 }]
 
   """
@@ -473,6 +473,6 @@ defmodule List do
     { nil, nil }
   end
 
-  defp to_list(tuple) when is_tuple(tuple), do: tuple_to_list(tuple)
-  defp to_list(list)  when is_list(list),   do: list
+  defp to_list(tuple) when is_tuple(tuple), :do tuple_to_list(tuple)
+  defp to_list(list)  when is_list(list),   :do list
 end

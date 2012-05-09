@@ -8,7 +8,7 @@ defmodule EEx.SmartEngineTest do
   end
 
   test "evaluates with assigns" do
-    assert_eval "1", "<%= @foo %>", assigns: [foo: 1]
+    assert_eval "1", "<%= @foo %>", :assigns [:foo 1]
   end
 
   test "evaluates with loops" do
@@ -16,7 +16,7 @@ defmodule EEx.SmartEngineTest do
   end
 
   defp assert_eval(expected, actual, binding // []) do
-    result = EEx.eval_string(actual, binding, file: __FILE__)
+    result = EEx.eval_string(actual, binding, :file __FILE__)
     assert result == expected
   end
 end

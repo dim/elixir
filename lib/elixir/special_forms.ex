@@ -43,7 +43,7 @@ defmodule Elixir.SpecialForms do
   `refer` can be used to setup an alias for any module:
 
       defmodule Math do
-        refer MyKeyword, as: Keyword
+        refer MyKeyword, :as Keyword
       end
 
   In the example above, we have set up `MyOrdict` to be referenced
@@ -63,7 +63,7 @@ defmodule Elixir.SpecialForms do
 
   Is the same as:
 
-      refer Foo.Bar.Baz, as: Baz
+      refer Foo.Bar.Baz, :as Baz
 
   ## Lexical scope
 
@@ -113,7 +113,7 @@ defmodule Elixir.SpecialForms do
   you can simply import it:
 
       defmodule Math do
-        import Keyword, only: [values: 1]
+        import Keyword, :only [:values 1]
 
         def some_function do
           # call values(orddict)
@@ -126,7 +126,7 @@ defmodule Elixir.SpecialForms do
   functions and macros are imported.
 
   In case you want to import only functions or macros, you can pass a
-  first argument selecting the scope:
+  first argument selecting the :scope
 
       import :macros, MyMacros
 
@@ -136,12 +136,12 @@ defmodule Elixir.SpecialForms do
   ## Lexical scope
 
   It is important to notice that `import` is lexical. This means you
-  can import specific macros inside specific functions:
+  can import specific macros inside specific :functions
 
       defmodule Math do
         def some_function do
           # 1) Disable `if/2` from Elixir.Builtin
-          import Elixir.Builtin, except: [if: 2]
+          import Elixir.Builtin, :except [:if 2]
 
           # 2) Require the new `if` macro from MyMacros
           import MyMacros
@@ -191,7 +191,7 @@ defmodule Elixir.SpecialForms do
 
   ## Examples
 
-      quote do: sum(1, 2, 3)
+      quote :do sum(1, 2, 3)
       #=> { :sum, 0, [1, 2, 3] }
 
   ## Homoiconicity
@@ -233,7 +233,7 @@ defmodule Elixir.SpecialForms do
 
       defmodule Hygiene do
         defmacro no_interference do
-          quote do: a = 1
+          quote :do a = 1
         end
       end
 
@@ -251,7 +251,7 @@ defmodule Elixir.SpecialForms do
 
       defmodule NoHygiene do
         defmacro interference do
-          quote do: var!(a) = 1
+          quote :do var!(a) = 1
         end
       end
 
@@ -277,7 +277,7 @@ defmodule Elixir.SpecialForms do
   when one is generating a code that should be inserted into
   some function.
   """
-  defmacro quote(opts, do: contents)
+  defmacro quote(opts, :do contents)
 
   @doc """
   Unquotes the given expression from inside a macro.
@@ -289,7 +289,7 @@ defmodule Elixir.SpecialForms do
   would be:
 
       value = 13
-      quote do: sum(1, value, 3)
+      quote :do sum(1, value, 3)
 
   Which would then return:
 
@@ -298,7 +298,7 @@ defmodule Elixir.SpecialForms do
   Which is not the expected result. For this, we use unquote:
 
       value = 13
-      quote do: sum(1, unquote(value), 3)
+      quote :do sum(1, unquote(value), 3)
       #=> { :sum, 0, [1, 13, 3] }
 
   """
@@ -311,7 +311,7 @@ defmodule Elixir.SpecialForms do
   ## Examples
 
       values = [2,3,4]
-      quote do: sum(1, unquote_splicing(values), 5)
+      quote :do sum(1, unquote_splicing(values), 5)
       #=> { :sum, 0, [1, 2, 3, 4, 5] }
 
   """
@@ -322,7 +322,7 @@ defmodule Elixir.SpecialForms do
 
   ## Examples
 
-      sum = fn(x, y, do: x + y)
+      sum = fn(x, y, :do x + y)
       sum.(1, 2) #=> 3
 
   Notice that a function needs to be invoked using the dot between
@@ -397,33 +397,33 @@ defmodule Elixir.SpecialForms do
   @doc """
   List comprehensions allow you to quickly build a list from another list:
 
-      lc n in [1,2,3,4], do: n * 2
+      lc n in [1,2,3,4], :do n * 2
       #=> [2,4,6,8]
 
   A comprehension accepts many generators and also filters. Filters must be given after the when clause:
 
       # A comprehension with a generator and a filter
-      lc n in [1,2,3,4,5,6] when rem(n, 2) == 0, do: n
+      lc n in [1,2,3,4,5,6] when rem(n, 2) == 0, :do n
       #=> [2,4,6]
 
       # A comprehension with two generators
-      lc x in [1,2], y in [2,3], do: x*y
+      lc x in [1,2], y in [2,3], :do x*y
       #=> [2,3,4,6]
 
   Elixir provides generators for both lists and bitstrings:
 
       # A list generator:
-      lc n in [1,2,3,4], do: n * 2
+      lc n in [1,2,3,4], :do n * 2
       #=> [2,4,6,8]
 
       # A bit string generator:
-      lc <<n>> in <<1,2,3,4>>, do: n * 2
+      lc <<n>> in <<1,2,3,4>>, :do n * 2
       #=> [2,4,6,8]
 
   Bit string generators are quite useful when you need to organize bit string streams:
 
       iex> pixels = <<213,45,132,64,76,32,76,0,0,234,32,15>>
-      iex> lc <<r:8,g:8,b:8>> in pixels, do: {r,g,b}
+      iex> lc <<r:8,:g8,:b8>> in pixels, :do {r,g,b}
       [{213,45,132},{64,76,32},{76,0,0},{234,32,15}]
 
   Elixir does its best to hide the differences between list and bit string generators.
@@ -433,15 +433,15 @@ defmodule Elixir.SpecialForms do
       # This will fail because when Elixir sees that the left side
       # of the in expression is a bit string, it expects the right side
       # to be a bit string as well:
-      lc <<n>> in [<<1>>,<<2>>,<<3>>], do: n*2
+      lc <<n>> in [<<1>>,<<2>>,<<3>>], :do n*2
       #=> ** (ErlangError) erlang error {:bad_generator,[<<1>>,<<2>>,<<3>>]}
 
-      # You need to be explicit and use inlist:
-      lc inlist(<<n>>, [<<1>>,<<2>>,<<3>>]), do: n*2
+      # You need to be explicit and use :inlist
+      lc inlist(<<n>>, [<<1>>,<<2>>,<<3>>]), :do n*2
       #=> [2,4,6]
 
       # For consistency, inbin is also available:
-      lc inbin(<<n>>, <<1,2,3>>), do: n*2
+      lc inbin(<<n>>, <<1,2,3>>), :do n*2
       #=> [2,4,6]
 
   Notice that although comprehensions uses `when` to specify filters, filters are not
@@ -455,7 +455,7 @@ defmodule Elixir.SpecialForms do
   be a bitstring. For example, here is how to remove all
   spaces from a string:
 
-      bc <<c>> in " hello world " when c != ?\s, do: <<c>>
+      bc <<c>> in " hello world " when c != ?\s, :do <<c>>
       "helloworld"
 
   """
@@ -492,5 +492,5 @@ defmodule Elixir.SpecialForms do
   In the example above, `in_guard` is allowing us to customize
   the same macro to work inside and outside guards.
   """
-  defmacro in_guard(do: do_block, else: else_block)
+  defmacro in_guard(:do do_block, :else else_block)
 end

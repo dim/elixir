@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-require Erlang.os, as: OS
+require Erlang.os, :as OS
 
 defmodule System.ARGVTest do
   use ExUnit.Case

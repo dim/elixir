@@ -1,10 +1,10 @@
 defmodule URI do
   @on_load :preload_parsers
 
-  defrecord Info, [scheme: nil, path: nil, query: nil,
-                   fragment: nil, authority: nil,
-                   userinfo: nil, host: nil, port: nil,
-                   specifics: nil]
+  defrecord Info, [:scheme nil, :path nil, :query nil,
+                   :fragment nil, :authority nil,
+                   :userinfo nil, :host nil, :port nil,
+                   :specifics nil]
 
   import Bitwise
 
@@ -19,7 +19,7 @@ defmodule URI do
   that implements the Binary.Chars protocol (i.e. can be converted
   to binary).
   """
-  def encode_query(l), do: Enum.join(Enum.map(l, pair(&1)), "&")
+  def encode_query(l), :do Enum.join(Enum.map(l, pair(&1)), "&")
 
   @doc """
   Given a query string of the form "key1=value1&key=value2...", produces an
@@ -57,12 +57,12 @@ defmodule URI do
   @doc """
   Percent (URL) encodes a URI.
   """
-  def encode(s), do: bc <<c>> in s, do: <<percent(c)|:binary>>
+  def encode(s), :do bc <<c>> in s, :do <<percent(c)|:binary>>
 
-  defp percent(32), do: <<?+>>
-  defp percent(?-), do: <<?->>
-  defp percent(?_), do: <<?_>>
-  defp percent(?.), do: <<?.>>
+  defp percent(32), :do <<?+>>
+  defp percent(?-), :do <<?->>
+  defp percent(?_), :do <<?_>>
+  defp percent(?.), :do <<?.>>
 
   defp percent(c) when
     c >= ?0 and c <= ?9 when
@@ -71,15 +71,15 @@ defmodule URI do
     <<c>>
   end
 
-  defp percent(c), do: escape_byte(c)
+  defp percent(c), :do escape_byte(c)
 
-  defp escape_byte(c), do: "%" <> hex(c)
+  defp escape_byte(c), :do "%" <> hex(c)
 
-  defp hex(n) when n <= 9, do: <<n + ?0>>
+  defp hex(n) when n <= 9, :do <<n + ?0>>
   defp hex(n) when n > 15 do
     hex(bsr(n, 4)) <> hex(band(n, 15))
   end
-  defp hex(n), do: <<n + ?A - 10>>
+  defp hex(n), :do <<n + ?A - 10>>
 
   @doc """
   Unpercent (URL) decodes a URI.
@@ -92,13 +92,13 @@ defmodule URI do
     <<check_plus(head)>> <> decode(tail)
   end
 
-  def decode(<<>>), do: <<>>
+  def decode(<<>>), :do <<>>
 
-  defp hex2dec(n) when n >= ?A and n <= ?F, do: n - ?A + 10
-  defp hex2dec(n) when n >= ?0 and n <= ?9, do: n - ?0
+  defp hex2dec(n) when n >= ?A and n <= ?F, :do n - ?A + 10
+  defp hex2dec(n) when n >= ?0 and n <= ?9, :do n - ?0
 
-  defp check_plus(?+), do: 32
-  defp check_plus(c), do: c
+  defp check_plus(?+), :do 32
+  defp check_plus(c), :do c
 
   @doc """
   Parses a URI into components.
@@ -127,9 +127,9 @@ defmodule URI do
     { userinfo, host, port } = split_authority(authority)
 
     info = URI.Info[
-      scheme: scheme, path: path, query: query,
-      fragment: fragment, authority: authority,
-      userinfo: userinfo, host: host, port: port
+      :scheme scheme, :path path, :query query,
+      :fragment fragment, :authority authority,
+      :userinfo userinfo, :host host, :port port
     ]
 
     scheme_specific(scheme, info)
@@ -155,7 +155,7 @@ defmodule URI do
   end
 
   defp default_port(info, module) do
-    if info.port, do: info, else: info.port(module.default_port)
+    if info.port, :do info, :else info.port(module.default_port)
   end
 
   # Split an authority into its userinfo, host and port parts.
@@ -163,7 +163,7 @@ defmodule URI do
     s = s || ""
     components = Regex.run %r/(^(.*)@)?([^:]*)(:(\d*))?/, s
     destructure [_, _, userinfo, host, _, port], nillify(components)
-    port = if port, do: list_to_integer(binary_to_list(port))
+    port = if port, :do list_to_integer(binary_to_list(port))
     { userinfo, host, port }
   end
 

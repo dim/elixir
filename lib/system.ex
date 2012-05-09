@@ -73,7 +73,7 @@ defmodule System do
   @doc """
   Returns Elixir's version as binary.
   """
-  def version, do: "0.5.0.dev"
+  def version, :do "0.5.0.dev"
 
   @doc """
   Returns the list of command-line arguments passed to the program.
@@ -132,7 +132,7 @@ defmodule System do
 
   See http://www.erlang.org/doc/man/os.html#getpid-0 for more info.
   """
-  def get_pid, do: list_to_binary(:os.getpid)
+  def get_pid, :do list_to_binary(:os.getpid)
 
   @doc """
   Sets a new `value` for the environment variable `varname`.
@@ -159,11 +159,12 @@ defmodule System do
   ## Helpers
 
   # Filter stacktrace by removing internal BOOTSTRAP calls.
-  defp filter_stacktrace([{ Elixir.Builtin, :raise, _, _ }|t]), do: filter_stacktrace(t)
-  defp filter_stacktrace([{ _mod, :BOOTSTRAP, _, info }|t]), do:
+  defp filter_stacktrace([{ Elixir.Builtin, :raise, _, _ }|t]), :do filter_stacktrace(t)
+  defp filter_stacktrace([{ _mod, :BOOTSTRAP, _, info }|t]) do
     filter_stacktrace([{ Elixir.Builtin, :defmodule, 2, info }|t])
-  defp filter_stacktrace([h|t]), do: [h|filter_stacktrace(t)]
-  defp filter_stacktrace([]), do: []
+  end
+  defp filter_stacktrace([h|t]), :do [h|filter_stacktrace(t)]
+  defp filter_stacktrace([]), :do []
 
   defp server_call(args) do
     Erlang.gen_server.call(:elixir_code_server, args)

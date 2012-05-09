@@ -15,16 +15,16 @@ defmodule Kernel.ExceptionTest do
   end
 
   test :format_stacktrace_with_file_and_line do
-    assert Exception.format_stacktrace({Foo, :bar, [], [file: 'file.ex', line: 10]}) == "file.ex:10: Foo.bar()"
-    assert Exception.format_stacktrace({Foo, :bar, [1, 2, 3], [file: 'file.ex', line: 10]}) == "file.ex:10: Foo.bar(1, 2, 3)"
-    assert Exception.format_stacktrace({Foo, :bar, 1, [file: 'file.ex', line: 10]}) == "file.ex:10: Foo.bar/1"
+    assert Exception.format_stacktrace({Foo, :bar, [], [:file 'file.ex', :line 10]}) == "file.ex:10: Foo.bar()"
+    assert Exception.format_stacktrace({Foo, :bar, [1, 2, 3], [:file 'file.ex', :line 10]}) == "file.ex:10: Foo.bar(1, 2, 3)"
+    assert Exception.format_stacktrace({Foo, :bar, 1, [:file 'file.ex', :line 10]}) == "file.ex:10: Foo.bar/1"
   end
 
   test :format_stacktrace_with_file_no_line do
-    assert Exception.format_stacktrace({Foo, :bar, [], [file: 'file.ex']}) == "file.ex: Foo.bar()"
-    assert Exception.format_stacktrace({Foo, :bar, [], [file: 'file.ex', line: 0]}) == "file.ex: Foo.bar()"
-    assert Exception.format_stacktrace({Foo, :bar, [1, 2, 3], [file: 'file.ex']}) == "file.ex: Foo.bar(1, 2, 3)"
-    assert Exception.format_stacktrace({Foo, :bar, 1, [file: 'file.ex']}) == "file.ex: Foo.bar/1"
+    assert Exception.format_stacktrace({Foo, :bar, [], [:file 'file.ex']}) == "file.ex: Foo.bar()"
+    assert Exception.format_stacktrace({Foo, :bar, [], [:file 'file.ex', :line 0]}) == "file.ex: Foo.bar()"
+    assert Exception.format_stacktrace({Foo, :bar, [1, 2, 3], [:file 'file.ex']}) == "file.ex: Foo.bar(1, 2, 3)"
+    assert Exception.format_stacktrace({Foo, :bar, 1, [:file 'file.ex']}) == "file.ex: Foo.bar/1"
   end
 
   test :format_module_function_arity do
@@ -39,29 +39,29 @@ defmodule Kernel.ExceptionTest do
 
   test :runtime_error_message do
     assert RuntimeError.new.message == "runtime error"
-    assert RuntimeError.new(message: "exception").message == "exception"
+    assert RuntimeError.new(:message "exception").message == "exception"
   end
 
   test :argument_error_message do
     assert ArgumentError.new.message == "argument error"
-    assert ArgumentError.new(message: "exception").message == "exception"
+    assert ArgumentError.new(:message "exception").message == "exception"
   end
 
   test :undefined_function_message do
     assert UndefinedFunctionError.new.message == "undefined function"
-    assert UndefinedFunctionError.new(module: Foo, function: :bar, arity: 1).message == "undefined function: Foo.bar/1"
-    assert UndefinedFunctionError.new(module: Foo, function: :bar, arity: []).message == "undefined function: Foo.bar/0"
-    assert UndefinedFunctionError.new(module: :foo,  function: :bar, arity: []).message == "undefined function: :foo.bar/0"
+    assert UndefinedFunctionError.new(:module Foo, :function :bar, :arity 1).message == "undefined function: Foo.bar/1"
+    assert UndefinedFunctionError.new(:module Foo, :function :bar, :arity []).message == "undefined function: Foo.bar/0"
+    assert UndefinedFunctionError.new(:module :foo,  :function :bar, :arity []).message == "undefined function: :foo.bar/0"
   end
 
   test :function_clause_message do
     assert FunctionClauseError.new.message == "no function clause matches"
-    assert FunctionClauseError.new(module: Foo, function: :bar, arity: 1).message == "no function clause matching: Foo.bar/1"
-    assert FunctionClauseError.new(module: Foo, function: :bar, arity: []).message == "no function clause matching: Foo.bar()"
-    assert FunctionClauseError.new(module: :foo,  function: :bar, arity: []).message == "no function clause matching: :foo.bar()"
+    assert FunctionClauseError.new(:module Foo, :function :bar, :arity 1).message == "no function clause matching: Foo.bar/1"
+    assert FunctionClauseError.new(:module Foo, :function :bar, :arity []).message == "no function clause matching: Foo.bar()"
+    assert FunctionClauseError.new(:module :foo,  :function :bar, :arity []).message == "no function clause matching: :foo.bar()"
   end
 
   test :erlang_error_message do
-    assert ErlangError.new(original: :sample).message == "erlang error: :sample"
+    assert ErlangError.new(:original :sample).message == "erlang error: :sample"
   end
 end

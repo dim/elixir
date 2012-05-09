@@ -37,7 +37,7 @@ defmodule Code do
 
   ## Examples
 
-      Code.eval "a + b", [a: 1, b: 2], file: __FILE__, line: __LINE__
+      Code.eval "a + b", [:a 1, :b 2], :file __FILE__, :line __LINE__
       # => { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
@@ -52,8 +52,8 @@ defmodule Code do
 
   ## Examples
 
-      contents = quote hygiene: false, do: a + b
-      Code.eval_quoted contents, [a: 1, b: 2], file: __FILE__, line: __LINE__
+      contents = quote :hygiene false, :do a + b
+      Code.eval_quoted contents, [:a 1, :b 2], :file __FILE__, :line __LINE__
       # => { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
@@ -164,7 +164,7 @@ defmodule Code do
       if File.regular?(prefix) do
         prefix
       else
-        raise ArgumentError, message: "could not load #{file}"
+        raise ArgumentError, :message "could not load #{file}"
       end
     end
   end

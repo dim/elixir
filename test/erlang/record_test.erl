@@ -33,7 +33,7 @@ record_new_selective_test() ->
   F = fun() ->
     eval("defrecord Foo, a: 1, b: 2, c: 3"),
     { { '__MAIN__.Foo', 1, 20, 3 }, _ } = eval("Foo.new b: 20"),
-    { 20, _ } = eval("Foo.new(b: 20).b")
+    { 20, _ } = eval("Foo.new(:b 20).b")
   end,
   test_helper:run_and_remove(F, ['__MAIN__.Foo']).
 

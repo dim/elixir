@@ -315,9 +315,13 @@ call_args -> call_args_comma_expr : build_args('$1').
 kv_eol -> kv_identifier : '$1'.
 kv_eol -> kv_identifier eol : '$1'.
 
+kv_comma -> atom expr : [{build_atom('$1'),'$2'}].
+kv_comma -> atom expr comma_separator kv_comma : [{build_atom('$1'),'$2'}|'$4'].
 kv_comma -> kv_eol expr : [{?exprs('$1'),'$2'}].
 kv_comma -> kv_eol expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
 
+matched_kv_comma -> atom matched_expr : [{build_atom('$1'),'$2'}].
+matched_kv_comma -> atom matched_expr comma_separator kv_comma : [{build_atom('$1'),'$2'}|'$4'].
 matched_kv_comma -> kv_eol matched_expr : [{?exprs('$1'),'$2'}].
 matched_kv_comma -> kv_eol matched_expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
 

@@ -49,7 +49,7 @@ defmodule Process do
   @doc """
   Returns all keys that have the given `value`.
   """
-  defdelegate [get_keys: 1], to: :erlang
+  defdelegate [:get_keys 1], :to :erlang
 
   @doc """
   Stores the given key-value in the process dictionary.
@@ -95,20 +95,20 @@ defmodule Process do
       Process.exit(other, :kil)
 
   """
-  defdelegate [exit: 2], to: :erlang
+  defdelegate [:exit 2], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of `fun`.
   Otherwise works like spawn/3.
   """
-  defdelegate [spawn: 1], to: :erlang
+  defdelegate [:spawn 1], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of `fun`
   on `node`. If `node` does not exist, a useless pid is returned.
   Otherwise works like spawn/3.
   """
-  defdelegate [spawn: 2], to: :erlang
+  defdelegate [:spawn 2], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of
@@ -117,21 +117,21 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#spawn-3 for more info.
   """
-  defdelegate [spawn: 3], to: :erlang
+  defdelegate [:spawn 3], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of
   `module.function(args)` on `node`. If `node` does not exists, a useless
   pid is returned. Otherwise works like spawn/3.
   """
-  defdelegate [spawn: 4], to: :erlang
+  defdelegate [:spawn 4], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of `fun`.
   A link is created between the calling process and the new
   process, atomically. Otherwise works like spawn/3.
   """
-  defdelegate [spawn_link: 1], to: :erlang
+  defdelegate [:spawn_link 1], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of `fun`
@@ -140,14 +140,14 @@ defmodule Process do
   (and due to the link, an exit signal with exit reason :noconnection will be
   received). Otherwise works like spawn/3.
   """
-  defdelegate [spawn_link: 2], to: :erlang
+  defdelegate [:spawn_link 2], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of
   `module.function(args)`. A link is created between the calling process
   and the new process, atomically. Otherwise works like spawn/3.
   """
-  defdelegate [spawn_link: 3], to: :erlang
+  defdelegate [:spawn_link 3], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of
@@ -156,49 +156,49 @@ defmodule Process do
   pid is returned (and due to the link, an exit signal with exit reason
   :noconnection will be received). Otherwise works like spawn/3.
   """
-  defdelegate [spawn_link: 4], to: :erlang
+  defdelegate [:spawn_link 4], :to :erlang
 
   @doc """
   Returns the pid of a new process started by the application of `fun`
   and reference for a monitor created to the new process.
   Otherwise works like spawn/3.
   """
-  defdelegate [spawn_monitor: 1], to: :erlang
+  defdelegate [:spawn_monitor 1], :to :erlang
 
   @doc """
   A new process is started by the application of `module.function(args)`
   and the process is monitored at the same time. Returns the pid and a
   reference for the monitor. Otherwise works like spawn/3.
   """
-  defdelegate [spawn_monitor: 3], to: :erlang
+  defdelegate [:spawn_monitor 3], :to :erlang
 
   @doc """
   The same as `spawn/1` but accepts extra options as arguments.
   Please read http://www.erlang.org/doc/man/erlang.html#spawn_opt-4 for
   documentation of the options.
   """
-  defdelegate [spawn_opt: 2], to: :erlang
+  defdelegate [:spawn_opt 2], :to :erlang
 
   @doc """
   The same as `spawn/2` but accepts extra options as arguments.
   Please read http://www.erlang.org/doc/man/erlang.html#spawn_opt-4 for
   documentation of the options.
   """
-  defdelegate [spawn_opt: 3], to: :erlang
+  defdelegate [:spawn_opt 3], :to :erlang
 
   @doc """
   The same as `spawn/3` but accepts extra options as arguments.
   Please read http://www.erlang.org/doc/man/erlang.html#spawn_opt-4 for
   documentation of the options.
   """
-  defdelegate [spawn_opt: 4], to: :erlang
+  defdelegate [:spawn_opt 4], :to :erlang
 
   @doc """
   The same as `spawn/4` but accepts extra options as arguments.
   Please read http://www.erlang.org/doc/man/erlang.html#spawn_opt-4 for
   documentation of the options.
   """
-  defdelegate [spawn_opt: 5], to: :erlang
+  defdelegate [:spawn_opt 5], :to :erlang
 
   @doc """
   The calling process starts monitoring the item given.
@@ -241,7 +241,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#link-1 for more info.
   """
-  defdelegate [link: 1], to: :erlang
+  defdelegate [:link 1], :to :erlang
 
   @doc """
   Removes the link, if there is one, between the calling process and
@@ -250,7 +250,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#unlink-1 for more info.
   """
-  defdelegate [unlink: 1], to: :erlang
+  defdelegate [:unlink 1], :to :erlang
 
   @doc """
   Associates the name with a pid or a port identifier. name, which must
@@ -259,14 +259,14 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#register-2 for more info.
   """
-  defdelegate [register: 2], to: :erlang
+  defdelegate [:register 2], :to :erlang
 
   @doc """
   Removes the registered name, associated with a pid or a port identifier.
 
   See http://www.erlang.org/doc/man/erlang.html#unregister-1 for more info.
   """
-  defdelegate [unregister: 1], to: :erlang
+  defdelegate [:unregister 1], :to :erlang
 
   @doc """
   Returns the pid or port identifier with the registered name.
@@ -274,7 +274,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#whereis-1 for more info.
   """
-  defdelegate [whereis: 1], to: :erlang
+  defdelegate [:whereis 1], :to :erlang
 
   @doc """
   Returns a list of names which have been registered using register/2.
@@ -314,6 +314,6 @@ defmodule Process do
     :erlang.process_info(pid, spec)
   end
 
-  defp nillify(:undefined), do: nil
-  defp nillify(else),       do: else
+  defp nillify(:undefined), :do nil
+  defp nillify(else),       :do else
 end

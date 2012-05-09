@@ -2,11 +2,11 @@ defmodule Protocol do
   @moduledoc false
 
   # We need to use Erlang.lists because Enum is not available yet
-  require Erlang.lists, as: L
+  require Erlang.lists, :as L
 
   @doc """
   Handle `defprotocol`. It will define a function for each
-  protocol plus two extra functions:
+  protocol plus two extra :functions
 
   * `__protocol__/1` - returns the protocol name when :name is given,
                        and a keywords list with the protocol functions
@@ -18,15 +18,15 @@ defmodule Protocol do
 
   * `__impl_for__!/1` - same as above but raises an error if an implementation is not found
   """
-  def defprotocol(name, [do: block]) do
+  def defprotocol(name, [:do block]) do
     quote do
       defmodule unquote(name) do
         # Remove "harmful" macros
         # We don't want to allow function definition inside protocols
-        import Elixir.Builtin, except: [
-          defmacro: 1, defmacro: 2, defmacro: 4,
-          defp: 1, defp: 2, defp: 4,
-          def: 1, def: 2, def: 4
+        import Elixir.Builtin, :except [
+          :defmacro 1, :defmacro 2, :defmacro 4,
+          :defp 1, :defp 2, :defp 4,
+          :def 1, :def 2, :def 4
         ]
 
         # Import the new dsl that holds the new def
@@ -51,7 +51,7 @@ defmodule Protocol do
   It also defines a `__impl__` function which
   returns the protocol being implemented.
   """
-  def defimpl(protocol, [for: for], [do: block]) do
+  def defimpl(protocol, [:for for], [:do block]) do
     quote do
       protocol = unquote(protocol)
       for      = unquote(for)
@@ -60,7 +60,7 @@ defmodule Protocol do
       Protocol.assert_protocol(protocol)
 
       defmodule name do
-        def __impl__, do: unquote(protocol)
+        def __impl__, :do unquote(protocol)
         unquote(block)
       end
 
@@ -76,13 +76,13 @@ defmodule Protocol do
     try do
       module.__info__(:data)
     rescue UndefinedFunctionError
-      raise ArgumentError, message: "#{module} is not loaded"
+      raise ArgumentError, :message "#{module} is not loaded"
     end
 
     try do
       module.__protocol__(:name)
     rescue UndefinedFunctionError
-      raise ArgumentError, message: "#{module} is not a protocol"
+      raise ArgumentError, :message "#{module} is not a protocol"
     end
   end
 
@@ -94,8 +94,9 @@ defmodule Protocol do
   def assert_impl(impl, protocol) do
     remaining = protocol.__protocol__(:functions) -- impl.__info__(:functions)
 
-    if remaining != [], do:
-      raise ArgumentError, message: "#{impl} did not implement #{protocol}, missing: #{remaining}"
+    if remaining != [] do
+      raise ArgumentError, :message "#{impl} did not implement #{protocol}, missing: #{remaining}"
+    end
   end
 
   @doc """
@@ -103,8 +104,8 @@ defmodule Protocol do
   """
   def meta(module, functions, fallback) do
     contents = quote do
-      def __protocol__(:name),      do: __MODULE__
-      def __protocol__(:functions), do: unquote(:lists.sort(functions))
+      def __protocol__(:name),      :do __MODULE__
+      def __protocol__(:functions), :do unquote(:lists.sort(functions))
 
       def __impl_for__(arg) do
         case __raw_impl__(arg) do
@@ -125,14 +126,14 @@ defmodule Protocol do
         if module = __impl_for__(arg) do
           module
         else
-          raise Protocol.UndefinedError, protocol: __MODULE__, structure: arg
+          raise Protocol.UndefinedError, :protocol __MODULE__, :structure arg
         end
       end
 
-      defp __fallback__, do: unquote(fallback)
+      defp __fallback__, :do unquote(fallback)
     end
 
-    Module.eval_quoted module, contents, [], file: __FILE__, line: __LINE__
+    Module.eval_quoted module, contents, [], :file __FILE__, :line __LINE__
   end
 
   @doc """
@@ -141,7 +142,7 @@ defmodule Protocol do
   which should be properly handled by the dispatching function.
   """
   def impl_for(module, conversions) do
-    contents = lc kind in conversions, do: each_impl_for(kind, conversions)
+    contents = lc kind in conversions, :do each_impl_for(kind, conversions)
 
     # If we don't implement all protocols and any is not in the
     # list, we need to add a final clause that returns nil.
@@ -153,7 +154,7 @@ defmodule Protocol do
       end]
     end
 
-    Module.eval_quoted module, contents, [], file: __FILE__, line: __LINE__
+    Module.eval_quoted module, contents, [], :file __FILE__, :line __LINE__
   end
 
   @doc """
@@ -261,11 +262,11 @@ defmodule Protocol.DSL do
     { name, arity } =
       case expression do
       match { _, _, args } when args == [] or is_atom(args)
-        raise ArgumentError, message: "protocol functions expect at least one argument"
+        raise ArgumentError, :message "protocol functions expect at least one argument"
       match { name, _, args } when is_atom(name) and is_list(args)
         { name, length(args) }
       else
-        raise ArgumentError, message: "invalid args for defprotocol"
+        raise ArgumentError, :message "invalid args for defprotocol"
       end
 
     # Generate arguments according the arity. The arguments
@@ -290,13 +291,13 @@ defmodule Protocol.DSL do
           rescue UndefinedFunctionError
             case __fallback__ do
             match nil
-              raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
+              raise Protocol.UndefinedError, :protocol __MODULE__, :structure xA
             match other
               apply other, unquote(name), args
             end
           end
         match nil
-          raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
+          raise Protocol.UndefinedError, :protocol __MODULE__, :structure xA
         match other
           apply other, unquote(name), args
         end

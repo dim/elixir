@@ -91,7 +91,7 @@ defmodule Binary.Inspect.TupleTest do
   end
 
   test :exception do
-    assert inspect(RuntimeError.new) == "RuntimeError[message: \"runtime error\"]"
+    assert inspect(RuntimeError.new) == "RuntimeError[:message \"runtime error\"]"
   end
 
   test :empty do
@@ -127,7 +127,7 @@ defmodule Binary.Inspect.AnyTest do
   use ExUnit.Case
 
   test :funs do
-    bin = inspect(fn(x, do: x + 1))
+    bin = inspect(fn(x, :do x + 1))
     assert_match '#Fun<' ++ _, binary_to_list(bin)
   end
 end

@@ -52,6 +52,6 @@ defmodule Kernel.DestructureTest do
     end
   end
 
-  defp a_list, do: [1,2,3]
-  defp a_nil, do: nil
+  defp a_list, :do [1,2,3]
+  defp a_nil, :do nil
 end

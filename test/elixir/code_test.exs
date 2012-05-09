@@ -3,27 +3,27 @@ Code.require_file "../test_helper", __FILE__
 defmodule CodeTest do
   use ExUnit.Case
 
-  def one, do: 1
+  def one, :do 1
 
   contents = quote do
     defmodule CodeTest.Sample do
-      def eval_quoted_info, do: { __MODULE__, __FILE__, __LINE__ }
+      def eval_quoted_info, :do { __MODULE__, __FILE__, __LINE__ }
     end
   end
 
-  Code.eval_quoted contents, [], file: "sample.ex", line: 13
+  Code.eval_quoted contents, [], :file "sample.ex", :line 13
 
   test :eval do
     assert Code.eval("1 + 2") == { 3, [] }
-    assert_match { 3, _ }, Code.eval("a + b", [a: 1, b: 2], file: __FILE__, line: __LINE__)
+    assert_match { 3, _ }, Code.eval("a + b", [:a 1, :b 2], :file __FILE__, :line __LINE__)
   end
 
   test :eval_with_scope do
-    assert Code.eval("one", [], delegate_locals_to: __MODULE__) == { 1, [] }
+    assert Code.eval("one", [], :delegate_locals_to __MODULE__) == { 1, [] }
   end
 
   test :eval_quoted do
-    assert Code.eval_quoted(quote(do: 1 + 2)) == { 3, [] }
+    assert Code.eval_quoted(quote(:do 1 + 2)) == { 3, [] }
     assert CodeTest.Sample.eval_quoted_info() == { CodeTest.Sample, "sample.ex", 13 }
   end
 

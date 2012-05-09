@@ -1,4 +1,4 @@
-defrecord EEx.State, engine: EEx.SmartEngine, dict: [], file: 'nofile', line: 1
+defrecord EEx.State, :engine EEx.SmartEngine, :dict [], :file 'nofile', :line 1
 
 defmodule EEx.Compiler do
   @moduledoc false
@@ -47,7 +47,7 @@ defmodule EEx.Compiler do
   end
 
   defp generate_buffer([{ :end_expr, line, _, chars }|_], _buffer, [], _state) do
-    raise EEx.SyntaxError, message: "unexpected token: #{inspect chars} at line #{inspect line}"
+    raise EEx.SyntaxError, :message "unexpected token: #{inspect chars} at line #{inspect line}"
   end
 
   defp generate_buffer([], buffer, [], _state) do
@@ -55,7 +55,7 @@ defmodule EEx.Compiler do
   end
 
   defp generate_buffer([], _buffer, _scope, _state) do
-    raise EEx.SyntaxError, message: "unexpected end of string. expecting a closing <% end %>."
+    raise EEx.SyntaxError, :message "unexpected end of string. expecting a closing <% end %>."
   end
 
   # Creates a placeholder and wrap it inside the expression block
@@ -91,7 +91,7 @@ defmodule EEx.Compiler do
     other
   end
 
-  defp normalize_block([]),    do: nil
-  defp normalize_block([h]),   do: h
-  defp normalize_block(other), do: { :__block__, 0, other }
+  defp normalize_block([]),    :do nil
+  defp normalize_block([h]),   :do h
+  defp normalize_block(other), :do { :__block__, 0, other }
 end

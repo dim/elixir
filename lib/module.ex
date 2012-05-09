@@ -1,9 +1,9 @@
 # We cannot use to_char_list because it depends on inspect,
 # which depends on protocol, which depends on this module.
-import Elixir.Builtin, except: [to_char_list: 1]
+import Elixir.Builtin, :except [:to_char_list 1]
 
 defmodule Module do
-  require Erlang.ets, as: ETS
+  require Erlang.ets, :as ETS
 
   @moduledoc """
   This module provides many functions to deal with modules during
@@ -23,8 +23,8 @@ defmodule Module do
   ## Examples
 
       defmodule Foo do
-        contents = quote do: (def sum(a, b), do: a + b)
-        Module.eval_quoted __MODULE__, contents, [], file: __FILE__, line: __LINE__
+        contents = quote :do (def sum(a, b), :do a + b)
+        Module.eval_quoted __MODULE__, contents, [], :file __FILE__, :line __LINE__
       end
 
       Foo.sum(1, 2) #=> 3
@@ -128,8 +128,8 @@ defmodule Module do
   ## Examples
 
       defmodule Foo do
-        Module.merge_data __MODULE__, value: 1
-        Module.read_data __MODULE__ #=> [value: 1]
+        Module.merge_data __MODULE__, :value 1
+        Module.read_data __MODULE__ #=> [:value 1]
       end
 
   """
@@ -144,7 +144,7 @@ defmodule Module do
   ## Examples
 
       defmodule Foo do
-        Module.merge_data __MODULE__, value: 1
+        Module.merge_data __MODULE__, :value 1
         Module.read_data __MODULE__, :value #=> 1
       end
 
@@ -165,10 +165,10 @@ defmodule Module do
   ## Examples
 
       defmodule Foo do
-        Module.merge_data __MODULE__, value: 1
+        Module.merge_data __MODULE__, :value 1
       end
 
-      Foo.__info__(:data) #=> [value: 1]
+      Foo.__info__(:data) #=> [:value 1]
 
   """
   def merge_data(module, data) do
@@ -177,10 +177,10 @@ defmodule Module do
     table      = data_table_for(module)
     old        = ETS.lookup_element(table, :data, 2)
     registered = ETS.lookup_element(table, :registered_attributes, 2)
-    data       = lc kv in data, do: normalize_data(kv)
+    data       = lc kv in data, :do normalize_data(kv)
 
     { attrs, new } = :lists.partition fn({k,_}) -> List.member?(registered, k) end, data
-    lc {k,v} in attrs, do: add_attribute(module, k, v)
+    lc {k,v} in attrs, :do add_attribute(module, k, v)
     ETS.insert(table, { :data,  Keyword.merge(old, new) })
   end
 
@@ -195,7 +195,7 @@ defmodule Module do
 
       defmodule MyModule do
         Module.add_doc(__MODULE__, __LINE__ + 1, :def, { :version, 0 }, "Manually added docs")
-        def version, do: 1
+        def version, :do 1
       end
 
   """
@@ -232,7 +232,7 @@ defmodule Module do
 
       defmodule Example do
         Module.function_defined? __MODULE__, { :version, 0 } #=> false
-        def version, do: 1
+        def version, :do 1
         Module.function_defined? __MODULE__, { :version, 0 } #=> true
       end
 
@@ -251,7 +251,7 @@ defmodule Module do
 
       defmodule Example do
         Module.function_defined? __MODULE__, { :version, 0 }, :defp #=> false
-        def version, do: 1
+        def version, :do 1
         Module.function_defined? __MODULE__, { :version, 0 }, :defp #=> false
       end
 
@@ -266,7 +266,7 @@ defmodule Module do
   ## Examples
 
       defmodule Example do
-        def version, do: 1
+        def version, :do 1
         Module.defined_functions __MODULE__ #=> [{:version,1}]
       end
 
@@ -274,7 +274,7 @@ defmodule Module do
   def defined_functions(module) do
     assert_not_compiled!(:defined_functions, module)
     table = function_table_for(module)
-    lc { tuple, _, _, _, _, _ } in ETS.tab2list(table), do: tuple
+    lc { tuple, _, _, _, _, _ } in ETS.tab2list(table), :do tuple
   end
 
   @doc """
@@ -284,7 +284,7 @@ defmodule Module do
   ## Examples
 
       defmodule Example do
-        def version, do: 1
+        def version, :do 1
         Module.defined_functions __MODULE__, :def  #=> [{:version,1}]
         Module.defined_functions __MODULE__, :defp #=> []
       end
@@ -293,7 +293,7 @@ defmodule Module do
   def defined_functions(module, kind) do
     assert_not_compiled!(:defined_functions, module)
     table = function_table_for(module)
-    lc { tuple, _, _, stored_kind, _, _ } in ETS.tab2list(table) when stored_kind == kind, do: tuple
+    lc { tuple, _, _, stored_kind, _, _ } in ETS.tab2list(table) when stored_kind == kind, :do tuple
   end
 
   @doc """
@@ -331,17 +331,17 @@ defmodule Module do
 
       defmodule MyLib do
         def __using__(target) do
-          Module.merge_data target, some_data: nil
+          Module.merge_data target, :some_data nil
           Module.add_compile_callback(target, __MODULE__, :__callback__)
         end
 
         defmacro __callback__(target) do
           value = Module.read_data(target, :some_data)
-          quote do: (def my_lib_value, do: unquote(value))
+          quote :do (def my_lib_value, :do unquote(value))
         end
       end
 
-  And a module could use `MyLib` with:
+  And a module could use `MyLib` :with
 
       defmodule App do
         use ModuleTest.ToBeUsed
@@ -397,7 +397,7 @@ defmodule Module do
     assert_not_compiled!(:delete_attribute, module)
     table = data_table_for(module)
     attrs = ETS.lookup_element(table, :attributes, 2)
-    final = lc {k,v} in attrs when k != key, do: {k,v}
+    final = lc {k,v} in attrs when k != key, :do {k,v}
     ETS.insert(table, { :attributes, final })
   end
 
@@ -428,14 +428,14 @@ defmodule Module do
   def compile_doc(module, line, kind, pair) do
     doc = read_data(module, :doc)
     result = add_doc(module, line, kind, pair, doc)
-    merge_data(module, doc: nil)
+    merge_data(module, :doc nil)
     result
   end
 
   ## Helpers
 
-  defp normalize_data({ :on_load, atom }) when is_atom(atom), do: { :on_load, { atom, 0 } }
-  defp normalize_data(else), do: else
+  defp normalize_data({ :on_load, atom }) when is_atom(atom), :do { :on_load, { atom, 0 } }
+  defp normalize_data(else), :do else
 
   defp data_table_for(module) do
     list_to_atom Erlang.lists.concat([:d, module])
@@ -451,7 +451,7 @@ defmodule Module do
 
   defp assert_not_compiled!(fun, module) do
     compiled?(module) ||
-      raise ArgumentError, message:
-        "could not call #{fun} on module #{inspect module} because it was already compiled"
+      raise ArgumentError,
+        [:message "could not call #{fun} on module #{inspect module} because it was already compiled"]
   end
 end

@@ -6,18 +6,18 @@ defmodule OptionParser.Simple do
   ## Example
 
       OptionParser.Simple.parse(["--debug"])
-      #=> { [debug: true], [] }
+      #=> { [:debug true], [] }
 
       OptionParser.Simple.parse(["--source", "lib"])
-      #=> { [source: "lib"], [] }
+      #=> { [:source "lib"], [] }
 
       OptionParser.Simple.parse(["--source", "lib", "test/enum_test.exs"])
-      #=> { [source: "lib"], ["test/enum_test.exs"] }
+      #=> { [:source "lib"], ["test/enum_test.exs"] }
 
   A set of aliases can be given as second argument:
 
-      OptionParser.Simple.parse(["-d"], [d: :debug])
-      #=> { [debug: true], [] }
+      OptionParser.Simple.parse(["-d"], [:d :debug])
+      #=> { [:debug true], [] }
 
   """
   def parse(options, aliases // []) when is_list(options) and is_list(aliases) do

@@ -1,4 +1,4 @@
-import Elixir.Builtin, except: [raise: 1, raise: 2]
+import Elixir.Builtin, :except [:raise 1, :raise 2]
 
 defmodule Elixir.Builtin do
   @moduledoc """
@@ -8,7 +8,7 @@ defmodule Elixir.Builtin do
   instance, if you want to tell Elixir to not import the `case`
   macro, you can do:
 
-      import Elixir.Builtin, except: [case: 2]
+      import Elixir.Builtin, :except [:case 2]
 
   Elixir also has special forms that are always imported and
   cannot be skipped. These are described in `Elixir.SpecialForms`.
@@ -465,12 +465,12 @@ defmodule Elixir.Builtin do
 
   For integer status, Erlang runtime system closes all ports and allows async
   threads to finish their operations before exiting. To exit without such
-  flushing, pass options [flush: false] instead.
+  flushing, pass options [:flush false] instead.
 
   ## Examples
 
       halt(0)
-      halt(1, flush: false)
+      halt(1, :flush false)
       halt(:abort)
 
   """
@@ -885,8 +885,8 @@ defmodule Elixir.Builtin do
   @doc """
   The same as `term_to_binary/1` but also supports two options:
 
-  * compressed: the level of compression to be used from 0 to 9;
-  * minor_version: used to control the details of encoding. Can be 0 or 1,
+  * :compressed the level of compression to be used from 0 to 9;
+  * :minor_version used to control the details of encoding. Can be 0 or 1,
     please read http://www.erlang.org/doc/man/erlang.html#term_to_binary-2
     for more details
 
@@ -930,7 +930,7 @@ defmodule Elixir.Builtin do
   ## Examples
 
       defmodule Foo do
-        def bar, do: :baz
+        def bar, :do :baz
       end
 
       Foo.bar #=> :baz
@@ -962,7 +962,7 @@ defmodule Elixir.Builtin do
   Elixir will accept any module name as long as the expression
   returns an atom.
   """
-  defmacro defmodule(name, do: contents)
+  defmacro defmodule(name, :do contents)
 
   @doc """
   Defines a function with the given name and contents.
@@ -970,12 +970,12 @@ defmodule Elixir.Builtin do
   ## Examples
 
       defmodule Foo do
-        def bar, do: :baz
+        def bar, :do :baz
       end
 
       Foo.bar #=> :baz
 
-  A function that expects arguments can be defined as follow:
+  A function that expects arguments can be defined as follows:
 
       defmodule Foo do
         def sum(a, b) do
@@ -1025,13 +1025,13 @@ defmodule Elixir.Builtin do
 
   This macro could be invoked as:
 
-      defkv one: 1, two: 2
+      defkv :one 1, :two 2
 
   Notice in the example above, we define the function as `def unquote(k).()`
   because each entry `k` is a an atom and invoking `def unquote(k)()`
   would be invalid Elixir syntax.
   """
-  defmacro def(name, do: contents)
+  defmacro def(name, :do contents)
 
   @doc """
   This macro allows a function to be defined more explicitly
@@ -1058,15 +1058,15 @@ defmodule Elixir.Builtin do
   `first_arg` is not defined. Therefore, we need to use quote:
 
       name   = :some_function
-      args   = quote(do: [first_arg, second_arg])
-      guards = quote(do: is_list(first_arg))
+      args   = quote(:do [first_arg, second_arg])
+      guards = quote(:do is_list(first_arg))
 
       def name, args, guards do
         # ...
       end
 
   """
-  defmacro def(name, args, guards, do: contents)
+  defmacro def(name, args, guards, :do contents)
 
   @doc """
   Defines a function that is private. Private functions
@@ -1081,32 +1081,32 @@ defmodule Elixir.Builtin do
           sum(1, 2)
         end
 
-        defp sum(a, b), do: a + b
+        defp sum(a, b), :do a + b
       end
 
   In the example above, `sum` is private and accessing it
   through `Foo.sum` will raise an error.
   """
-  defmacro defp(name, do: contents)
+  defmacro defp(name, :do contents)
 
   @doc """
   The same as `def/4` but generates a private function.
   """
-  defmacro defp(name, args, guards, do: contents)
+  defmacro defp(name, args, guards, :do contents)
 
   @doc """
   Define a record given by name and values.
 
   ## Examples
 
-      defrecord FileInfo, atime: nil, mtime: nil
+      defrecord FileInfo, :atime nil, :mtime nil
 
   The line above will define a module named `FileInfo` which
   contains a function named `new` that returns a new record
   and other functions to read and set the values in the
   record. Therefore, we can do:
 
-      file_info = FileInfo.new(atime: now())
+      file_info = FileInfo.new(:atime now())
       file_info.atime         #=> Returns the value of atime
       file_info.atime(now())  #=> Updates the value of atime
 
@@ -1123,7 +1123,7 @@ defmodule Elixir.Builtin do
   track of how many tests were executed and the failures that happened
   The record definition is similar to:
 
-      defrecord Config, counter: 0, failures: []
+      defrecord Config, :counter 0, :failures []
 
   Since `counter` is an integer, Elixir automatically defines a helper
   named `increment_counter` that will increase the counter value:
@@ -1144,7 +1144,7 @@ defmodule Elixir.Builtin do
   By default records are not documented and have @moduledoc set to false.
   This can be changed by passing a moduledoc option after values:
 
-      defrecord Config, [counter: 0, failures: []], moduledoc: "A simple record"
+      defrecord Config, [:counter 0, :failures []], :moduledoc "A simple record"
 
   """
   defmacro defrecord(name, values, opts // [], do_block // []) do
@@ -1160,8 +1160,8 @@ defmodule Elixir.Builtin do
     opts = Keyword.merge(opts, do_block)
     opts = Keyword.put(opts, :do, quote do
       unquote(Keyword.get opts, :do)
-      def exception(args), do: new(args)
-      def exception(args, self), do: self
+      def exception(args), :do new(args)
+      def exception(args, self), :do self
     end)
 
     opts = case Keyword.key?(opts, :moduledoc) do
@@ -1176,8 +1176,9 @@ defmodule Elixir.Builtin do
 
     check  = quote do
       name = Module.concat __MODULE__, unquote(name)
-      unless List.member?(name.__info__(:functions), { :message, 1 }), do:
+      unless List.member?(name.__info__(:functions), { :message, 1 }) do
         raise "Expected #{name} to implement message/1"
+      end
     end
 
     [record, check]
@@ -1210,7 +1211,7 @@ defmodule Elixir.Builtin do
 
   ## Examples
 
-      defrecord Config, sample: nil
+      defrecord Config, :sample nil
 
       is_record(Config.new, Config) #=> true
       is_record(Config.new, List)   #=> false
@@ -1260,21 +1261,21 @@ defmodule Elixir.Builtin do
   to implement the protocol for each Elixir type. For example:
 
       # Numbers are never blank
-      defimpl Blank, for: Number do
-        def blank?(number), do: false
+      defimpl Blank, :for Number do
+        def blank?(number), :do false
       end
 
       # Just empty list is blank
-      defimpl Blank, for: List do
-        def blank?([]), do: true
-        def blank?(_),  do: false
+      defimpl Blank, :for List do
+        def blank?([]), :do true
+        def blank?(_),  :do false
       end
 
       # Just the atoms false and nil are blank
-      defimpl Blank, for: Atom do
-        def blank?(false), do: true
-        def blank?(nil),   do: true
-        def blank?(_),     do: false
+      defimpl Blank, :for Atom do
+        def blank?(false), :do true
+        def blank?(nil),   :do true
+        def blank?(_),     :do false
       end
 
   And we would have to define the implementation for all types.
@@ -1310,8 +1311,8 @@ defmodule Elixir.Builtin do
   nor Tuple, nor List, nor BitString, Elixir will now dispatch to
   Any. That said, the default behavior could be implemented as:
 
-      defimpl Blank, for: Any do
-        def blank?(_), do: false
+      defimpl Blank, :for Any do
+        def blank?(_), :do false
       end
 
   Now, all data types that we have not specified will be
@@ -1326,8 +1327,8 @@ defmodule Elixir.Builtin do
   in case it has no items. To achieve this, the developer just needs to
   implement the protocol for `RedBlack.Tree`:
 
-      defimpl Blank, for: RedBlack.Tree do
-        def blank?(tree), do: RedBlack.empty?(tree)
+      defimpl Blank, :for RedBlack.Tree do
+        def blank?(tree), :do RedBlack.empty?(tree)
       end
 
   In the example above, we have implemented `blank?` for `RedBlack.Tree`
@@ -1338,16 +1339,16 @@ defmodule Elixir.Builtin do
   Finally, since records are simply tuples, one can add a default protocol
   implementation to any record by defining a default implementation for tuples.
   """
-  defmacro defprotocol(name, [do: block]) do
-    Protocol.defprotocol(name, [do: block])
+  defmacro defprotocol(name, [:do block]) do
+    Protocol.defprotocol(name, [:do block])
   end
 
   @doc """
   Defines an implementation for the given protocol. See
   `defprotocol/2` for examples.
   """
-  defmacro defimpl(name, [for: for], [do: block]) do
-    Protocol.defimpl(name, [for: for], [do: block])
+  defmacro defimpl(name, [:for for], [:do block]) do
+    Protocol.defimpl(name, [:for for], [:do block])
   end
 
   @doc """
@@ -1363,14 +1364,14 @@ defmodule Elixir.Builtin do
   ## Examples
 
       defmodule MyList do
-        defdelegate [reverse: 1], to: Erlang.lists
+        defdelegate [:reverse 1], :to Erlang.lists
       end
 
       MyList.reverse([1,2,3])
       #=> [3,2,1]
 
   """
-  defmacro defdelegate(tuples, to: target) do
+  defmacro defdelegate(tuples, :to target) do
     lc { name, arity } in tuples do
       args = lc i in :lists.seq(1, arity) do
         { binary_to_atom(<<?x, i + 64>>, :utf8), 0, :quoted }
@@ -1435,7 +1436,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro inspect(arg) do
-    quote do: __MAIN__.Binary.Inspect.inspect(unquote(arg))
+    quote :do __MAIN__.Binary.Inspect.inspect(unquote(arg))
   end
 
   @doc """
@@ -1447,9 +1448,9 @@ defmodule Elixir.Builtin do
   It is important to notice the access protocol is also
   allowed in function signatures when applying to references.
   This is useful when working with records to allow to match
-  against an specific part of a record:
+  against an specific part of a :record
 
-      def uri_parse(Uri.Config[schema: :http])
+      def uri_parse(Uri.Config[:schema :http])
 
   In the example above, the schema clause will only match if
   the config schema is `:http`. Using the access protocol with
@@ -1476,7 +1477,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro to_binary(arg) do
-    quote do: __MAIN__.Binary.Chars.to_binary(unquote(arg))
+    quote :do __MAIN__.Binary.Chars.to_binary(unquote(arg))
   end
 
   @doc """
@@ -1489,7 +1490,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro to_char_list(arg) do
-    quote do: __MAIN__.List.Chars.to_char_list(unquote(arg))
+    quote :do __MAIN__.List.Chars.to_char_list(unquote(arg))
   end
 
   @doc """
@@ -1503,7 +1504,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro elem(tuple, index) do
-    quote do: :erlang.element(unquote(index), unquote(tuple))
+    quote :do :erlang.element(unquote(index), unquote(tuple))
   end
 
   @doc """
@@ -1517,7 +1518,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro setelem(tuple, index, value) do
-    quote do: :erlang.setelement(unquote(index), unquote(tuple), unquote(value))
+    quote :do :erlang.setelement(unquote(index), unquote(tuple), unquote(value))
   end
 
   @doc """
@@ -1531,7 +1532,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro div(left, right) do
-    quote do: __op__ :div, unquote(left), unquote(right)
+    quote :do __op__ :div, unquote(left), unquote(right)
   end
 
   @doc """
@@ -1545,7 +1546,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro rem(left, right) do
-    quote do: __op__ :rem, unquote(left), unquote(right)
+    quote :do __op__ :rem, unquote(left), unquote(right)
   end
 
   @doc """
@@ -1558,7 +1559,7 @@ defmodule Elixir.Builtin do
       match?(1, 2) #=> false
       match?({1,_}, {1,2}) #=> true
 
-  Match can also be used to filter or find a value in an enumerable:
+  Match can also be used to filter or find a value in an :enumerable
 
       list = [{:a,1},{:b,2},{:a,3}]
       Enum.filter list, match?({:a, _}, _)
@@ -1613,7 +1614,7 @@ defmodule Elixir.Builtin do
 
   The example above will return 20, because `i` is assgined to 10
   and then multiplied by 2. If you desire to match the value of `i`
-  against the given condition, you need to use the `^` operator:
+  against the given condition, you need to use the `^` :operator
 
       i = 1
       case 10 do
@@ -1665,7 +1666,7 @@ defmodule Elixir.Builtin do
   clauses, rescue provides some conveniences around exceptions
   that allows one to rescue an exception by its name and not by
   its internal contents. All the following formats are valid
-  rescue expressions:
+  rescue :expressions
 
       try do
         UndefinedModule.undefined_function
@@ -1749,7 +1750,7 @@ defmodule Elixir.Builtin do
   The match clauses above follows the same rules as `case/2`.
 
   An optional after clause can be given in case the message was not
-  received after the specified period of time:
+  received after the specified period of :time
 
       receive do
       match { :selector, i, value } when is_integer(i)
@@ -1801,14 +1802,14 @@ defmodule Elixir.Builtin do
 
   ## One-line examples
 
-      if(foo, do: bar)
+      if(foo, :do bar)
 
   In the example above, bar will be returned if foo evalutes to
   true (i.e. it is not false nor nil). Otherwise, nil will be returned.
 
   An else option can be given to specify the opposite:
 
-      if(foo, do: bar, else: bar)
+      if(foo, :do bar, :else bar)
 
   ## Blocks examples
 
@@ -1843,7 +1844,7 @@ defmodule Elixir.Builtin do
 
   """
   defmacro if(condition, opts) do
-    opts = :elixir_kw_block.pivot(opts, [elsif: 1, else: 0], __FILE__)
+    opts = :elixir_kw_block.pivot(opts, [:elsif 1, :else 0], __FILE__)
     [{:do,do_clause}|tail] = opts
 
     # Transform the condition and the expressions in the
@@ -1852,7 +1853,7 @@ defmodule Elixir.Builtin do
     else_clause = Keyword.get(tail, :else, nil)
 
     # Convert all :elsif clauses into matches
-    converted   = lc {:elsif,rest} in tail, do: {:match,rest}
+    converted   = lc {:elsif,rest} in tail, :do {:match,rest}
     merged      = [{:match,if_clause}|converted]
 
     # Decouple all if and elsif clauses into an array of tuples.
@@ -1868,7 +1869,7 @@ defmodule Elixir.Builtin do
   and documentation.
   """
   defmacro unless(clause, options) do
-    quote do: if(!unquote(clause), unquote(options))
+    quote :do if(!unquote(clause), unquote(options))
   end
 
   @doc """
@@ -1981,7 +1982,7 @@ defmodule Elixir.Builtin do
   """
   defmacro :<>.(left, right) do
     concats = extract_concatenations({ :<>, 0, [left, right] })
-    quote do: << unquote_splicing(concats) >>
+    quote :do << unquote_splicing(concats) >>
   end
 
   @doc """
@@ -2119,7 +2120,7 @@ defmodule Elixir.Builtin do
 
   """
   def raise(msg) when is_binary(msg) do
-    :erlang.error RuntimeError.new(message: msg)
+    :erlang.error RuntimeError.new(:message msg)
   end
 
   def raise(exception) do
@@ -2140,7 +2141,7 @@ defmodule Elixir.Builtin do
 
   ## Examples
 
-      raise ArgumentError, message: "Sample"
+      raise ArgumentError, :message "Sample"
 
   """
   def raise(exception, args) do
@@ -2208,7 +2209,7 @@ defmodule Elixir.Builtin do
 
   defmacro __c__({ :<<>>, line, pieces }, []) do
     binary = { :<<>>, line, Binary.unescape_tokens(pieces) }
-    quote do: binary_to_list(unquote(binary))
+    quote :do binary_to_list(unquote(binary))
   end
 
   @doc """
@@ -2221,7 +2222,7 @@ defmodule Elixir.Builtin do
   """
   defmacro __r__({ :<<>>, line, pieces }, options) do
     binary = { :<<>>, line, Binary.unescape_tokens(pieces, Regex.unescape_map(&1)) }
-    quote do: Regex.compile(unquote(binary), unquote(options))
+    quote :do Regex.compile(unquote(binary), unquote(options))
   end
 
   ## Private functions
@@ -2285,8 +2286,8 @@ defmodule Elixir.Builtin do
   end
 
   defp build_if_clauses([{ :match, _, _clause }|_], _) do
-    raise ArgumentError, message: "No or too many conditions given to elsif clause"
+    raise ArgumentError, :message "No or too many conditions given to elsif clause"
   end
 
-  defp build_if_clauses([], acc), do: acc
+  defp build_if_clauses([], acc), :do acc
 end

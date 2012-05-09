@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-require Erlang.os, as: OS
+require Erlang.os, :as OS
 
 defmodule Elixir.CLI.InitTest do
   use ExUnit.Case
@@ -64,9 +64,9 @@ defmodule Elixir.CLI.SyntaxErrorTest do
   use ExUnit.Case
 
   test :syntax_code_error do
-    message = '** (TokenMissingError) nofile:1: syntax error: expression is incomplete'
+    message = '** (TokenMissingError) :nofile1: syntax :error expression is incomplete'
     assert Erlang.string.str(message, OS.cmd('bin/elixir -e "[1,2"')) == 0
-    message = '** (SyntaxError) nofile:1: syntax error before: \'end\''
+    message = '** (SyntaxError) :nofile1: syntax error before: \'end\''
     assert Erlang.string.str(message, OS.cmd('bin/elixir -e "case 1 end"')) == 0
   end
 end

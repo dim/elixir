@@ -10,7 +10,7 @@ defmodule GenServer.Behavior do
 
   This module also tags the behavior as :gen_server. For more
   information on gen_server, please refer to the Erlang
-  documentation:
+  :documentation
 
   http://www.erlang.org/doc/man/gen_server.html
   http://www.erlang.org/doc/design_principles/gen_server_concepts.html
@@ -33,8 +33,8 @@ defmodule GenServer.Behavior do
       end
 
       def terminate(reason, state) do
-        :error_logger.error_report('#{inspect __MODULE__} crashed:\n#{inspect reason}')
-        :error_logger.error_report('#{inspect __MODULE__} snapshot:\n#{inspect state}')
+        :error_logger.error_report('#{inspect __MODULE__} :crashed\n#{inspect reason}')
+        :error_logger.error_report('#{inspect __MODULE__} :snapshot\n#{inspect state}')
         :ok
       end
 
@@ -42,7 +42,7 @@ defmodule GenServer.Behavior do
         { :ok, state }
       end
 
-      defoverridable [handle_call: 3, handle_info: 2, handle_cast: 2, terminate: 2, code_change: 3]
+      defoverridable [:handle_call 3, :handle_info 2, :handle_cast 2, :terminate 2, :code_change 3]
     end
   end
 end

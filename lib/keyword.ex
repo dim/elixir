@@ -40,7 +40,7 @@ defmodule Keyword do
   ## Examples
 
       Keyword.new [{:b,1},{:a,2}]
-      #=> [a: 2, b: 1]
+      #=> [:a 2, :b 1]
 
   """
   def new(pairs) do
@@ -57,7 +57,7 @@ defmodule Keyword do
   ## Examples
 
       Keyword.new [:a, :b], fn(x) -> {x,x} end
-      #=> [a: :a, b: :b]
+      #=> [:a :a, :b :b]
   """
   def new(pairs, transform) do
     Enum.reduce pairs, [], fn(i, keywords) ->
@@ -77,29 +77,29 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.get [a: 1], :a      #=> 1
-      Keyword.get [a: 1], :b      #=> nil
-      Keyword.get [a: 1], :b, 3   #=> 3
+      Keyword.get [:a 1], :a      #=> 1
+      Keyword.get [:a 1], :b      #=> nil
+      Keyword.get [:a 1], :b, 3   #=> 3
   """
   def get(keywords, key, default // nil)
-  def get([{k, _}|_], key, default) when key < k, do: default
-  def get([{k, _}|d], key, default) when key > k, do: get(d, key, default)
-  def get([{_, value}|_], _key, _default),        do: value
-  def get([], _, default),                        do: default
+  def get([{k, _}|_], key, default) when key < k, :do default
+  def get([{k, _}|d], key, default) when key > k, :do get(d, key, default)
+  def get([{_, value}|_], _key, _default),        :do value
+  def get([], _, default),                        :do default
 
   @doc """
   Gets all values for a specific key.
 
   ## Examples
 
-      Keyword.get_values [a: 1, a: 2], :a
+      Keyword.get_values [:a 1, :a 2], :a
       #=> [1,2]
 
   """
-  def get_values([{k, _}|_], key) when key < k, do: []
-  def get_values([{k, _}|d], key) when key > k, do: get_values(d, key)
-  def get_values([{_, value}|d], key),          do: [value|get_values(d, key)]
-  def get_values([], _),                        do: []
+  def get_values([{k, _}|_], key) when key < k, :do []
+  def get_values([{k, _}|d], key) when key > k, :do get_values(d, key)
+  def get_values([{_, value}|d], key),          :do [value|get_values(d, key)]
+  def get_values([], _),                        :do []
 
   @doc """
   Returns all keys from the keywords list. Duplicated
@@ -107,11 +107,11 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.keys [a: 1, b: 2] #=> [:a,:b]
+      Keyword.keys [:a 1, :b 2] #=> [:a,:b]
 
   """
   def keys(keywords) do
-    lc { key, _ } in keywords, do: key
+    lc { key, _ } in keywords, :do key
   end
 
   @doc """
@@ -119,10 +119,10 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.values [a: 1, b: 2] #=> [1,2]
+      Keyword.values [:a 1, :b 2] #=> [1,2]
   """
   def values(keywords) do
-    lc { _, value } in keywords, do: value
+    lc { _, value } in keywords, :do value
   end
 
   @doc """
@@ -133,13 +133,13 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.delete [a: 1, b: 2], :a   #=> [b: 2]
-      Keyword.delete [b: 2], :a         #=> [b: 2]
+      Keyword.delete [:a 1, :b 2], :a   #=> [:b 2]
+      Keyword.delete [:b 2], :a         #=> [:b 2]
   """
-  def delete([{k, _}|_] = keywords, key) when key < k, do: keywords
-  def delete([{k, _} = e|tail], key) when key > k, do: [e|delete(tail, key)]
-  def delete([{_, _}|tail], key),                  do: delete(tail, key)
-  def delete([], _), do: []
+  def delete([{k, _}|_] = keywords, key) when key < k, :do keywords
+  def delete([{k, _} = e|tail], key) when key > k, :do [e|delete(tail, key)]
+  def delete([{_, _}|tail], key),                  :do delete(tail, key)
+  def delete([], _), :do []
 
   @doc """
   Sets the given `value` under `key`.
@@ -152,8 +152,8 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.put [a: 1, b: 2], :a, 3
-      #=> [a: 3, b: 2]
+      Keyword.put [:a 1, :b 2], :a, 3
+      #=> [:a 3, :b 2]
   """
   def put([{k, _} = e|keywords], key, value) when key < k and is_atom(key) do
     [{key, value},e|keywords]
@@ -177,8 +177,8 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.merge [a: 1, b: 2], [a: 3, d: 4]
-      #=> [a:3, b:2, d: 4]
+      Keyword.merge [:a 1, :b 2], [:a 3, :d 4]
+      #=> [:a3, :b2, :d 4]
   """
   def merge(d1, d2) do
     merge(d1, d2, fn(_k, _v1, v2) -> v2 end)
@@ -190,10 +190,10 @@ defmodule Keyword do
 
   ## Examples
 
-      Keyword.merge [a: 1, b: 2], [a: 3, d: 4], fn(_k, v1, v2) ->
+      Keyword.merge [:a 1, :b 2], [:a 3, :d 4], fn(_k, v1, v2) ->
         v1 + v2
       end
-      #=> [a:4, b:2, d: 4]
+      #=> [:a4, :b2, :d 4]
   """
   def merge([{k1, _} = e1|d1], [{k2, _} = e2|d2], fun) when k1 < k2 and is_atom(k1) do
     [e1|merge(d1, [e2|d2], fun)]
@@ -207,20 +207,20 @@ defmodule Keyword do
     [{k1, fun.(k1, v1, v2)}|merge(d1, d2, fun)]
   end
 
-  def merge([], d2, _fun), do: d2
-  def merge(d1, [], _fun), do: d1
+  def merge([], d2, _fun), :do d2
+  def merge(d1, [], _fun), :do d1
 
   @doc """
   Returns whether a given key exists in the given keywords.
 
   ### Examples
-      Keyword.key?([a: 1], :a)
+      Keyword.key?([:a 1], :a)
       #=> true
-      Keyword.key?([a: 1], :b)
+      Keyword.key?([:a 1], :b)
       #=> false
   """
-  def key?([{k, _}|_], key) when key < k, do: false
-  def key?([{k, _}|d], key) when key > k, do: key?(d, key)
-  def key?([{_, _}|_], _key),             do: true
-  def key?([], _),                        do: false
+  def key?([{k, _}|_], key) when key < k, :do false
+  def key?([{k, _}|d], key) when key > k, :do key?(d, key)
+  def key?([{_, _}|_], _key),             :do true
+  def key?([], _),                        :do false
 end

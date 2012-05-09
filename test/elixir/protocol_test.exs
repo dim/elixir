@@ -20,23 +20,23 @@ defprotocol ProtocolTest.Plus do
   def plus(thing, other)
 end
 
-defrecord ProtocolTest.Foo, a: 0, b: 0
+defrecord ProtocolTest.Foo, :a 0, :b 0
 
-defimpl ProtocolTest.WithAll, for: ProtocolTest.Foo do
+defimpl ProtocolTest.WithAll, :for ProtocolTest.Foo do
   def blank(record) do
     record.a + record.b == 0
   end
 end
 
-defimpl ProtocolTest.WithOnly, for: ProtocolTest.Foo do
+defimpl ProtocolTest.WithOnly, :for ProtocolTest.Foo do
   def blank(record) do
     record.a + record.b == 0
   end
 end
 
-defimpl ProtocolTest.Plus, for: Number do
-  def plus(thing), do: thing + 1
-  def plus(thing, other), do: thing + other
+defimpl ProtocolTest.Plus, :for Number do
+  def plus(thing), :do thing + 1
+  def plus(thing, other), :do thing + other
 end
 
 defmodule ProtocolTest do
@@ -44,7 +44,7 @@ defmodule ProtocolTest do
 
   test :protocol_with_all do
     assert_undef(ProtocolTest.WithAll, Atom, :foo)
-    assert_undef(ProtocolTest.WithAll, Function, fn(x, do: x))
+    assert_undef(ProtocolTest.WithAll, Function, fn(x, :do x))
     assert_undef(ProtocolTest.WithAll, Number, 1)
     assert_undef(ProtocolTest.WithAll, Number, 1.1)
     assert_undef(ProtocolTest.WithAll, List, [])
@@ -63,12 +63,12 @@ defmodule ProtocolTest do
     assert_undef(ProtocolTest.WithExcept, Any, :foo)
     assert_undef(ProtocolTest.WithExcept, Any, 1)
     assert_undef(ProtocolTest.WithExcept, Any, [1,2,3])
-    assert_undef(ProtocolTest.WithExcept, Function, fn(x, do: x))
+    assert_undef(ProtocolTest.WithExcept, Function, fn(x, :do x))
     assert_undef(ProtocolTest.WithExcept, Tuple, {})
   end
 
   test :protocol_with_only do
-    assert_undef ProtocolTest.WithOnly, Function, fn(x, do: x)
+    assert_undef ProtocolTest.WithOnly, Function, fn(x, :do x)
     assert ProtocolTest.WithOnly.blank(ProtocolTest.Foo.new) == true
   end
 
@@ -82,12 +82,12 @@ defmodule ProtocolTest do
 
   test :protocol_with_record do
     true  = ProtocolTest.WithAll.blank(ProtocolTest.Foo.new)
-    false = ProtocolTest.WithAll.blank(ProtocolTest.Foo.new(a: 1))
+    false = ProtocolTest.WithAll.blank(ProtocolTest.Foo.new(:a 1))
   end
 
   test :protocol_for do
     assert_protocol_for(ProtocolTest.WithAll, Atom, :foo)
-    assert_protocol_for(ProtocolTest.WithAll, Function, fn(x, do: x))
+    assert_protocol_for(ProtocolTest.WithAll, Function, fn(x, :do x))
     assert_protocol_for(ProtocolTest.WithAll, Number, 1)
     assert_protocol_for(ProtocolTest.WithAll, Number, 1.1)
     assert_protocol_for(ProtocolTest.WithAll, List, [])

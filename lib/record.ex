@@ -9,7 +9,7 @@ defmodule Record do
 
   ## Examples
 
-      defrecord FileInfo, Record.extract(:file_info, from_lib: "kernel/include/file.hrl")
+      defrecord FileInfo, Record.extract(:file_info, :from_lib "kernel/include/file.hrl")
 
   """
   def extract(name, opts) do
@@ -47,7 +47,7 @@ defmodule Record do
       initializers(values)
     ]
 
-    Module.eval_quoted module, contents, [], file: __FILE__, line: __LINE__
+    Module.eval_quoted module, contents, [], :file __FILE__, :line __LINE__
   end
 
   # Define __record__/1 and __record__/2 as reflection functions
@@ -59,24 +59,24 @@ defmodule Record do
   #
   # ## Examples
   #
-  #     defrecord FileInfo, atime: nil, mtime: nil
+  #     defrecord FileInfo, :atime nil, :mtime nil
   #
   #     FileInfo.__record__(:name)   #=> FileInfo
-  #     FileInfo.__record__(:fields) #=> [atime: nil, mtime: nil]
+  #     FileInfo.__record__(:fields) #=> [:atime nil, :mtime nil]
   #
   defp reflection(name, values) do
     quote do
-      def __record__(kind),       do: __record__(kind, nil)
-      def __record__(:name, _),   do: unquote(name)
-      def __record__(:fields, _), do: unquote(values)
+      def __record__(kind),       :do __record__(kind, nil)
+      def __record__(:name, _),   :do unquote(name)
+      def __record__(:fields, _), :do unquote(values)
     end
   end
 
-  # Define initializers methods. For a declaration like:
+  # Define initializers functions. For a declaration like:
   #
-  #     defrecord FileInfo, atime: nil, mtime: nil
+  #     defrecord FileInfo, :atime nil, :mtime nil
   #
-  # It will define three methods:
+  # It will define three functions:
   #
   #     def new() do
   #       new([])
@@ -98,23 +98,23 @@ defmodule Record do
     # the given key from the ordered dict, falling back to the
     # default value if one does not exist.
     selective = Enum.map values, fn({k,v}) ->
-      quote do: Keyword.get(opts, unquote(k), unquote(v))
+      quote :do Keyword.get(opts, unquote(k), unquote(v))
     end
 
     quote do
-      def new(), do: new([])
-      def new([]), do: { __MODULE__, unquote_splicing(defaults) }
-      def new(opts) when is_list(opts), do: { __MODULE__, unquote_splicing(selective) }
-      def new(tuple) when is_tuple(tuple), do: setelem(tuple, 1, __MODULE__)
+      def new(), :do new([])
+      def new([]), :do { __MODULE__, unquote_splicing(defaults) }
+      def new(opts) when is_list(opts), :do { __MODULE__, unquote_splicing(selective) }
+      def new(tuple) when is_tuple(tuple), :do setelem(tuple, 1, __MODULE__)
     end
   end
 
   # Implement getters and setters for each attribute.
   # For a declaration like:
   #
-  #     defrecord FileInfo, atime: nil, mtime: nil
+  #     defrecord FileInfo, :atime nil, :mtime nil
   #
-  # It will define four methods:
+  # It will define four functions:
   #
   #     def :atime.(record) do
   #       elem(record, 2)
@@ -144,7 +144,7 @@ defmodule Record do
     getters_and_setters(t, i, [functions | acc], definition)
   end
 
-  defp getters_and_setters([], _i, acc, _), do: acc
+  defp getters_and_setters([], _i, acc, _), :do acc
 end
 
 defmodule Record.Extractor do
@@ -153,7 +153,7 @@ defmodule Record.Extractor do
 
   # Retrieve a record definition from an Erlang file using
   # the same lookup as the *include* attribute from Erlang modules.
-  def retrieve(name, from: string) do
+  def retrieve(name, :from string) do
     file = to_char_list(string)
 
     case Erlang.code.where_is_file(file) do
@@ -167,7 +167,7 @@ defmodule Record.Extractor do
 
   # Retrieve a record definition from an Erlang file using
   # the same lookup as the *include_lib* attribute from Erlang modules.
-  def retrieve(name, from_lib: file) do
+  def retrieve(name, :from_lib file) do
     [app|path] = Erlang.filename.split(to_char_list(file))
     case Erlang.code.lib_dir(to_char_list(app)) do
     match { :error, _ }
@@ -189,7 +189,7 @@ defmodule Record.Extractor do
 
   # Parse the given file and retrieve all existent records.
   defp retrieve_from_file(file) do
-    lc { :attribute, _, :record, record } in read_file(file), do: record
+    lc { :attribute, _, :record, record } in read_file(file), :do record
   end
 
   # Read a file and return its abstract syntax form that also
@@ -200,7 +200,7 @@ defmodule Record.Extractor do
     match { :ok, form }
       form
     match other
-      raise "Error parsing file #{to_binary(file)}, got: #{inspect(other)}"
+      raise "Error parsing file #{to_binary(file)}, :got #{inspect(other)}"
     end
   end
 
@@ -297,5 +297,5 @@ defmodule Record.Definition do
     end
   end
 
-  def extension_for(_, _, _), do: nil
+  def extension_for(_, _, _), :do nil
 end

@@ -97,23 +97,23 @@ defmodule Binary do
     printable?(t)
   end
 
-  def printable?(<<?\n, t|:binary>>), do: printable?(t)
-  def printable?(<<?\r, t|:binary>>), do: printable?(t)
-  def printable?(<<?\t, t|:binary>>), do: printable?(t)
-  def printable?(<<?\v, t|:binary>>), do: printable?(t)
-  def printable?(<<?\b, t|:binary>>), do: printable?(t)
-  def printable?(<<?\f, t|:binary>>), do: printable?(t)
-  def printable?(<<?\e, t|:binary>>), do: printable?(t)
+  def printable?(<<?\n, t|:binary>>), :do printable?(t)
+  def printable?(<<?\r, t|:binary>>), :do printable?(t)
+  def printable?(<<?\t, t|:binary>>), :do printable?(t)
+  def printable?(<<?\v, t|:binary>>), :do printable?(t)
+  def printable?(<<?\b, t|:binary>>), :do printable?(t)
+  def printable?(<<?\f, t|:binary>>), :do printable?(t)
+  def printable?(<<?\e, t|:binary>>), :do printable?(t)
 
-  def printable?(<<>>), do: true
-  def printable?(_),    do: false
+  def printable?(<<>>), :do true
+  def printable?(_),    :do false
 
   @doc %B"""
   Unescape the given chars. The unescaping is driven by the same
   rules as single- and double-quoted strings. Check `unescape/2`
   for information on how to customize the escaping map.
 
-  In this setup, Elixir will escape the following: `\b`, `\d`,
+  In this setup, Elixir will escape the :following `\b`, `\d`,
   `\e`, `\f`, `\n`, `\r`, `\s`, `\t` and `\v`. Octals are also
   escaped according to the latin1 set they represent.
 
@@ -140,23 +140,23 @@ defmodule Binary do
   representing the number of the characters it wants to unescape.
   Here is the default mapping function implemented by Elixir:
 
-      def unescape_map(?b), do: ?\b
-      def unescape_map(?d), do: ?\d
-      def unescape_map(?e), do: ?\e
-      def unescape_map(?f), do: ?\f
-      def unescape_map(?n), do: ?\n
-      def unescape_map(?r), do: ?\r
-      def unescape_map(?s), do: ?\s
-      def unescape_map(?t), do: ?\t
-      def unescape_map(?v), do: ?\v
-      def unescape_map(e), do: e
+      def unescape_map(?b), :do ?\b
+      def unescape_map(?d), :do ?\d
+      def unescape_map(?e), :do ?\e
+      def unescape_map(?f), :do ?\f
+      def unescape_map(?n), :do ?\n
+      def unescape_map(?r), :do ?\r
+      def unescape_map(?s), :do ?\s
+      def unescape_map(?t), :do ?\t
+      def unescape_map(?v), :do ?\v
+      def unescape_map(e), :do e
 
   If the `unescape_map` function returns false. The char is
   not escaped and `\` is kept in the char list.
 
   ## Examples
 
-  Using the unescape_map defined above is easy:
+  Using the unescape_map defined above is :easy
 
       Binary.unescape "example\\n", unescape_map(&1)
 
@@ -208,14 +208,14 @@ defmodule Binary do
     <<char>>
   end
 
-  defp escape_map(?#),  do: ?#
-  defp escape_map(?\b), do: ?b
-  defp escape_map(?\d), do: ?d
-  defp escape_map(?\e), do: ?e
-  defp escape_map(?\f), do: ?f
-  defp escape_map(?\n), do: ?n
-  defp escape_map(?\r), do: ?r
-  defp escape_map(?\\), do: ?\\
-  defp escape_map(?\t), do: ?t
-  defp escape_map(?\v), do: ?v
+  defp escape_map(?#),  :do ?#
+  defp escape_map(?\b), :do ?b
+  defp escape_map(?\d), :do ?d
+  defp escape_map(?\e), :do ?e
+  defp escape_map(?\f), :do ?f
+  defp escape_map(?\n), :do ?n
+  defp escape_map(?\r), :do ?r
+  defp escape_map(?\\), :do ?\\
+  defp escape_map(?\t), :do ?t
+  defp escape_map(?\v), :do ?v
 end

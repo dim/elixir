@@ -1,11 +1,11 @@
 defmodule Elixir.ParallelCompiler do
-  refer Erlang.orddict, as: Orddict
+  refer Erlang.orddict, :as Orddict
 
   @moduledoc """
   A module responsible for compiling files in parallel.
   """
 
-  defmacrop default_callback, do: quote(do: fn(x) -> x end)
+  defmacrop default_callback, :do quote(:do fn(x) -> x end)
 
   @doc """
   Compiles the given files.
@@ -30,7 +30,7 @@ defmodule Elixir.ParallelCompiler do
   def files_to_path(files, path, callback // default_callback) do
     Code.ensure_loaded(Elixir.ErrorHandler)
     files = Enum.map(files, to_char_list(&1))
-    path  = if path, do: to_char_list(path)
+    path  = if path, :do to_char_list(path)
     spawn_compilers(files, path, callback, [], [], [])
   end
 
@@ -64,9 +64,9 @@ defmodule Elixir.ParallelCompiler do
   end
 
   # No more files, nothing waiting, queue is empty, we are done
-  defp spawn_compilers([], _output, _callback, [], [], result), do: result
+  defp spawn_compilers([], _output, _callback, [], [], result), :do result
 
-  # Queued x, waiting for x: POSSIBLE ERROR! Release processes so we get the failures
+  # Queued x, waiting for :x POSSIBLE ERROR! Release processes so we get the failures
   defp spawn_compilers([], output, callback, waiting, queued, result) when length(waiting) == length(queued) do
     Enum.each queued, fn({ child, _ }) -> child <- { :release, Process.self() } end
     wait_for_messages([], output, callback, waiting, queued, result)

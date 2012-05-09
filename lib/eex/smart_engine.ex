@@ -32,14 +32,14 @@ defmodule EEx.TransformerEngine do
       end
 
       defp transform(list) when is_list(list) do
-        lc i in list, do: transform(i)
+        lc i in list, :do transform(i)
       end
 
       defp transform(other) do
         other
       end
 
-      defoverridable [transform: 1, handle_expr: 3, handle_text: 2]
+      defoverridable [:transform 1, :handle_expr 3, :handle_text 2]
     end
   end
 end
@@ -59,7 +59,7 @@ defmodule EEx.AssignsEngine do
         use EEx.AssignsEngine
       end
 
-      EEx.eval_string("<%= @foo %>", assigns: [foo: 1])
+      EEx.eval_string("<%= @foo %>", :assigns [:foo 1])
       #=> 1
 
   In the example above, we can access the value `foo` under
@@ -71,13 +71,13 @@ defmodule EEx.AssignsEngine do
 
   @doc false
   defmacro __using__(_, _) do
-    quote unquote: false do
+    quote :unquote false do
       defp transform({ :@, line, [{ name, _, atom }] }) when is_atom(name) and is_atom(atom) do
-        quote(do: Keyword.get var!(assigns), unquote(name))
+        quote(:do Keyword.get var!(assigns), unquote(name))
       end
 
-      defp transform(_), do: super
-      defoverridable [transform: 1]
+      defp transform(_), :do super
+      defoverridable [:transform 1]
     end
   end
 end
@@ -97,22 +97,22 @@ defmodule EEx.ForEngine do
         use EEx.ForEngine
       end
 
-      EEx.eval_string("<%= for x in [1,2,3] do %><%= x %>\n<% end %>", assigns: [foo: 1])
+      EEx.eval_string("<%= for x in [1,2,3] do %><%= x %>\n<% end %>", :assigns [:foo 1])
       #=> "1\n2\n3\n"
 
   """
 
   @doc false
   defmacro __using__(_, _) do
-    quote unquote: false do
+    quote :unquote false do
       defp transform({ :for, line, [{ :in, _, [var, collection] }, opts] }) do
         quote do
           Enum.map_join(unquote(collection), "", fn(unquote(var), unquote(opts)))
         end
       end
 
-      defp transform(_), do: super
-      defoverridable [transform: 1]
+      defp transform(_), :do super
+      defoverridable [:transform 1]
     end
   end
 end

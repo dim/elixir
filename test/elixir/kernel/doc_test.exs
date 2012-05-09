@@ -3,7 +3,7 @@ Code.require_file "../../test_helper", __FILE__
 defmodule Kernel.DocTest do
   # Since this module is changing the code
   # server state, we need to run it in sync.
-  use ExUnit.Case, sync: true
+  use ExUnit.Case, :sync true
 
   test :compiled_docs do
     tmp  = File.expand_path("../../tmp", __FILE__)
@@ -11,7 +11,7 @@ defmodule Kernel.DocTest do
 
     try do
       :file.make_dir(tmp)
-      Code.compiler_options(docs: true)
+      Code.compiler_options(:docs true)
       Elixir.ParallelCompiler.files_to_path([path], tmp)
       Code.prepend_path(tmp)
 
@@ -20,7 +20,7 @@ defmodule Kernel.DocTest do
       assert CompiledWithDocs.__info__(:docs) == expected
       assert CompiledWithDocs.__info__(:moduledoc) == { 1, "moduledoc" }
     after
-      Code.compiler_options(docs: false)
+      Code.compiler_options(:docs false)
       :os.cmd('rm -rf #{tmp}')
     end
   end

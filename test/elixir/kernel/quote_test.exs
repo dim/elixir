@@ -2,21 +2,21 @@ Code.require_file "../../test_helper", __FILE__
 
 defmodule Kernel.QuoteTest.Hygiene do
   defmacro no_interference do
-    quote do: a = 1
+    quote :do a = 1
   end
 
   defmacro no_hygiene do
-    quote hygiene: false do
+    quote :hygiene false do
       a = 1
     end
   end
 
   defmacro write_interference do
-    quote do: var!(a) = 1
+    quote :do var!(a) = 1
   end
 
   defmacro read_interference do
-    quote do: 10 = var!(a)
+    quote :do 10 = var!(a)
   end
 end
 
@@ -46,10 +46,10 @@ defmodule Kernel.QuoteTest do
   end
 
   test :list do
-    assert quote(do: [1,2,3]) == [1,2,3]
+    assert quote(:do [1,2,3]) == [1,2,3]
   end
 
   test :tuple do
-    assert quote(do: { :a, 1 }) == {:a,1}
+    assert quote(:do { :a, 1 }) == {:a,1}
   end
 end

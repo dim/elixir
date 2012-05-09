@@ -1,4 +1,4 @@
-defrecord ExUnit.Runner.Config, formatter: ExUnit.Formatter, cases: [], max_cases: 4, taken_cases: 0, sync_cases: []
+defrecord ExUnit.Runner.Config, :formatter ExUnit.Formatter, :cases [], :max_cases 4, :taken_cases 0, :sync_cases []
 
 defmodule ExUnit.Runner do
   @moduledoc false
@@ -112,6 +112,6 @@ defmodule ExUnit.Runner do
     end
   end
 
-  defp tests_for([_|t], acc), do: tests_for t, acc
-  defp tests_for([], acc),    do: List.reverse(acc)
+  defp tests_for([_|t], acc), :do tests_for t, acc
+  defp tests_for([], acc),    :do List.reverse(acc)
 end
