@@ -48,8 +48,9 @@ defmodule ExUnit.Assertions do
 
   """
   def assert(expected, message) when is_binary(message) do
-    unless expected, do:
+    unless expected do
       raise ExUnit.AssertionError, message: message
+    end
     true
   end
 

@@ -313,7 +313,6 @@ call_args -> call_args_comma_expr : build_args('$1').
 % KV and orddict
 
 kv_eol -> kv_identifier : '$1'.
-kv_eol -> kv_identifier eol : '$1'.
 
 kv_comma -> kv_eol expr : [{?exprs('$1'),'$2'}].
 kv_comma -> kv_eol expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].

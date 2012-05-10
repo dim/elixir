@@ -94,8 +94,10 @@ defmodule Protocol do
   def assert_impl(impl, protocol) do
     remaining = protocol.__protocol__(:functions) -- impl.__info__(:functions)
 
-    if remaining != [], do:
-      raise ArgumentError, message: "#{impl} did not implement #{protocol}, missing: #{remaining}"
+    if remaining != [] do
+      raise ArgumentError,
+        message: "#{impl} did not implement #{protocol}, missing: #{remaining}"
+    end
   end
 
   @doc """

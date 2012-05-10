@@ -1176,8 +1176,8 @@ defmodule Elixir.Builtin do
 
     check  = quote do
       name = Module.concat __MODULE__, unquote(name)
-      unless List.member?(name.__info__(:functions), { :message, 1 }), do:
-        raise "Expected #{name} to implement message/1"
+      unless List.member?(name.__info__(:functions), { :message, 1 }),
+        do: raise "Expected #{name} to implement message/1"
     end
 
     [record, check]

@@ -451,7 +451,7 @@ defmodule Module do
 
   defp assert_not_compiled!(fun, module) do
     compiled?(module) ||
-      raise ArgumentError, message:
-        "could not call #{fun} on module #{inspect module} because it was already compiled"
+      raise ArgumentError,
+        message: "could not call #{fun} on module #{inspect module} because it was already compiled"
   end
 end
