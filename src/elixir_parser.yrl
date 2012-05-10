@@ -3,9 +3,9 @@
 
 Nonterminals
   grammar expr_list
-  expr block_expr stab_expr bracket_expr call_expr max_expr
-  base_expr matched_expr matched_op_expr unmatched_expr op_expr
-  comma_separator kv_eol
+  expr stab_expr bracket_expr call_expr max_expr
+  base_expr op_expr
+  comma_separator
   add_op mult_op unary_op addadd_op multmult_op bin_concat_op
   match_op arrow_op default_op when_op pipe_op in_op
   andand_op oror_op and_op or_op comp_expr_op
@@ -13,18 +13,17 @@ Nonterminals
   open_bracket close_bracket
   open_curly close_curly
   open_bit close_bit
-  comma_expr call_args_comma_expr call_args call_args_parens
-  matched_comma_expr call_args_no_parens
-  kv_comma base_orddict
-  matched_kv_comma matched_base_orddict
-  do_eol end_eol kv_item kv_list do_block stab_eol stab_block
+  comma_expr call_args_comma_expr last_args
+  call_args call_args_parens call_args_no_parens
+  kv_comma base_orddict kv_eol kv_block
+  end_eol kv_item kv_list stab_eol stab_block
   parens_call dot_op dot_identifier dot_do_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
   .
 
 Terminals
-  'do' 'end' '__ref__'
+  'end' '__ref__'
   identifier kv_identifier punctuated_identifier
   bracket_identifier paren_identifier do_identifier
   number signed_number atom bin_string list_string sigil
@@ -39,7 +38,6 @@ Terminals
 
 Rootsymbol grammar.
 
-Left      10 do.
 Left      20 ','.  % Solve nested call_args conflicts
 Right     30 default_op.
 Right     40 when_op.
@@ -76,19 +74,10 @@ grammar -> '$empty' : [nil].
 expr_list -> expr : ['$1'].
 expr_list -> expr_list eol expr : ['$3'|'$1'].
 
-expr -> matched_expr : '$1'.
-expr -> unmatched_expr : '$1'.
-
-matched_expr -> matched_expr matched_op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
-matched_expr -> unary_op matched_expr : build_unary_op('$1', '$2').
-matched_expr -> special_op matched_expr : build_special_op('$1', '$2').
-matched_expr -> stab_expr : '$1'.
-
-unmatched_expr -> matched_expr op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
-unmatched_expr -> unmatched_expr op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
-unmatched_expr -> unary_op expr : build_unary_op('$1', '$2').
-unmatched_expr -> special_op expr : build_special_op('$1', '$2').
-unmatched_expr -> block_expr : '$1'.
+expr -> expr op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
+expr -> unary_op expr : build_unary_op('$1', '$2').
+expr -> special_op expr : build_special_op('$1', '$2').
+expr -> stab_expr : '$1'.
 
 op_expr -> match_op expr : { '$1', '$2' }.
 op_expr -> add_op expr : { '$1', '$2' }.
@@ -106,28 +95,6 @@ op_expr -> when_op expr : { '$1', '$2' }.
 op_expr -> arrow_op expr : { '$1', '$2' }.
 op_expr -> default_op expr : { '$1', '$2' }.
 op_expr -> comp_expr_op expr : { '$1', '$2' }.
-
-matched_op_expr -> match_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> add_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> mult_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> addadd_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> multmult_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> andand_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> oror_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> and_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> or_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> pipe_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> bin_concat_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> in_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> when_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> arrow_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> default_op matched_expr : { '$1', '$2' }.
-matched_op_expr -> comp_expr_op matched_expr : { '$1', '$2' }.
-
-block_expr -> parens_call call_args_parens do_block : build_identifier('$1', '$2', '$3').
-block_expr -> dot_punctuated_identifier call_args_no_parens do_block : build_identifier('$1', '$2', '$3').
-block_expr -> dot_do_identifier do_block : build_identifier('$1', [], '$2').
-block_expr -> dot_identifier call_args_no_parens do_block : build_identifier('$1', '$2', '$3').
 
 stab_expr -> parens_call call_args_parens stab_block : build_identifier('$1', '$2', '$3').
 stab_expr -> dot_punctuated_identifier stab_block : build_identifier('$1', [], '$2').
@@ -270,40 +237,40 @@ dot_op -> '.' : '$1'.
 dot_op -> '.' eol : '$1'.
 
 dot_identifier -> identifier : '$1'.
-dot_identifier -> matched_expr dot_op identifier : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_identifier -> expr dot_op identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
-dot_ref -> matched_expr dot_op '__ref__' : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_ref -> expr dot_op '__ref__' : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_do_identifier -> do_identifier : '$1'.
-dot_do_identifier -> matched_expr dot_op do_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_do_identifier -> expr dot_op do_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_bracket_identifier -> bracket_identifier : '$1'.
-dot_bracket_identifier -> matched_expr dot_op bracket_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_bracket_identifier -> expr dot_op bracket_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_paren_identifier -> paren_identifier : '$1'.
-dot_paren_identifier -> matched_expr dot_op paren_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_paren_identifier -> expr dot_op paren_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_punctuated_identifier -> punctuated_identifier : '$1'.
-dot_punctuated_identifier -> matched_expr dot_op punctuated_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
+dot_punctuated_identifier -> expr dot_op punctuated_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 parens_call -> dot_paren_identifier : '$1'.
-parens_call -> matched_expr dot_call_op : { '.', ?line('$2'), ['$1'] }. % Fun/local calls
+parens_call -> expr dot_call_op : { '.', ?line('$2'), ['$1'] }. % Fun/local calls
 
 % Function calls
 
-matched_comma_expr -> matched_expr : ['$1'].
-matched_comma_expr -> matched_comma_expr comma_separator matched_expr : ['$3'|'$1'].
+last_args -> base_orddict : '$1'.
+last_args -> kv_block : '$1'.
 
-call_args_no_parens -> matched_comma_expr : lists:reverse('$1').
-call_args_no_parens -> matched_base_orddict : ['$1'].
-call_args_no_parens -> matched_comma_expr comma_separator matched_base_orddict : lists:reverse(['$3'|'$1']).
+call_args_no_parens -> comma_expr : lists:reverse('$1').
+call_args_no_parens -> last_args : ['$1'].
+call_args_no_parens -> comma_expr comma_separator last_args : lists:reverse(['$3'|'$1']).
 
 comma_expr -> expr : ['$1'].
 comma_expr -> comma_expr comma_separator expr : ['$3'|'$1'].
 
 call_args_comma_expr -> comma_expr : lists:reverse('$1').
-call_args_comma_expr -> base_orddict : ['$1'].
-call_args_comma_expr -> comma_expr comma_separator base_orddict : lists:reverse(['$3'|'$1']).
+call_args_comma_expr -> last_args : ['$1'].
+call_args_comma_expr -> comma_expr comma_separator last_args : lists:reverse(['$3'|'$1']).
 
 call_args_parens -> open_paren ')' : [].
 call_args_parens -> open_paren call_args_comma_expr close_paren : '$2'.
@@ -312,21 +279,14 @@ call_args -> call_args_comma_expr : build_args('$1').
 
 % KV and orddict
 
-kv_eol -> kv_identifier : '$1'.
-
-kv_comma -> kv_eol expr : [{?exprs('$1'),'$2'}].
-kv_comma -> kv_eol expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
-
-matched_kv_comma -> kv_eol matched_expr : [{?exprs('$1'),'$2'}].
-matched_kv_comma -> kv_eol matched_expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
+kv_comma -> kv_identifier expr : [{?exprs('$1'),'$2'}].
+kv_comma -> kv_identifier expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
 
 base_orddict -> kv_comma : { '[:]', ?line(hd('$1')), '$1' }.
-matched_base_orddict -> matched_kv_comma : { '[:]', ?line(hd('$1')), '$1' }.
 
 % KV blocks
 
-do_eol -> 'do' : '$1'.
-do_eol -> 'do' eol : '$1'.
+kv_eol -> kv_identifier eol : '$1'.
 
 stab_eol -> '->' : '$1'.
 stab_eol -> '->' eol : '$1'.
@@ -341,15 +301,13 @@ kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwb
 kv_list -> kv_item : ['$1'].
 kv_list -> kv_item kv_list : ['$1'|'$2'].
 
-do_block -> do_eol 'end'                       : build_kw_block('$1', [], []).
-do_block -> do eol kv_list 'end'               : build_kw_block('$1', [], '$3').
-do_block -> do_eol expr_list end_eol           : build_kw_block('$1', '$2', []).
-do_block -> do_eol expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
+kv_block -> kv_eol 'end'                       : build_kw_block('$1', [], []).
+kv_block -> kv_eol kv_list 'end'               : build_kw_block('$1', [], '$2').
+kv_block -> kv_eol expr_list end_eol           : build_kw_block('$1', '$2', []).
+kv_block -> kv_eol expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
 
-stab_block -> stab_eol 'end'                       : build_kw_block('$1', [], []).
-stab_block -> '->' eol kv_list 'end'               : build_kw_block('$1', [], '$3').
-stab_block -> stab_eol expr_list end_eol           : build_kw_block('$1', '$2', []).
-stab_block -> stab_eol expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
+stab_block -> stab_eol 'end'             : build_kw_block('$1', [], []).
+stab_block -> stab_eol expr_list end_eol : build_kw_block('$1', '$2', []).
 
 % Lists
 
