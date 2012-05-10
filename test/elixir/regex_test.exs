@@ -1,22 +1,22 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule Regex.BinaryTest do
+defmodule Regex.BinaryTest, do:
   use ExUnit.Case
 
-  test :compile do
+  test :compile, do:
     assert is_record(Regex.compile("foo"), Regex)
     assert is_regex(Regex.compile("foo"))
   end
 
-  test :source do
+  test :source, do:
     assert Regex.source(Regex.compile("foo")) == "foo"
   end
 
-  test :opts do
+  test :opts, do:
     assert Regex.opts(Regex.compile("foo", "u")) == "u"
   end
 
-  test :match? do
+  test :match?, do:
     assert Regex.match?(%r/foo/, "foo")
     assert !Regex.match?(%r/foo/, "FOO")
     assert Regex.match?(%r/foo/i, "FOO")
@@ -29,23 +29,23 @@ defmodule Regex.BinaryTest do
     assert Regex.match?(%r/foo$/,  "afoo")
   end
 
-  test :run do
+  test :run, do:
     assert Regex.run(%r"c(d)", "abcd") == ["cd", "d"]
     assert Regex.run(%r"e", "abcd") == nil
   end
 
-  test :indexes do
+  test :indexes, do:
     assert Regex.indexes(%r"c(d)", "abcd") == [{2,2},{3,1}]
     assert Regex.indexes(%r"e", "abcd") == nil
   end
 
-  test :scan do
+  test :scan, do:
     assert Regex.scan(%r"c(d|e)", "abcd abce") == [["d"], ["e"]]
     assert Regex.scan(%r"c(?:d|e)", "abcd abce") == ["cd", "ce"]
     assert Regex.scan(%r"e", "abcd") == []
   end
 
-  test :split do
+  test :split, do:
     assert Regex.split(%r" ", "foo bar baz") == ["foo", "bar", "baz"]
     assert Regex.split(%r" ", "foo bar baz", 2) == ["foo", "bar baz"]
     assert Regex.split(%r"\s", "foobar") == ["foobar"]
@@ -54,7 +54,7 @@ defmodule Regex.BinaryTest do
     assert Regex.split(%r"=", "=value") == ["", "value"]
   end
 
-  test :replace do
+  test :replace, do:
     assert Regex.replace(%r(d), "abc", "d") == "abc"
     assert Regex.replace(%r(b), "abc", "d") == "adc"
     assert Regex.replace(%r(b), "abc", "[&]") == "a[b]c"
@@ -62,7 +62,7 @@ defmodule Regex.BinaryTest do
     assert Regex.replace(%r[(b)], "abc", "[\\1]") == "a[b]c"
   end
 
-  test :replace_all do
+  test :replace_all, do:
     assert Regex.replace_all(%r(d), "abcbe", "d") == "abcbe"
     assert Regex.replace_all(%r(b), "abcbe", "d") == "adcde"
     assert Regex.replace_all(%r(b), "abcbe", "[&]") == "a[b]c[b]e"
@@ -71,23 +71,23 @@ defmodule Regex.BinaryTest do
   end
 end
 
-defmodule Regex.ListTest do
+defmodule Regex.ListTest, do:
   use ExUnit.Case
 
-  test :compile do
+  test :compile, do:
     assert is_record(Regex.compile('foo'), Regex)
     assert is_regex(Regex.compile('foo'))
   end
 
-  test :source do
+  test :source, do:
     assert Regex.source(Regex.compile('foo')) == "foo"
   end
 
-  test :opts do
+  test :opts, do:
     assert Regex.opts(Regex.compile('foo', 'u')) == "u"
   end
 
-  test :match? do
+  test :match?, do:
     assert Regex.match?(%r(foo), 'foo')
     assert !Regex.match?(%r(foo), 'FOO')
     assert Regex.match?(%r(foo)i, 'FOO')
@@ -100,29 +100,29 @@ defmodule Regex.ListTest do
     assert Regex.match?(%r(foo$),  'afoo')
   end
 
-  test :run do
+  test :run, do:
     assert Regex.run(%r'c(d)', 'abcd') == ['cd', 'd']
     assert Regex.run(%r'e', 'abcd') == nil
   end
 
-  test :indexes do
+  test :indexes, do:
     assert Regex.indexes(%r'c(d)', 'abcd') == [{2,2},{3,1}]
     assert Regex.indexes(%r'e', 'abcd') == nil
   end
 
-  test :scan do
+  test :scan, do:
     assert Regex.scan(%r'c(d|e)', 'abcd abce') == [['d'], ['e']]
     assert Regex.scan(%r'c(?:d|e)', 'abcd abce') == ['cd', 'ce']
     assert Regex.scan(%r'e', 'abcd') == []
   end
 
-  test :split do
+  test :split, do:
     assert Regex.split(%r' ', 'foo bar baz') == ['foo', 'bar', 'baz']
     assert Regex.split(%r' ', 'foo bar baz', 2) == ['foo', 'bar baz']
     assert Regex.split(%r'\s', 'foobar') == ['foobar']
   end
 
-  test :replace do
+  test :replace, do:
     assert Regex.replace(%r(d), 'abc', 'd') == 'abc'
     assert Regex.replace(%r(b), 'abc', 'd') == 'adc'
     assert Regex.replace(%r(b), 'abc', '[&]') == 'a[b]c'
@@ -130,7 +130,7 @@ defmodule Regex.ListTest do
     assert Regex.replace(%r[(b)], 'abc', '[\\1]') == 'a[b]c'
   end
 
-  test :replace_all do
+  test :replace_all, do:
     assert Regex.replace_all(%r(d), 'abcbe', 'd') == 'abcbe'
     assert Regex.replace_all(%r(b), 'abcbe', 'd') == 'adcde'
     assert Regex.replace_all(%r(b), 'abcbe', '[&]') == 'a[b]c[b]e'

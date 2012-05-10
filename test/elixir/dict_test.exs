@@ -1,11 +1,11 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule DictTest.Common do
-  defmacro __using__(module, _opts // []) do
-    quote do
+defmodule DictTest.Common, do:
+  defmacro __using__(module, _opts // []), do:
+    quote do:
       use ExUnit.Case
 
-      test :new_pairs do
+      test :new_pairs, do:
         dict = new_dict [{"first key", 1}, {"second key", 2}]
         assert 2 == Dict.size dict
 
@@ -13,7 +13,7 @@ defmodule DictTest.Common do
         assert [1, 2] == List.sort Dict.values dict
       end
 
-      test :new_pairs_with_transform do
+      test :new_pairs_with_transform, do:
         dict = new_dict [{1}, {2}, {3}], fn({x}) -> { {x}, x } end
         assert 3 == Dict.size dict
 
@@ -21,30 +21,30 @@ defmodule DictTest.Common do
         assert [1, 2, 3] == List.sort Dict.values dict
       end
 
-      test :get do
+      test :get, do:
         assert 1 == Dict.get(new_dict, "first_key")
         assert 2 == Dict.get(new_dict, "second_key")
         assert nil == Dict.get(new_dict, "other_key")
         assert "default" == Dict.get(empty_dict, "first_key", "default")
       end
 
-      test :put do
+      test :put, do:
         dict = Dict.put(new_dict, "first_key", {1})
         assert {1} == Dict.get dict, "first_key"
         assert 2 == Dict.get dict, "second_key"
       end
 
-      test :keys do
+      test :keys, do:
         assert ["first_key", "second_key"] == List.sort Dict.keys new_dict
         assert [] == Dict.keys empty_dict
       end
 
-      test :values do
+      test :values, do:
         assert [1, 2] ==List.sort Dict.values(new_dict)
         assert [] == Dict.values empty_dict
       end
 
-      test :delete do
+      test :delete, do:
         mdict = Dict.delete new_dict, "second_key"
         assert 1 == Dict.size mdict
         assert Dict.has_key? mdict, "first_key"
@@ -55,7 +55,7 @@ defmodule DictTest.Common do
         assert 0 == Dict.size Dict.delete(empty_dict, "other_key")
       end
 
-      test :merge do
+      test :merge, do:
         dict = new_dict
         assert dict == Dict.merge empty_dict, dict
         assert dict == Dict.merge dict, empty_dict
@@ -67,7 +67,7 @@ defmodule DictTest.Common do
         assert new_dict(List.zip ["a", "b", "c", "d"], [3, 2, :a, 0]) == Dict.merge(dict1, dict2)
       end
 
-      test :merge_with_function do
+      test :merge_with_function, do:
         dict1 = new_dict List.zip ["a", "b"], [1, 2]
         dict2 = new_dict List.zip ["a", "d"], [3, 4]
         result = Dict.merge dict1, dict2, fn(_k, v1, v2) ->
@@ -76,18 +76,18 @@ defmodule DictTest.Common do
         assert new_dict(List.zip ["a", "b", "d"], [4, 2, 4]) == result
       end
 
-      test :has_key do
+      test :has_key, do:
         dict = new_dict [{"a", 1}]
         assert Dict.has_key?(dict, "a")
         refute Dict.has_key?(dict, "b")
       end
 
-      test :size do
+      test :size, do:
         assert 2 == Dict.size new_dict
         assert 0 == Dict.size empty_dict
       end
 
-      test :update do
+      test :update, do:
         dict = Dict.update new_dict, "first_key", fn(val) -> -val end
         assert -1 == Dict.get dict, "first_key"
 
@@ -95,7 +95,7 @@ defmodule DictTest.Common do
         assert "..." == Dict.get dict, "non-existent"
       end
 
-      test :empty do
+      test :empty, do:
         assert empty_dict == Dict.empty new_dict
       end
 
@@ -109,20 +109,20 @@ defmodule DictTest.Common do
   end
 end
 
-defmodule DictTest do
+defmodule DictTest, do:
   require DictTest.Common
   DictTest.Common.__using__(HashDict)
 
-  test :new do
+  test :new, do:
     assert :dict.new == HashDict.new.data
   end
 end
 
-defmodule OrddictTest do
+defmodule OrddictTest, do:
   require DictTest.Common
   DictTest.Common.__using__(Orddict)
 
-  test :new do
+  test :new, do:
     assert [] == Orddict.new.data
   end
 end

@@ -258,19 +258,20 @@ parens_call -> expr dot_call_op : { '.', ?line('$2'), ['$1'] }. % Fun/local call
 
 % Function calls
 
-last_args -> base_orddict : '$1'.
-last_args -> kv_block : '$1'.
+last_args -> base_orddict : ['$1'].
+last_args -> kv_block : ['$1'].
+last_args -> base_orddict comma_separator kv_block : ['$1', '$2'].
 
 call_args_no_parens -> comma_expr : lists:reverse('$1').
-call_args_no_parens -> last_args : ['$1'].
-call_args_no_parens -> comma_expr comma_separator last_args : lists:reverse(['$3'|'$1']).
+call_args_no_parens -> last_args : '$1'.
+call_args_no_parens -> comma_expr comma_separator last_args : lists:reverse('$1') ++ '$3'.
 
 comma_expr -> expr : ['$1'].
 comma_expr -> comma_expr comma_separator expr : ['$3'|'$1'].
 
 call_args_comma_expr -> comma_expr : lists:reverse('$1').
-call_args_comma_expr -> last_args : ['$1'].
-call_args_comma_expr -> comma_expr comma_separator last_args : lists:reverse(['$3'|'$1']).
+call_args_comma_expr -> last_args : '$1'.
+call_args_comma_expr -> comma_expr comma_separator last_args : lists:reverse('$1') ++ '$3'.
 
 call_args_parens -> open_paren ')' : [].
 call_args_parens -> open_paren call_args_comma_expr close_paren : '$2'.

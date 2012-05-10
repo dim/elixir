@@ -1,4 +1,4 @@
-defmodule Protocol do
+defmodule Protocol, do:
   @moduledoc false
 
   # We need to use Erlang.lists because Enum is not available yet
@@ -18,9 +18,9 @@ defmodule Protocol do
 
   * `__impl_for__!/1` - same as above but raises an error if an implementation is not found
   """
-  def defprotocol(name, [do: block]) do
-    quote do
-      defmodule unquote(name) do
+  def defprotocol(name, [do: block]), do:
+    quote do:
+      defmodule unquote(name), do:
         # Remove "harmful" macros
         # We don't want to allow function definition inside protocols
         import Elixir.Builtin, except: [
@@ -51,15 +51,15 @@ defmodule Protocol do
   It also defines a `__impl__` function which
   returns the protocol being implemented.
   """
-  def defimpl(protocol, [for: for], [do: block]) do
-    quote do
+  def defimpl(protocol, [for: for], [do: block]), do:
+    quote do:
       protocol = unquote(protocol)
       for      = unquote(for)
       name     = Module.concat(protocol, for)
 
       Protocol.assert_protocol(protocol)
 
-      defmodule name do
+      defmodule name, do:
         def __impl__, do: unquote(protocol)
         unquote(block)
       end
@@ -72,14 +72,14 @@ defmodule Protocol do
   Check if the given module is a protocol. Raises an error
   if not loaded or not a protocol.
   """
-  def assert_protocol(module) do
-    try do
+  def assert_protocol(module), do:
+    try do:
       module.__info__(:data)
     rescue: UndefinedFunctionError
       raise ArgumentError, message: "#{module} is not loaded"
     end
 
-    try do
+    try do:
       module.__protocol__(:name)
     rescue: UndefinedFunctionError
       raise ArgumentError, message: "#{module} is not a protocol"
@@ -91,10 +91,10 @@ defmodule Protocol do
   Raises an error if not.
 
   """
-  def assert_impl(impl, protocol) do
+  def assert_impl(impl, protocol), do:
     remaining = protocol.__protocol__(:functions) -- impl.__info__(:functions)
 
-    if remaining != [] do
+    if remaining != [], do:
       raise ArgumentError,
         message: "#{impl} did not implement #{protocol}, missing: #{remaining}"
     end
@@ -103,16 +103,16 @@ defmodule Protocol do
   @doc """
   Defines meta information about the protocol and internal callbacks.
   """
-  def meta(module, functions, fallback) do
-    contents = quote do
+  def meta(module, functions, fallback), do:
+    contents = quote do:
       def __protocol__(:name),      do: __MODULE__
       def __protocol__(:functions), do: unquote(:lists.sort(functions))
 
-      def __impl_for__(arg) do
-        case __raw_impl__(arg) do
+      def __impl_for__(arg), do:
+        case __raw_impl__(arg), do:
         match: __MODULE__.Record
           target = Module.concat(__MODULE__, :erlang.element(1, arg))
-          try do
+          try do:
             target.__impl__
             target
           rescue: UndefinedFunctionError
@@ -123,8 +123,8 @@ defmodule Protocol do
         end
       end
 
-      def __impl_for__!(arg) do
-        if module = __impl_for__(arg) do
+      def __impl_for__!(arg), do:
+        if module = __impl_for__(arg), do:
           module
         else:
           raise Protocol.UndefinedError, protocol: __MODULE__, structure: arg
@@ -142,14 +142,14 @@ defmodule Protocol do
   the module to dispatch to. Returns module.Record for records
   which should be properly handled by the dispatching function.
   """
-  def impl_for(module, conversions) do
+  def impl_for(module, conversions), do:
     contents = lc kind in conversions, do: each_impl_for(kind, conversions)
 
     # If we don't implement all protocols and any is not in the
     # list, we need to add a final clause that returns nil.
-    if !L.member({ Any, :is_any }, conversions) && length(conversions) < 10 do
-      contents = contents ++ [quote do
-        defp __raw_impl__(_) do
+    if !L.member({ Any, :is_any }, conversions) && length(conversions) < 10, do:
+      contents = contents ++ [quote do:
+        defp __raw_impl__(_), do:
           nil
         end
       end]
@@ -162,18 +162,18 @@ defmodule Protocol do
   Returns the default conversions according to the given
   only/except options.
   """
-  def conversions_for(module, only, except) do
+  def conversions_for(module, only, except), do:
     kinds = all_types
 
     conversions =
-      if only do
+      if only, do:
         L.map(fn(i) -> L.keyfind(i, 1, kinds) end, only)
       else:
         except = except || [Any]
         L.foldl(fn(i, list) -> L.keydelete(i, 1, list) end, kinds, except)
       end
 
-    fallback = if L.keyfind(Tuple, 1, conversions) do
+    fallback = if L.keyfind(Tuple, 1, conversions), do:
       Module.concat module, Tuple
     elsif: L.keyfind(Any, 1, conversions)
       Module.concat module, Any
@@ -186,7 +186,7 @@ defmodule Protocol do
 
   ## Helpers
 
-  defp all_types do
+  defp all_types, do:
     [
       { Record,    :is_record },
       { Tuple,     :is_tuple },
@@ -204,29 +204,29 @@ defmodule Protocol do
 
   # Returns a quoted expression that allow to checks
   # if a variable named first is built in or not.
-  defp is_builtin?([{h,_}]) do
-    quote do
+  defp is_builtin?([{h,_}]), do:
+    quote do:
       first == unquote(h)
     end
   end
 
-  defp is_builtin?([{h,_}|t]) do
-    quote do
+  defp is_builtin?([{h,_}|t]), do:
+    quote do:
       first == unquote(h) or unquote(is_builtin?(t))
     end
   end
 
   # Specially handle tuples as they can also be record.
   # If this is the case, module.Record will be returned.
-  defp each_impl_for({ _, :is_record }, conversions) do
-    quote do
-      defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)) do
+  defp each_impl_for({ _, :is_record }, conversions), do:
+    quote do:
+      defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)), do:
         first = :erlang.element(1, arg)
-        case unquote(is_builtin?(conversions)) do
+        case unquote(is_builtin?(conversions)), do:
         match: true
           __MODULE__.Tuple
         match: false
-          case atom_to_list(first) do
+          case atom_to_list(first), do:
           match: '__MAIN__' ++ _
             __MODULE__.Record
           else:
@@ -238,30 +238,30 @@ defmodule Protocol do
   end
 
   # Special case any as we don't need to generate a guard.
-  defp each_impl_for({ _, :is_any }, _) do
-    quote do
-      defp __raw_impl__(_) do
+  defp each_impl_for({ _, :is_any }, _), do:
+    quote do:
+      defp __raw_impl__(_), do:
         __MODULE__.Any
       end
     end
   end
 
   # Generate all others protocols.
-  defp each_impl_for({ kind, fun }, _) do
-    quote do
-      defp __raw_impl__(arg) when unquote(fun).(arg) do
+  defp each_impl_for({ kind, fun }, _), do:
+    quote do:
+      defp __raw_impl__(arg) when unquote(fun).(arg), do:
         Module.concat __MODULE__, unquote(kind)
       end
     end
   end
 end
 
-defmodule Protocol.DSL do
+defmodule Protocol.DSL, do:
   @moduledoc false
 
-  defmacro def(expression) do
+  defmacro def(expression), do:
     { name, arity } =
-      case expression do
+      case expression, do:
       match: { _, _, args } when args == [] or is_atom(args)
         raise ArgumentError, message: "protocol functions expect at least one argument"
       match: { name, _, args } when is_atom(name) and is_list(args)
@@ -274,23 +274,23 @@ defmodule Protocol.DSL do
     # are named xa, xb and so forth. We cannot use string
     # interpolation to generate the arguments because of compile
     # dependencies, so we use the <<>> instead.
-    args = lc i in :lists.seq(1, arity) do
+    args = lc i in :lists.seq(1, arity), do:
       { binary_to_atom(<<?x, i + 64>>), 0, :quoted }
     end
 
-    quote do
+    quote do:
       # Append new function to the list
       @functions [unquote({name, arity})|@functions]
 
-      Elixir.Builtin.def unquote(name).(unquote_splicing(args)) do
+      Elixir.Builtin.def unquote(name).(unquote_splicing(args)), do:
         args = [unquote_splicing(args)]
-        case __raw_impl__(xA) do
+        case __raw_impl__(xA), do:
         match: __MODULE__.Record
-          try do
+          try do:
             target = Module.concat(__MODULE__, :erlang.element(1, xA))
             apply target, unquote(name), args
           rescue: UndefinedFunctionError
-            case __fallback__ do
+            case __fallback__, do:
             match: nil
               raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
             match: other

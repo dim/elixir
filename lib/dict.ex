@@ -1,4 +1,4 @@
-defprotocol Dict do
+defprotocol Dict, do:
   @only [Record]
 
   @moduledoc """

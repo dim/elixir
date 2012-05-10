@@ -1,4 +1,4 @@
-defmodule Keyword do
+defmodule Keyword, do:
   @moduledoc """
   A keyword is a list of tuples where the first element
   of the tuple is an atom and the second element can be
@@ -22,14 +22,14 @@ defmodule Keyword do
   that behaves as a dict, `Keyword.from_enum` do not remove
   duplicated entries.
   """
-  def from_enum(enum) do
+  def from_enum(enum), do:
     Enum.qsort(enum)
   end
 
   @doc """
   Returns an empty keywords list, i.e. an empty list.
   """
-  def new do
+  def new, do:
     []
   end
 
@@ -43,7 +43,7 @@ defmodule Keyword do
       #=> [a: 2, b: 1]
 
   """
-  def new(pairs) do
+  def new(pairs), do:
     Enum.reduce pairs, [], fn({k, v}, keywords) ->
       put(keywords, k, v)
     end
@@ -59,7 +59,7 @@ defmodule Keyword do
       Keyword.new [:a, :b], fn(x) -> {x,x} end
       #=> [a: :a, b: :b]
   """
-  def new(pairs, transform) do
+  def new(pairs, transform), do:
     Enum.reduce pairs, [], fn(i, keywords) ->
       { k, v } = transform.(i)
       put(keywords, k, v)
@@ -110,7 +110,7 @@ defmodule Keyword do
       Keyword.keys [a: 1, b: 2] #=> [:a,:b]
 
   """
-  def keys(keywords) do
+  def keys(keywords), do:
     lc { key, _ } in keywords, do: key
   end
 
@@ -121,7 +121,7 @@ defmodule Keyword do
 
       Keyword.values [a: 1, b: 2] #=> [1,2]
   """
-  def values(keywords) do
+  def values(keywords), do:
     lc { _, value } in keywords, do: value
   end
 
@@ -155,19 +155,19 @@ defmodule Keyword do
       Keyword.put [a: 1, b: 2], :a, 3
       #=> [a: 3, b: 2]
   """
-  def put([{k, _} = e|keywords], key, value) when key < k and is_atom(key) do
+  def put([{k, _} = e|keywords], key, value) when key < k and is_atom(key), do:
     [{key, value},e|keywords]
   end
 
-  def put([{k, _} = e|keywords], key, value) when key > k do
+  def put([{k, _} = e|keywords], key, value) when key > k, do:
     [e|put(keywords, key, value)]
   end
 
-  def put([{key, _}|keywords], key, value) when is_atom(key) do
+  def put([{key, _}|keywords], key, value) when is_atom(key), do:
     [{key, value}|delete(keywords, key)]
   end
 
-  def put([], key, value) when is_atom(key) do
+  def put([], key, value) when is_atom(key), do:
     [{key, value}]
   end
 
@@ -180,7 +180,7 @@ defmodule Keyword do
       Keyword.merge [a: 1, b: 2], [a: 3, d: 4]
       #=> [a:3, b:2, d: 4]
   """
-  def merge(d1, d2) do
+  def merge(d1, d2), do:
     merge(d1, d2, fn(_k, _v1, v2) -> v2 end)
   end
 
@@ -195,15 +195,15 @@ defmodule Keyword do
       end
       #=> [a:4, b:2, d: 4]
   """
-  def merge([{k1, _} = e1|d1], [{k2, _} = e2|d2], fun) when k1 < k2 and is_atom(k1) do
+  def merge([{k1, _} = e1|d1], [{k2, _} = e2|d2], fun) when k1 < k2 and is_atom(k1), do:
     [e1|merge(d1, [e2|d2], fun)]
   end
 
-  def merge([{k1, _} = e1|d1], [{k2, _} = e2|d2], fun) when k1 > k2 and is_atom(k2) do
+  def merge([{k1, _} = e1|d1], [{k2, _} = e2|d2], fun) when k1 > k2 and is_atom(k2), do:
     [e2|merge([e1|d1], d2, fun)]
   end
 
-  def merge([{k1, v1}|d1], [{k1, v2}|d2], fun) do
+  def merge([{k1, v1}|d1], [{k1, v2}|d2], fun), do:
     [{k1, fun.(k1, v1, v2)}|merge(d1, d2, fun)]
   end
 

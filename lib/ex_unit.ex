@@ -1,4 +1,4 @@
-defmodule ExUnit do
+defmodule ExUnit, do:
   @moduledoc """
   Basic unit test structure for Elixir.
 
@@ -12,7 +12,7 @@ defmodule ExUnit do
       ExUnit.start
 
       # 2) Next we create a new TestCase and use ExUnit.Case
-      defmodule AssertionTest do
+      defmodule AssertionTest, do:
         use ExUnit.Case
 
         # 3) A test is a method which name finishes with _test
@@ -38,7 +38,7 @@ defmodule ExUnit do
   any file that uses ExUnit.Case. Check `configure/1`
   to see the supported options.
   """
-  def start(options // []) do
+  def start(options // []), do:
     ExUnit.Server.start_link
     configure(options)
     System.at_exit fn(status) ->
@@ -57,7 +57,7 @@ defmodule ExUnit do
   * `:max_cases` - Maximum number of cases to run in parallel
 
   """
-  def configure(options) do
+  def configure(options), do:
     ExUnit.Server.merge_options(options)
   end
 
@@ -65,7 +65,7 @@ defmodule ExUnit do
   API used to run the tests. A developer does not
   need to call it directly.
   """
-  def run do
+  def run, do:
     config = ExUnit.Runner.Config.new ExUnit.Server.options
     config = config.formatter(config.formatter.start)
     failures = ExUnit.Runner.start config

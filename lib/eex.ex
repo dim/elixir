@@ -1,6 +1,6 @@
 defexception EEx.SyntaxError, message: nil
 
-defmodule EEx do
+defmodule EEx, do:
   @moduledoc %B"""
   EEx stands for Embedded Elixir. It allows you to embed
   Elixir code inside a string in a robust way:
@@ -86,7 +86,7 @@ defmodule EEx do
 
   ## Examples
 
-      defmodule Sample do
+      defmodule Sample, do:
         require EEx
         EEx.function_from_string :def, :sample, "<%= a + b %>", [:a, :b]
       end
@@ -94,8 +94,8 @@ defmodule EEx do
       Sample.sample(1, 2) #=> "3"
 
   """
-  defmacro function_from_string(kind, name, source, args // [], options // []) do
-    quote do
+  defmacro function_from_string(kind, name, source, args // [], options // []), do:
+    quote do:
       EEx.function_from_quoted(__MODULE__, unquote(kind), unquote(name),
         unquote(args), EEx.compile_string(unquote(source), unquote(options)),
         line: __LINE__, file: __FILE__)
@@ -116,7 +116,7 @@ defmodule EEx do
       <%= a + b %>
 
       # sample.ex
-      defmodule Sample do
+      defmodule Sample, do:
         require EEx
         EEx.function_from_file :def, :sample, "sample.eex", [:a, :b]
       end
@@ -125,8 +125,8 @@ defmodule EEx do
       Sample.sample(1, 2) #=> "3"
 
   """
-  defmacro function_from_file(kind, name, filename, args // [], options // []) do
-    quote do
+  defmacro function_from_file(kind, name, filename, args // [], options // []), do:
+    quote do:
       EEx.function_from_quoted(__MODULE__, unquote(kind), unquote(name),
         unquote(args), EEx.compile_file(unquote(filename), unquote(options)),
         line: __LINE__, file: __FILE__)
@@ -137,7 +137,7 @@ defmodule EEx do
   Get a string `source` and generate a quoted expression
   that can be evaluated by Elixir or compiled to a function.
   """
-  def compile_string(source, options // []) do
+  def compile_string(source, options // []), do:
     EEx.Compiler.compile(source, options)
   end
 
@@ -145,7 +145,7 @@ defmodule EEx do
   Get a `filename` and generate a quoted expression
   that can be evaluated by Elixir or compiled to a function.
   """
-  def compile_file(filename, options // []) do
+  def compile_file(filename, options // []), do:
     options = Keyword.put options, :file, filename
     compile_string(File.read!(filename), options)
   end
@@ -159,7 +159,7 @@ defmodule EEx do
       #=> "foo baz"
 
   """
-  def eval_string(source, bindings // [], options // []) do
+  def eval_string(source, bindings // [], options // []), do:
     compiled = compile_string(source, options)
     do_eval(compiled, bindings, options)
   end
@@ -177,7 +177,7 @@ defmodule EEx do
       #=> "foo baz"
 
   """
-  def eval_file(filename, bindings // [], options // []) do
+  def eval_file(filename, bindings // [], options // []), do:
     options  = Keyword.put options, :file, filename
     compiled = compile_file(filename, options)
     do_eval(compiled, bindings, options)
@@ -186,15 +186,15 @@ defmodule EEx do
   ### Helpers
 
   @doc false
-  def function_from_quoted(module, kind, name, args, source, info) do
+  def function_from_quoted(module, kind, name, args, source, info), do:
     args  = Enum.map args, fn(arg) -> { arg, 0, nil } end
-    quote = quote do
+    quote = quote do:
       unquote(kind).(unquote(name).(unquote_splicing(args)), do: unquote(source))
     end
     Module.eval_quoted module, quote, [], info
   end
 
-  defp do_eval(compiled, bindings, options) do
+  defp do_eval(compiled, bindings, options), do:
     { result, _ } = Code.eval_quoted(compiled, bindings, options)
     result
   end

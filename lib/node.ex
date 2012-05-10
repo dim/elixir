@@ -1,4 +1,4 @@
-defmodule Node do
+defmodule Node, do:
   @moduledoc """
   Functions related to Erlang nodes.
   """
@@ -7,7 +7,7 @@ defmodule Node do
   Returns true if the local node is alive; that is, if the node can be
   part of a distributed system. Otherwise, it returns false.
   """
-  def alive? do
+  def alive?, do:
     :erlang.is_alive()
   end
 
@@ -15,7 +15,7 @@ defmodule Node do
   Returns a list of all visible nodes in the system, excluding
   the local node. Same as list(visible).
   """
-  def list do
+  def list, do:
     :erlang.nodes()
   end
 
@@ -26,7 +26,7 @@ defmodule Node do
   
   See http://www.erlang.org/doc/man/erlang.html#nodes-1 for more info.
   """
-  def list(args) do
+  def list(args), do:
     :erlang.nodes(args)
   end
 
@@ -36,7 +36,7 @@ defmodule Node do
 
   See http://www.erlang.org/doc/man/erlang.html#monitor_node-2 for more info.
   """
-  def monitor(node, flag) do
+  def monitor(node, flag), do:
     :erlang.monitor_node(node, flag)
   end
 
@@ -46,7 +46,7 @@ defmodule Node do
 
   See http://www.erlang.org/doc/man/erlang.html#monitor_node-3 for more info.
   """
-  def monitor(node, flag, options) do
+  def monitor(node, flag, options), do:
     :erlang.monitor_node(node, flag, options)
   end
 
@@ -58,7 +58,7 @@ defmodule Node do
   
   See http://www.erlang.org/doc/man/erlang.html#disconnect_node-1 for more info.
   """
-  def disconnect(node) do
+  def disconnect(node), do:
     :erlang.disconnect_node(node)
   end
 end

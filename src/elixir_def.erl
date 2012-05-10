@@ -35,7 +35,7 @@ reset_last(Module) ->
 %% We need to wrap functions instead of eagerly defining them to ensure
 %% functions inside branches won't propagate, for example:
 %%
-%%   if false do
+%%   if false, do:
 %%     def bar, do: 1
 %%   else:
 %%     def bar, do: 2

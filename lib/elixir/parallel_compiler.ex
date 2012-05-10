@@ -1,4 +1,4 @@
-defmodule Elixir.ParallelCompiler do
+defmodule Elixir.ParallelCompiler, do:
   refer Erlang.orddict, as: Orddict
 
   @moduledoc """
@@ -19,7 +19,7 @@ defmodule Elixir.ParallelCompiler do
   with the module names and binaries defined inside it can
   be optionally given as argument.
   """
-  def files(files, callback // default_callback) do
+  def files(files, callback // default_callback), do:
     files_to_path(files, nil, callback)
   end
 
@@ -27,7 +27,7 @@ defmodule Elixir.ParallelCompiler do
   Compiles the given files to the given path.
   Read files/2 for more information.
   """
-  def files_to_path(files, path, callback // default_callback) do
+  def files_to_path(files, path, callback // default_callback), do:
     Code.ensure_loaded(Elixir.ErrorHandler)
     files = Enum.map(files, to_char_list(&1))
     path  = if path, do: to_char_list(path)
@@ -36,20 +36,20 @@ defmodule Elixir.ParallelCompiler do
 
   # We already have 4 currently running, don't spawn new ones
   defp spawn_compilers(files, output, callback, waiting, queued, result) when
-      length(queued) - length(waiting) >= 4 do
+      length(queued) - length(waiting) >= 4, do:
     wait_for_messages(files, output, callback, waiting, queued, result)
   end
 
   # Spawn a compiler for each file in the list until we reach the limit
-  defp spawn_compilers([h|t], output, callback, waiting, queued, result) do
+  defp spawn_compilers([h|t], output, callback, waiting, queued, result), do:
     parent = Process.self()
 
     child  = spawn_link fn ->
       Process.put(:elixir_parent_compiler, parent)
       Process.flag(:error_handler, Elixir.ErrorHandler)
 
-      try do
-        if output do
+      try do:
+        if output, do:
           Erlang.elixir_compiler.file_to_path(h, output)
         else:
           Erlang.elixir_compiler.file(h)
@@ -67,19 +67,19 @@ defmodule Elixir.ParallelCompiler do
   defp spawn_compilers([], _output, _callback, [], [], result), do: result
 
   # Queued x, waiting for x: POSSIBLE ERROR! Release processes so we get the failures
-  defp spawn_compilers([], output, callback, waiting, queued, result) when length(waiting) == length(queued) do
+  defp spawn_compilers([], output, callback, waiting, queued, result) when length(waiting) == length(queued), do:
     Enum.each queued, fn({ child, _ }) -> child <- { :release, Process.self() } end
     wait_for_messages([], output, callback, waiting, queued, result)
   end
 
   # No more files, but queue and waiting are not full or do not match
-  defp spawn_compilers([], output, callback, waiting, queued, result) do
+  defp spawn_compilers([], output, callback, waiting, queued, result), do:
     wait_for_messages([], output, callback, waiting, queued, result)
   end
 
   # Wait for messages from child processes
-  defp wait_for_messages(files, output, callback, waiting, queued, result) do
-    receive do
+  defp wait_for_messages(files, output, callback, waiting, queued, result), do:
+    receive do:
     match: { :compiled, child, file }
       callback.(list_to_binary(file))
       new_queued  = List.keydelete(queued, child, 1)
@@ -95,7 +95,7 @@ defmodule Elixir.ParallelCompiler do
       new_waiting = Orddict.store(child, on, waiting)
       spawn_compilers(files, output, callback, new_waiting, queued, result)
     match: { :failure, child, kind, reason, stacktrace }
-      extra = if match?({^child, module}, List.keyfind(waiting, child, 1)) do
+      extra = if match?({^child, module}, List.keyfind(waiting, child, 1)), do:
         " (undefined module #{inspect module})"
       end
 
@@ -106,9 +106,9 @@ defmodule Elixir.ParallelCompiler do
   end
 
   # Release waiting processes that are waiting for the given module
-  defp release_waiting_processes(module, waiting) do
+  defp release_waiting_processes(module, waiting), do:
     Enum.filter waiting, fn({ child, waiting_module }) ->
-      if waiting_module == module do
+      if waiting_module == module, do:
         child <- { :release, Process.self() }
         false
       else:

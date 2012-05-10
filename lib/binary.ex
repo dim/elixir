@@ -1,4 +1,4 @@
-defmodule Binary do
+defmodule Binary, do:
   @moduledoc """
   Functions for working with binaries.
   """
@@ -7,7 +7,7 @@ defmodule Binary do
   Simply invokes the Access protocol for the given binary.
   Check `Access.BitString` for more information.
   """
-  def access(binary, access) when is_binary(binary) do
+  def access(binary, access) when is_binary(binary), do:
     Access.BitString.access(binary, access)
   end
 
@@ -22,7 +22,7 @@ defmodule Binary do
       #=> "'foo'"
 
   """
-  def escape(other, char) do
+  def escape(other, char), do:
     <<char>> <> do_escape(other, char)
   end
 
@@ -37,63 +37,63 @@ defmodule Binary do
   """
 
   # Allow basic ascii chars
-  def printable?(<<c, t|:binary>>) when c >= ?\s and c <= ?~ do
+  def printable?(<<c, t|:binary>>) when c >= ?\s and c <= ?~, do:
     printable?(t)
   end
 
   # From 16#A0 to 16#BF
-  def printable?(<<194, c, t|:binary>>) when c >= 160 and c <= 191 do
+  def printable?(<<194, c, t|:binary>>) when c >= 160 and c <= 191, do:
     printable?(t)
   end
 
   # From 16#C0 to 16#7FF
-  def printable?(<<m, o1, t|:binary>>) when m >= 195 and m <= 223 and o1 >= 128 and o1 < 192  do
+  def printable?(<<m, o1, t|:binary>>) when m >= 195 and m <= 223 and o1 >= 128 and o1 < 192 , do:
     printable?(t)
   end
 
   # From 16#800 to 16#CFFF
   def printable?(<<m, o1, o2, t|:binary>>) when m >= 224 and m <= 236 and
-      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192 do
+      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192, do:
     printable?(t)
   end
 
   # From 16#D000 to 16#D7FF
   def printable?(<<237, o1, o2, t|:binary>>) when
-      o1 >= 128 and o1 < 160 and o2 >= 128 and o2 < 192 do
+      o1 >= 128 and o1 < 160 and o2 >= 128 and o2 < 192, do:
     printable?(t)
   end
 
   # Reject 16#FFFF and 16#FFFE
-  def printable?(<<239, 191, o>>) when o == 190 or o == 191 do
+  def printable?(<<239, 191, o>>) when o == 190 or o == 191, do:
     false
   end
 
   # From 16#E000 to 16#EFFF
   def printable?(<<m, o1, o2, t|:binary>>) when (m == 238 or m == 239) and
-      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192 do
+      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192, do:
     printable?(t)
   end
 
   # From 16#F000 to 16#FFFD
   def printable?(<<239, o1, o2, t|:binary>>) when
-      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192 do
+      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192, do:
     printable?(t)
   end
 
   # From 16#10000 to 16#3FFFF
   def printable?(<<240, o1, o2, o3, t|:binary>>) when
-      o1 >= 144 and o1 < 192 and o2 >= 128 and o2 < 192 and o3 >= 128 and o3 < 192 do
+      o1 >= 144 and o1 < 192 and o2 >= 128 and o2 < 192 and o3 >= 128 and o3 < 192, do:
     printable?(t)
   end
 
   # Reject 16#110000 onwards
-  def printable?(<<244, o1, _, _, _|:binary>>) when o1 >= 144 do
+  def printable?(<<244, o1, _, _, _|:binary>>) when o1 >= 144, do:
     false
   end
 
   # From 16#4000 to 16#10FFFF
   def printable?(<<m, o1, o2, o3, t|:binary>>) when m >= 241 and m <= 244 and
-      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192 and o3 >= 128 and o3 < 192 do
+      o1 >= 128 and o1 < 192 and o2 >= 128 and o2 < 192 and o3 >= 128 and o3 < 192, do:
     printable?(t)
   end
 
@@ -125,7 +125,7 @@ defmodule Binary do
   In the example above, we pass a string with `\n` escaped
   and we return a version with it unescaped.
   """
-  def unescape(chars) do
+  def unescape(chars), do:
     Erlang.elixir_interpolation.unescape_chars(chars)
   end
 
@@ -161,7 +161,7 @@ defmodule Binary do
       Binary.unescape "example\\n", unescape_map(&1)
 
   """
-  def unescape(chars, map) do
+  def unescape(chars, map), do:
     Erlang.elixir_interpolation.unescape_chars(chars, map)
   end
 
@@ -173,7 +173,7 @@ defmodule Binary do
   when implementing your own sigils. Check the implementation
   of `Elixir::Builtin.__b__` for examples.
   """
-  def unescape_tokens(tokens) do
+  def unescape_tokens(tokens), do:
     Erlang.elixir_interpolation.unescape_tokens(tokens)
   end
 
@@ -181,13 +181,13 @@ defmodule Binary do
   Unescape the given tokens according to the given map.
   Check `unescape_tokens/1` and `unescaped/2` for more information.
   """
-  def unescape_tokens(tokens, map) do
+  def unescape_tokens(tokens, map), do:
     Erlang.elixir_interpolation.unescape_tokens(tokens, map)
   end
 
   ## Helpers
 
-  defp do_escape(<<char, t|:binary>>, char) do
+  defp do_escape(<<char, t|:binary>>, char), do:
     <<?\\, char, do_escape(t, char)|:binary>>
   end
 
@@ -196,15 +196,15 @@ defmodule Binary do
     h == ?\d or h == ?\e or
     h == ?\f or h == ?\n or
     h == ?\r or h == ?\\ or
-    h == ?\t or h == ?\v do
+    h == ?\t or h == ?\v, do:
     <<?\\, escape_map(h), do_escape(t, char)|:binary>>
   end
 
-  defp do_escape(<<h, t|:binary>>, char) do
+  defp do_escape(<<h, t|:binary>>, char), do:
     <<h, do_escape(t,char)|:binary>>
   end
 
-  defp do_escape(<<>>, char) do
+  defp do_escape(<<>>, char), do:
     <<char>>
   end
 

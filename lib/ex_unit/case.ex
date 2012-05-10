@@ -1,4 +1,4 @@
-defmodule ExUnit.Case do
+defmodule ExUnit.Case, do:
   @moduledoc """
   This module is meant to be used in other modules
   as a way to configure and prepare them for testing.
@@ -18,7 +18,7 @@ defmodule ExUnit.Case do
 
   ## Examples
 
-      defmodule AssertionTest do
+      defmodule AssertionTest, do:
         use ExUnit.Case
 
         def test_always_pass
@@ -29,14 +29,14 @@ defmodule ExUnit.Case do
   """
 
   @doc false
-  defmacro __using__(module, opts // []) do
-    if Keyword.get(opts, :sync, false) do
+  defmacro __using__(module, opts // []), do:
+    if Keyword.get(opts, :sync, false), do:
       ExUnit.Server.add_sync_case(module)
     else:
       ExUnit.Server.add_case(module)
     end
 
-    quote do
+    quote do:
       import ExUnit.Assertions
       import ExUnit.Case
 
@@ -57,29 +57,29 @@ defmodule ExUnit.Case do
 
   ## Examples
 
-      test "true is equal to true" do
+      test "true is equal to true", do:
         assert true == true
       end
 
   """
-  defmacro test(message, contents) do
+  defmacro test(message, contents), do:
     contents =
-      case contents do
+      case contents, do:
       match: [do: block]
-        quote do
+        quote do:
           unquote(contents)
           :ok
         end
       else:
-        quote do
+        quote do:
           try(unquote(contents))
           :ok
         end
       end
 
-    quote do
+    quote do:
       message = unquote(message)
-      message = if is_binary(message) do
+      message = if is_binary(message), do:
         :"test #{message}"
       else:
         :"test_#{message}"

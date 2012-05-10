@@ -1,4 +1,4 @@
-defmodule List do
+defmodule List, do:
   @moduledoc """
   Implements functions that only make sense for lists
   and cannot be part of the Enum protocol. In general,
@@ -14,7 +14,7 @@ defmodule List do
   Simply invokes the Access protocol for the given list.
   Check `Access.List` for more information.
   """
-  def access(list, access) when is_list(list) do
+  def access(list, access) when is_list(list), do:
     Access.List.access(list, access)
   end
 
@@ -27,7 +27,7 @@ defmodule List do
       #=> [1,[2],3,4,5,6]
 
   """
-  def concat(list) when is_list(list) do
+  def concat(list) when is_list(list), do:
     Erlang.lists.append(list)
   end
 
@@ -44,11 +44,11 @@ defmodule List do
       #=> [1,2,3,4,5,6]
 
   """
-  def concat([h], elements) when is_list(elements) do
+  def concat([h], elements) when is_list(elements), do:
     [h|elements]
   end
 
-  def concat(list, elements) when is_list(list) and is_list(elements) do
+  def concat(list, elements) when is_list(list) and is_list(elements), do:
     list ++ elements
   end
 
@@ -63,7 +63,7 @@ defmodule List do
       #=> [2,3]
 
   """
-  def delete(list, item) do
+  def delete(list, item), do:
     Erlang.lists.delete(item, list)
   end
 
@@ -81,11 +81,11 @@ defmodule List do
       # => [1,2,3,4,5]
 
   """
-  def flatten(list) do
+  def flatten(list), do:
     Erlang.lists.flatten(list)
   end
 
-  def flatten(list, tail) do
+  def flatten(list, tail), do:
     Erlang.lists.flatten(list, tail)
   end
 
@@ -102,7 +102,7 @@ defmodule List do
       #=> 2
 
   """
-  def foldl(list, acc, function) when is_list(list) and is_function(function) do
+  def foldl(list, acc, function) when is_list(list) and is_function(function), do:
     Erlang.lists.foldl(function, acc, list)
   end
 
@@ -116,7 +116,7 @@ defmodule List do
       #=> -2
 
   """
-  def foldr(list, acc, function) when is_list(list) and is_function(function) do
+  def foldr(list, acc, function) when is_list(list) and is_function(function), do:
     Erlang.lists.foldr(function, acc, list)
   end
 
@@ -163,7 +163,7 @@ defmodule List do
       #=> false
 
   """
-  def member?(list, term) do
+  def member?(list, term), do:
     Erlang.lists.member(term, list)
   end
 
@@ -184,7 +184,7 @@ defmodule List do
       #=> nil
 
   """
-  def keyfind(list, item, position, default // nil) do
+  def keyfind(list, item, position, default // nil), do:
     Erlang.lists.keyfind(item, position, list) || default
   end
 
@@ -205,7 +205,7 @@ defmodule List do
       #=> false
 
   """
-  def keymember?(list, item, position) do
+  def keymember?(list, item, position), do:
     Erlang.lists.keymember(item, position, list)
   end
 
@@ -226,7 +226,7 @@ defmodule List do
       #=> [{ :a, 1 }, { :b, 2 }]
 
   """
-  def keydelete(list, item, position) do
+  def keydelete(list, item, position), do:
     Erlang.lists.keydelete(item, position, list)
   end
 
@@ -248,8 +248,8 @@ defmodule List do
   """
   def range(first, last, step // nil)
 
-  def range(first, last, step) when is_integer(first) and is_integer(last) and first <= last do
-    step = case step do
+  def range(first, last, step) when is_integer(first) and is_integer(last) and first <= last, do:
+    step = case step, do:
     match: nil
       Erlang.lists.seq(first, last, 1)
     match: x when x < 0
@@ -259,8 +259,8 @@ defmodule List do
     end
   end
 
-  def range(first, last, step) when is_integer(first) and is_integer(last) and first > last do
-    step = case step do
+  def range(first, last, step) when is_integer(first) and is_integer(last) and first > last, do:
+    step = case step, do:
     match: nil
       Erlang.lists.seq(first, last, -1)
     match: x when x > 0
@@ -280,7 +280,7 @@ defmodule List do
       #=> [1, 2, 3, 4, 7]
 
   """
-  def sort(list) do
+  def sort(list), do:
     :lists.sort list
   end
 
@@ -295,7 +295,7 @@ defmodule List do
       #=> [7, 4, 3, 2, 1]
 
   """
-  def sort(list, fun) do
+  def sort(list, fun), do:
     :lists.sort fun, list
   end
 
@@ -308,7 +308,7 @@ defmodule List do
       #=> [1,2,3]
 
   """
-  def uniq(list) when is_list(list) do
+  def uniq(list) when is_list(list), do:
     do_uniq(list, [])
   end
 
@@ -323,7 +323,7 @@ defmodule List do
       List.duplicate [1,2], 2
       #=> [[1,2],[1,2]]
   """
-  def duplicate(elem, n) do
+  def duplicate(elem, n), do:
     Erlang.lists.duplicate(n, elem)
   end
 
@@ -339,9 +339,9 @@ defmodule List do
       List.find_index ['a'], 'a'
       #=> 1
   """
-  def find_index(list, term) do
+  def find_index(list, term), do:
     index = Erlang.string.str(list, [term])
-    case index == 0 do
+    case index == 0, do:
     match: true
       nil
     match: false
@@ -359,15 +359,15 @@ defmodule List do
       List.wrap [1,2,3] #=> [1,2,3]
 
   """
-  def wrap(list) when is_list(list) do
+  def wrap(list) when is_list(list), do:
     list
   end
 
-  def wrap(nil) do
+  def wrap(nil), do:
     []
   end
 
-  def wrap(else) do
+  def wrap(else), do:
     [else]
   end
 
@@ -385,7 +385,7 @@ defmodule List do
       #=> [{1, 4}, {2, 5}]
 
   """
-  def zip(item1, item2) do
+  def zip(item1, item2), do:
     do_zip(to_list(item1), to_list(item2), [])
   end
 
@@ -401,7 +401,7 @@ defmodule List do
       #=> [{1, 3, 5}]
 
   """
-  def zip(list_of_lists) when is_list(list_of_lists) do
+  def zip(list_of_lists) when is_list(list_of_lists), do:
     do_zip(list_of_lists, [])
   end
 
@@ -418,7 +418,7 @@ defmodule List do
       #=> [[1, 2, 3], [:a, :b, :c]]
 
   """
-  def unzip(list) when is_list(list) do
+  def unzip(list) when is_list(list), do:
     :lists.map tuple_to_list(&1), zip(list)
   end
 
@@ -426,8 +426,8 @@ defmodule List do
 
   # uniq
 
-  defp do_uniq([h|t], acc) do
-    case Erlang.lists.member(h, acc) do
+  defp do_uniq([h|t], acc), do:
+    case Erlang.lists.member(h, acc), do:
     match: true
       do_uniq(t, acc)
     match: false
@@ -435,25 +435,25 @@ defmodule List do
     end
   end
 
-  defp do_uniq([], _acc) do
+  defp do_uniq([], _acc), do:
     []
   end
 
   # zip
 
-  defp do_zip([h1|t1], [h2|t2], acc) do
+  defp do_zip([h1|t1], [h2|t2], acc), do:
     do_zip t1, t2, [{h1, h2}|acc]
   end
 
-  defp do_zip(_, _, acc) do
+  defp do_zip(_, _, acc), do:
     reverse acc
   end
 
-  defp do_zip(list, acc) do
+  defp do_zip(list, acc), do:
     converter = fn(x, acc) -> do_zip_each(to_list(x), acc) end
     {mlist, heads} = :lists.mapfoldl converter, [], list
 
-    case heads do
+    case heads, do:
     match: nil
       :lists.reverse acc
     else:
@@ -461,15 +461,15 @@ defmodule List do
     end
   end
 
-  defp do_zip_each(_, nil) do
+  defp do_zip_each(_, nil), do:
     { nil, nil }
   end
 
-  defp do_zip_each([h|t], acc) do
+  defp do_zip_each([h|t], acc), do:
     { t, [h|acc] }
   end
 
-  defp do_zip_each([], _) do
+  defp do_zip_each([], _), do:
     { nil, nil }
   end
 

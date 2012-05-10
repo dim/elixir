@@ -1,4 +1,4 @@
-defmodule Elixir.SpecialForms do
+defmodule Elixir.SpecialForms, do:
   @moduledoc """
   In this module we define Elixir special forms. Those are called
   special forms because they cannot be overridden by the developer
@@ -42,7 +42,7 @@ defmodule Elixir.SpecialForms do
 
   `refer` can be used to setup an alias for any module:
 
-      defmodule Math do
+      defmodule Math, do:
         refer MyKeyword, as: Keyword
       end
 
@@ -87,7 +87,7 @@ defmodule Elixir.SpecialForms do
   `MyMacros`. If you want to invoke it, you need to first explicitly
   require the `MyMacros`:
 
-      defmodule Math do
+      defmodule Math, do:
         require MyMacros
         MyMacros.if do_something, it_works
       end
@@ -112,10 +112,10 @@ defmodule Elixir.SpecialForms do
   in your module and you don't want to always type `Keyword.values`,
   you can simply import it:
 
-      defmodule Math do
+      defmodule Math, do:
         import Keyword, only: [values: 1]
 
-        def some_function do
+        def some_function, do:
           # call values(orddict)
         end
       end
@@ -138,8 +138,8 @@ defmodule Elixir.SpecialForms do
   It is important to notice that `import` is lexical. This means you
   can import specific macros inside specific functions:
 
-      defmodule Math do
-        def some_function do
+      defmodule Math, do:
+        def some_function, do:
           # 1) Disable `if/2` from Elixir.Builtin
           import Elixir.Builtin, except: [if: 2]
 
@@ -231,8 +231,8 @@ defmodule Elixir.SpecialForms do
   a variable defined in a macro cannot affect the scope where
   the macro is included. Consider the following example:
 
-      defmodule Hygiene do
-        defmacro no_interference do
+      defmodule Hygiene, do:
+        defmacro no_interference, do:
           quote do: a = 1
         end
       end
@@ -246,11 +246,11 @@ defmodule Elixir.SpecialForms do
   In the example above, `a` returns 10 even if the macro
   is apparently setting it to 1 because the variables defined
   in the macro does not affect the context the macro is
-  executed. If you want to set or get a variable, you can do
+  executed. If you want to set or get a variable, you can, do:
   it with the help of the `var!` macro:
 
-      defmodule NoHygiene do
-        defmacro interference do
+      defmodule NoHygiene, do:
+        defmacro interference, do:
           quote do: var!(a) = 1
         end
       end
@@ -264,7 +264,7 @@ defmodule Elixir.SpecialForms do
   Notice that references are not hygienic in Elixir unless
   you explicitly access it via __MAIN__ to the reference name.
 
-      quote do
+      quote do:
         __MAIN__.Foo # => Access the root Foo
         Foo   # => Access the Foo reference in the current
                    module (if any is set), then fallback to root
@@ -339,7 +339,7 @@ defmodule Elixir.SpecialForms do
   The example works fine because `->` binds to the closest function call,
   which is `fn`, but if we replace it by `do/end`, it will fail:
 
-      Enum.map [1,2,3], fn(x) do
+      Enum.map [1,2,3], fn(x), do:
         x * 2
       end
 
@@ -351,7 +351,7 @@ defmodule Elixir.SpecialForms do
   One may define a function which expects different clauses as long
   as all clauses expects the same number of arguments:
 
-      fun = fn do
+      fun = fn do:
       match: x, y when y < 0
         x - y
       match: x, y
@@ -371,7 +371,7 @@ defmodule Elixir.SpecialForms do
 
       list = [1,2,3]
 
-      loop list, [] do
+      loop list, [], do:
       match: [h|t], acc
         recur t, [h*2|acc]
       match: [], acc
@@ -471,9 +471,9 @@ defmodule Elixir.SpecialForms do
 
   A good example is the `is_exception/1` macro defined in Elixir:
 
-       defmacro is_exception(thing) do
-         quote do
-           in_guard do
+       defmacro is_exception(thing), do:
+         quote do:
+           quote do:
              is_tuple(unquote(thing)) and elem(unquote(thing), 2) == :__exception__
            else:
              result = unquote(thing)
