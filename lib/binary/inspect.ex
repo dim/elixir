@@ -37,13 +37,14 @@ defimpl Binary.Inspect, [for: Atom], do:
   def inspect(atom), do:
     binary = atom_to_binary(atom)
 
-    if valid_identifier?(binary) == <<>>, do:
-      ":" <> binary
-    elsif: valid_ref_identifier?(binary) == <<>>
-      "__MAIN__." <> rest = binary
-      rest
-    else:
-      ":" <> Binary.escape(binary, ?")
+    cond do:
+      valid_identifier?(binary) == <<>> =>
+          ":" <> binary
+      valid_ref_identifier?(binary) == <<>> =>
+        "__MAIN__." <> rest = binary
+        rest
+      true =>
+        ":" <> Binary.escape(binary, ?")
     end
   end
 

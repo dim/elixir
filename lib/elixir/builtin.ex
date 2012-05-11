@@ -1857,6 +1857,20 @@ defmodule Elixir.Builtin, do:
     build_if_clauses(List.reverse(all), else_clause)
   end
 
+  defmacro cond(opts), do:
+    # TODO: Support more than two
+    [h|t] = List.reverse Erlang.elixir_kw_block.decouple(opts)
+    { :do, [condition], clause } = h
+
+    new_acc = quote do:
+      case !unquote(condition), do:
+        false => unquote(clause)
+      end
+    end
+
+    build_if_clauses(t, new_acc)
+  end
+
   @doc """
   Provides a unless macro that executes the expression
   unless a value evalutes to true. Check `if` for examples
@@ -2257,7 +2271,7 @@ defmodule Elixir.Builtin, do:
   #         end
   #     end
   #
-  defp build_if_clauses([{ :match, [condition], clause }|t], acc), do:
+  defp build_if_clauses([{ key, [condition], clause }|t], acc) when key == :match or key == :do, do:
     new_acc = quote do:
       case !unquote(condition), do:
         false => unquote(clause)

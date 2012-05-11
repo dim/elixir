@@ -9,12 +9,13 @@ defmodule ExUnit.Runner, do:
   # cases finish, tell the formatter we finished and exit.
   def start(config), do:
     if config.cases == [], do:
-      if config.taken_cases > 0, do:
-        do_loop config
-      elsif: config.sync_cases == []
-        call_formatter config, :finish
-      else:
-        do_loop spawn_sync_cases(config)
+      cond do:
+        config.taken_cases > 0 =>
+          do_loop config
+        config.sync_cases == [] =>
+          call_formatter config, :finish
+        true =>
+          do_loop spawn_sync_cases(config)
       end
     else:
       do_loop spawn_async_cases(config)

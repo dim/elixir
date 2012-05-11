@@ -173,12 +173,13 @@ defmodule Protocol, do:
         L.foldl(fn(i, list) -> L.keydelete(i, 1, list) end, kinds, except)
       end
 
-    fallback = if L.keyfind(Tuple, 1, conversions), do:
-      Module.concat module, Tuple
-    elsif: L.keyfind(Any, 1, conversions)
-      Module.concat module, Any
-    else:
-      nil
+    fallback = cond do:
+      L.keyfind(Tuple, 1, conversions) =>
+        Module.concat module, Tuple
+      L.keyfind(Any, 1, conversions) =>
+        Module.concat module, Any
+      true =>
+        nil
     end
 
     { conversions, fallback }

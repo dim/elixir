@@ -319,8 +319,8 @@ kv_block -> kv_eol kv_list 'end'                      : build_kw_block('$1', [],
 kv_block -> kv_eol rocket_expr_list end_eol           : build_kw_block('$1', '$2', []).
 kv_block -> kv_eol rocket_expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
 
-stab_block -> stab_eol 'end'             : build_kw_block('$1', [], []).
-stab_block -> stab_eol expr_list end_eol : build_kw_block('$1', '$2', []).
+stab_block -> stab_eol 'end'             : [{do,nil}].
+stab_block -> stab_eol expr_list end_eol : [{do,build_block('$2')}].
 
 % Lists
 
@@ -384,8 +384,7 @@ build_block(Exprs)                         -> { '__block__', 0, lists:reverse(Ex
 % Handle keywords blocks
 build_kw_block(Delimiter, Contents, IncompleteList) ->
   Line = ?line(Delimiter),
-  %% TODO: Remove hardcoded
-  List = [{ do, build_kw(lists:reverse(Contents)) }|IncompleteList],
+  List = [{ ?exprs(Delimiter), build_kw(lists:reverse(Contents)) }|IncompleteList],
   {'[:]', Line, sort_kv(List)}.
   
 

@@ -776,12 +776,13 @@ defmodule Enum, do:
   end
 
   defp do_list_qsort_part(x, [h|t], { l, e, g }, acc), do:
-    if h < x, do:
-      do_list_qsort_part(x, t, { [h|l], e, g }, acc)
-    elsif: h > x
-      do_list_qsort_part(x, t, { l, e, [h|g] }, acc)
-    else:
-      do_list_qsort_part(x, t, { l, [h|e], g }, acc)
+    cond do:
+      h < x =>
+        do_list_qsort_part(x, t, { [h|l], e, g }, acc)
+      h > x =>
+        do_list_qsort_part(x, t, { l, e, [h|g] }, acc)
+      true =>
+        do_list_qsort_part(x, t, { l, [h|e], g }, acc)
     end
   end
 
@@ -800,12 +801,13 @@ defmodule Enum, do:
   end
 
   defp do_qsort_part(x, { h, next }, iterator, { l, e, g }, acc), do:
-    if h < x, do:
-      do_qsort_part(x, iterator.(next), iterator, { [h|l], e, g }, acc)
-    elsif: h > x
-      do_qsort_part(x, iterator.(next), iterator, { l, e, [h|g] }, acc)
-    else:
-      do_qsort_part(x, iterator.(next), iterator, { l, [h|e], g }, acc)
+    cond do:
+      h < x =>
+        do_qsort_part(x, iterator.(next), iterator, { [h|l], e, g }, acc)
+      h > x =>
+        do_qsort_part(x, iterator.(next), iterator, { l, e, [h|g] }, acc)
+      true =>
+        do_qsort_part(x, iterator.(next), iterator, { l, [h|e], g }, acc)
     end
   end
 
