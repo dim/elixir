@@ -169,11 +169,12 @@ defmodule Elixir.CLI, do:
 
   defp process_compiler([h|t] = list, config), do:
     case h, do:
-    match: '-' ++ _
-      shared_option? list, config, process_compiler(&1, &2)
-    else:
-      pattern = if File.dir?(h), do: '#{h}/**/*.ex', else: h
-      process_compiler t, config.prepend_compile [pattern]
+    match:
+      '-' ++ _ =>
+        shared_option? list, config, process_compiler(&1, &2)
+      _ =>
+        pattern = if File.dir?(h), do: '#{h}/**/*.ex', else: h
+        process_compiler t, config.prepend_compile [pattern]
     end
   end
 

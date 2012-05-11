@@ -121,10 +121,11 @@ defmodule ExUnit.Assertions, do:
 
   defp guess_expected_and_actual(left, right), do:
     case right, do:
-    match: { fun, i, _ } when is_integer(i) and (fun != :<<>> or fun != :{})
-      { left, right }
-    else:
-      { right, left }
+    match:
+      { fun, i, _ } when is_integer(i) and (fun != :<<>> or fun != :{}) =>
+        { left, right }
+      _ =>
+        { right, left }
     end
   end
 

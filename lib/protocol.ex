@@ -110,16 +110,17 @@ defmodule Protocol, do:
 
       def __impl_for__(arg), do:
         case __raw_impl__(arg), do:
-        match: __MODULE__.Record
-          target = Module.concat(__MODULE__, :erlang.element(1, arg))
-          try do:
-            target.__impl__
-            target
-          rescue: UndefinedFunctionError
-            __fallback__
-          end
-        match: other
-          other
+        match:
+          __MODULE__.Record =>
+            target = Module.concat(__MODULE__, :erlang.element(1, arg))
+            try do:
+              target.__impl__
+              target
+            rescue: UndefinedFunctionError
+              __fallback__
+            end
+          other =>
+            other
         end
       end
 
@@ -223,15 +224,14 @@ defmodule Protocol, do:
       defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)), do:
         first = :erlang.element(1, arg)
         case unquote(is_builtin?(conversions)), do:
-        match: true
-          __MODULE__.Tuple
-        match: false
-          case atom_to_list(first), do:
-          match: '__MAIN__' ++ _
-            __MODULE__.Record
-          else:
-            __MODULE__.Tuple
-          end
+        match:
+          true  => __MODULE__.Tuple
+          false =>
+            case atom_to_list(first), do:
+            match:
+              '__MAIN__' ++ _ => __MODULE__.Record
+              _ => __MODULE__.Tuple
+            end
         end
       end
     end
@@ -262,12 +262,13 @@ defmodule Protocol.DSL, do:
   defmacro def(expression), do:
     { name, arity } =
       case expression, do:
-      match: { _, _, args } when args == [] or is_atom(args)
-        raise ArgumentError, message: "protocol functions expect at least one argument"
-      match: { name, _, args } when is_atom(name) and is_list(args)
-        { name, length(args) }
-      else:
-        raise ArgumentError, message: "invalid args for defprotocol"
+      match:
+        { _, _, args } when args == [] or is_atom(args) =>
+          raise ArgumentError, message: "protocol functions expect at least one argument"
+        { name, _, args } when is_atom(name) and is_list(args) =>
+          { name, length(args) }
+        _ =>
+          raise ArgumentError, message: "invalid args for defprotocol"
       end
 
     # Generate arguments according the arity. The arguments
@@ -285,22 +286,24 @@ defmodule Protocol.DSL, do:
       Elixir.Builtin.def unquote(name).(unquote_splicing(args)), do:
         args = [unquote_splicing(args)]
         case __raw_impl__(xA), do:
-        match: __MODULE__.Record
-          try do:
-            target = Module.concat(__MODULE__, :erlang.element(1, xA))
-            apply target, unquote(name), args
-          rescue: UndefinedFunctionError
-            case __fallback__, do:
-            match: nil
-              raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
-            match: other
-              apply other, unquote(name), args
+        match:
+          __MODULE__.Record =>
+            try do:
+              target = Module.concat(__MODULE__, :erlang.element(1, xA))
+              apply target, unquote(name), args
+            rescue: UndefinedFunctionError
+              case __fallback__, do:
+              match:
+                nil =>
+                  raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
+                other =>
+                  apply other, unquote(name), args
+              end
             end
-          end
-        match: nil
-          raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
-        match: other
-          apply other, unquote(name), args
+          nil =>
+            raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
+          other =>
+            apply other, unquote(name), args
         end
       end
     end

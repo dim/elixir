@@ -203,10 +203,11 @@ defmodule File, do:
   """
   def read!(path), do:
     case read(path), do:
-    match: { :ok, binary }
-      binary
-    match: { :error, reason }
-      raise File.Error, reason: reason, action: "read file", path: to_binary(path)
+    match:
+      { :ok, binary } =>
+        binary
+      { :error, reason } =>
+        raise File.Error, reason: reason, action: "read file", path: to_binary(path)
     end
   end
 
@@ -278,10 +279,11 @@ defmodule File, do:
   """
   def read_info(path, opts // []), do:
     case :file.read_file_info(path, opts), do:
-    match: {:ok, fileinfo}
-      {:ok, Info.new fileinfo}
-    match: error
-      error
+    match:
+      {:ok, fileinfo} =>
+        {:ok, Info.new fileinfo}
+      error =>
+        error
     end
   end
 
@@ -291,10 +293,11 @@ defmodule File, do:
   """
   def read_info!(path, opts // []), do:
     case read_info(path, opts), do:
-    match: {:ok, info}
-      info
-    match: {:error, reason}
-      raise File.Error, reason: reason, action: "read file info", path: to_binary(path)
+    match:
+      {:ok, info} =>
+        info
+      {:error, reason} =>
+        raise File.Error, reason: reason, action: "read file info", path: to_binary(path)
     end
   end
 

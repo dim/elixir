@@ -123,10 +123,10 @@ defmodule ProtocolTest, do:
     catch: :error, :undef, [stack|_]
       ref = Module.concat target, impl
       case hd(stack), do:
-      match: { ^ref, :blank, [^thing], _}
-        :ok
-      else:
-        raise "Invalid stack #{inspect stack}. Expected: { #{ref}, :blank, [#{inspect thing}], _ }"
+      match:
+        { ^ref, :blank, [^thing], _} => :ok
+        _ =>
+          raise "Invalid stack #{inspect stack}. Expected: { #{ref}, :blank, [#{inspect thing}], _ }"
       end
     end
   end

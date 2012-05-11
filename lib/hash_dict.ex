@@ -23,10 +23,12 @@ defimpl Dict, [for: HashDict.Record], do:
 
   def get(HD[data: data], key, default // nil), do:
     case :dict.find(key, data), do:
-    match: {:ok, value}
-      value
-    match: :error
-      default
+    match:
+      {:ok, value} =>
+        value
+    match:
+      :error =>
+        default
     end
   end
 

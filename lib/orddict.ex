@@ -21,10 +21,12 @@ defimpl Dict, [for: Orddict.Record], do:
 
   def get(O[data: data], key, default // nil), do:
     case :orddict.find(key, data), do:
-    match: {:ok, value}
-      value
-    match: :error
-      default
+    match:
+      {:ok, value} =>
+        value
+    match:
+      :error =>
+        default
     end
   end
 

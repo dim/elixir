@@ -352,10 +352,10 @@ defmodule Elixir.SpecialForms, do:
   as all clauses expects the same number of arguments:
 
       fun = fn do:
-      match: x, y when y < 0
-        x - y
-      match: x, y
-        x + y
+        [x, y] when y < 0 =>
+          x - y
+        [x, y] =>
+          x + y
       end
 
       fun.(10, -10) #=> 20
@@ -372,10 +372,10 @@ defmodule Elixir.SpecialForms, do:
       list = [1,2,3]
 
       loop list, [], do:
-      match: [h|t], acc
-        recur t, [h*2|acc]
-      match: [], acc
-        acc
+        [[h|t], acc] =>
+          recur t, [h*2|acc]
+        [[], acc] =>
+          acc
       end
       #=> [6,4,2]
 

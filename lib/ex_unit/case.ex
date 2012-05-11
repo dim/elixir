@@ -65,16 +65,17 @@ defmodule ExUnit.Case, do:
   defmacro test(message, contents), do:
     contents =
       case contents, do:
-      match: [do: block]
-        quote do:
-          unquote(contents)
-          :ok
-        end
-      else:
-        quote do:
-          try(unquote(contents))
-          :ok
-        end
+      match:
+        [do: block] =>
+          quote do:
+            unquote(contents)
+            :ok
+          end
+        _ =>
+          quote do:
+            try(unquote(contents))
+            :ok
+          end
       end
 
     quote do:

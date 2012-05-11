@@ -157,9 +157,9 @@ defmodule Record.Extractor, do:
     file = to_char_list(string)
 
     case Erlang.code.where_is_file(file), do:
-    match: :non_existing
-      realfile = file
-    match: realfile
+    match:
+      :non_existing => realfile = file
+      realfile => nil
     end
 
     retrieve_record(name, realfile)
@@ -170,10 +170,11 @@ defmodule Record.Extractor, do:
   def retrieve(name, from_lib: file), do:
     [app|path] = Erlang.filename.split(to_char_list(file))
     case Erlang.code.lib_dir(to_char_list(app)), do:
-    match: { :error, _ }
-      raise ArgumentError, "Lib file #{to_binary(file)} could not be found"
-    match: libpath
-      retrieve_record name, Erlang.filename.join([libpath|path])
+    match:
+      { :error, _ } =>
+        raise ArgumentError, "Lib file #{to_binary(file)} could not be found"
+      libpath =>
+        retrieve_record name, Erlang.filename.join([libpath|path])
     end
   end
 
@@ -197,10 +198,11 @@ defmodule Record.Extractor, do:
   # by using Erlang's epp_dodger.
   defp read_file(file), do:
     case Erlang.epp_dodger.quick_parse_file(file), do:
-    match: { :ok, form }
-      form
-    match: other
-      raise "Error parsing file #{to_binary(file)}, got: #{inspect(other)}"
+    match:
+      { :ok, form } =>
+        form
+      other =>
+        raise "Error parsing file #{to_binary(file)}, got: #{inspect(other)}"
     end
   end
 
