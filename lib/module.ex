@@ -213,13 +213,14 @@ defmodule Module, do:
     table = docs_table_for(module)
 
     case { ETS.lookup(table, tuple), doc }, do:
-    match: { [], _ }
-      ETS.insert(table, { tuple, line, kind, doc })
-      :ok
-    match: { _, nil }
-      :ok
-    else:
-      { :error, :existing_doc }
+    match:
+      { [], _ } =>
+        ETS.insert(table, { tuple, line, kind, doc })
+        :ok
+      { _, nil } =>
+        :ok
+      _ =>
+        { :error, :existing_doc }
     end
   end
 
@@ -306,12 +307,12 @@ defmodule Module, do:
     table = function_table_for(module)
     lc tuple in tuples, do:
       case ETS.lookup(table, tuple), do:
-      match: [clause]
-        ETS.delete(table, tuple)
-        Erlang.elixir_def_overridable.define(module, tuple, clause)
-      else:
-        { name, arity } = tuple
-        raise "Cannot make function #{name}/#{arity} overridable because it was not defined"
+        [clause] =>
+          ETS.delete(table, tuple)
+          Erlang.elixir_def_overridable.define(module, tuple, clause)
+        _ =>
+          { name, arity } = tuple
+          raise "Cannot make function #{name}/#{arity} overridable because it was not defined"
       end
     end
   end

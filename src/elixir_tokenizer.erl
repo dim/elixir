@@ -74,6 +74,9 @@ tokenize(Line, [$?,Char|T], Tokens) ->
 tokenize(Line, "->" ++ Rest, Tokens) ->
   tokenize(Line, Rest, [{'->',Line}|Tokens]);
 
+tokenize(Line, "=>" ++ Rest, Tokens) ->
+  tokenize(Line, Rest, [{'=>',Line}|Tokens]);
+
 % Dot operators
 
 % ## Exception for .( as it needs to be treated specially in the parser

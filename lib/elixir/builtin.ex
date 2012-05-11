@@ -818,8 +818,8 @@ defmodule Elixir.Builtin, do:
       child   = spawn(fn -> current <- { Process.self, 1 + 2 } end)
 
       receive
-      match: { ^child, 3 }
-        IO.puts "Received 3 back"
+      match:
+        { ^child, 3 } => IO.puts "Received 3 back"
       end
 
   """
@@ -850,8 +850,8 @@ defmodule Elixir.Builtin, do:
       child   = spawn_link(fn -> current <- { Process.self, 1 + 2 } end)
 
       receive
-      match: { ^child, 3 }
-        IO.puts "Received 3 back"
+        { ^child, 3 } =>
+          IO.puts "Received 3 back"
       end
 
   """
@@ -1165,10 +1165,11 @@ defmodule Elixir.Builtin, do:
     end)
 
     opts = case Keyword.key?(opts, :moduledoc), do:
-    match: false
-      Keyword.put(opts, :moduledoc, nil)
-    else:
-      opts
+    match:
+      false =>
+        Keyword.put(opts, :moduledoc, nil)
+      _ =>
+        opts
     end
 
     values = [{ :__exception__, :__exception__ }|values]
@@ -1577,10 +1578,11 @@ defmodule Elixir.Builtin, do:
   defmacro match?(left, right), do:
     quote do:
       case unquote(right), do:
-      match: unquote(left)
-        true
-      else:
-        false
+      match:
+        unquote(left) =>
+          true
+        _ =>
+          false
       end
     end
   end
@@ -1591,10 +1593,10 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       case thing, do:
-      match: { :selector, i, value } when is_integer(i)
-        value
-      match: value
-        value
+      match:
+        { :selector, i, value } when is_integer(i) =>
+          value
+        value => value
       end
 
   In the example above, we compare `thing` with each given
@@ -1607,8 +1609,7 @@ defmodule Elixir.Builtin, do:
 
       i = 1
       case 10, do:
-      match: i
-        i * 2
+        i => i * 2
       end
 
   The example above will return 20, because `i` is assgined to 10
@@ -1617,8 +1618,7 @@ defmodule Elixir.Builtin, do:
 
       i = 1
       case 10, do:
-      match: ^i
-        i * 2
+        ^i => i * 2
       end
 
   The example above will actually fail because 10 does not match 1.
@@ -1627,10 +1627,10 @@ defmodule Elixir.Builtin, do:
   of the clauses match:
 
       case thing, do:
-      match: { :selector, i, value } when is_integer(i)
-        value
-      else:
-        thing
+        { :selector, i, value } when is_integer(i) =>
+          value
+        _ =>
+          thing
       end
 
   """
@@ -1738,12 +1738,12 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       receive do:
-      match: { :selector, i, value } when is_integer(i)
-        value
-      match: value when is_atom(value)
-        value
-      else:
-        IO.puts :standard_error, "Unexpected message received"
+        { :selector, i, value } when is_integer(i) =>
+          value
+        value when is_atom(value) =>
+          value
+        _ =>
+          IO.puts :standard_error, "Unexpected message received"
       end
 
   The match clauses above follows the same rules as `case/2`.
@@ -1752,14 +1752,15 @@ defmodule Elixir.Builtin, do:
   received after the specified period of time:
 
       receive do:
-      match: { :selector, i, value } when is_integer(i)
-        value
-      match: value when is_atom(value)
-        value
-      else:
-        IO.puts :standard_error, "Unexpected message received"
-      after: 5000
-        IO.puts :standard_error, "No message in 5 seconds"
+        { :selector, i, value } when is_integer(i) =>
+          value
+        value when is_atom(value) =>
+          value
+        _ =>
+          IO.puts :standard_error, "Unexpected message received"
+      after:
+        5000 =>
+          IO.puts :standard_error, "No message in 5 seconds"
       end
 
   The `after` clause can be specified even if there are no match clauses.
@@ -1907,10 +1908,11 @@ defmodule Elixir.Builtin, do:
     List.foldl left, right, fn(item, acc) ->
       quote do:
         case unquote(acc), do:
-        match: [unquote(item)|t]
-          t
-        match: other when other == [] or other == nil
-          unquote(item) = nil
+        match:
+          [unquote(item)|t] =>
+            t
+          other when other == [] or other == nil =>
+            unquote(item) = nil
         end
       end
     end
@@ -2001,10 +2003,11 @@ defmodule Elixir.Builtin, do:
   defmacro :&&.(left, right), do:
     quote do:
       case unquote(left), do:
-      match: andand in [false, nil]
-        andand
-      match: _
-        unquote(right)
+      match:
+        andand in [false, nil] =>
+          andand
+        _ =>
+          unquote(right)
       end
     end
   end
@@ -2028,10 +2031,11 @@ defmodule Elixir.Builtin, do:
   defmacro :||.(left, right), do:
     quote do:
       case unquote(left), do:
-      match: oror in [false, nil]
-        unquote(right)
-      match: oror
-        oror
+      match:
+        oror in [false, nil] =>
+          unquote(right)
+        oror =>
+          oror
       end
     end
   end
@@ -2075,12 +2079,10 @@ defmodule Elixir.Builtin, do:
   defmacro :!.({:!, _, [expr]}), do:
     quote do:
       case unquote(expr), do:
-      match: false
-        false
-      match: nil
-        false
-      else:
-        true
+      match:
+        false => false
+        nil => false
+        _ => true
       end
     end
   end
@@ -2088,12 +2090,10 @@ defmodule Elixir.Builtin, do:
   defmacro :!.(expr), do:
     quote do:
       case unquote(expr), do:
-      match: false
-        true
-      match: nil
-        true
-      else:
-        false
+      match:
+        false => true
+        nil => true
+        _ => false
       end
     end
   end
@@ -2258,24 +2258,20 @@ defmodule Elixir.Builtin, do:
   # Becomes:
   #
   #     case !foo, do:
-  #     match: false
-  #       1
-  #     match: true
-  #       case !bar, do:
-  #       match: false
-  #         2
-  #       match: true
-  #         3
-  #       end
+  #       false => 1
+  #       true =>
+  #         case !bar, do:
+  #           false => 2
+  #           true => 3
+  #         end
   #     end
   #
   defp build_if_clauses([{ :match, [condition], clause }|t], acc), do:
     new_acc = quote do:
       case !unquote(condition), do:
-      match: false
-        unquote(clause)
-      else:
-        unquote(acc)
+      match:
+        false => unquote(clause)
+        _ => unquote(acc)
       end
     end
 

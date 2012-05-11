@@ -7,7 +7,7 @@ Nonterminals
   base_expr op_expr
   comma_separator
   add_op mult_op unary_op addadd_op multmult_op bin_concat_op
-  match_op arrow_op default_op when_op pipe_op in_op
+  match_op arrow_op default_op when_op pipe_op in_op rocket_op
   andand_op oror_op and_op or_op comp_expr_op
   open_paren close_paren
   open_bracket close_bracket
@@ -16,7 +16,7 @@ Nonterminals
   comma_expr call_args_comma_expr last_args
   call_args call_args_parens call_args_no_parens
   kv_comma base_orddict kv_eol kv_block
-  end_eol kv_item kv_list stab_eol stab_block
+  end_eol kv_item kv_list stab_eol stab_block rocket_block
   parens_call dot_op dot_identifier dot_do_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
@@ -32,12 +32,13 @@ Terminals
   'true' 'false' 'nil'
   '=' '+' '-' '*' '/' '++' '--' '**' '//'
   '(' ')' '[' ']' '{' '}' '<<' '>>'
-  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->'
+  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>'
   '&&' '||' '!'
   .
 
 Rootsymbol grammar.
 
+Right     10 rocket_op.
 Left      20 ','.  % Solve nested call_args conflicts
 Right     30 default_op.
 Right     40 when_op.
@@ -225,6 +226,9 @@ in_op -> 'in' eol : '$1'.
 when_op -> 'when' : '$1'.
 when_op -> 'when' eol : '$1'.
 
+rocket_op -> '=>' : '$1'.
+rocket_op -> '=>' eol : '$1'.
+
 arrow_op -> '<-' : '$1'.
 arrow_op -> '<-' eol : '$1'.
 
@@ -295,9 +299,15 @@ stab_eol -> '->' eol : '$1'.
 end_eol -> 'end' : '$1'.
 end_eol -> eol 'end' : '$2'.
 
-kv_item -> kv_identifier comma_expr eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),nil] } }.
-kv_item -> kv_identifier eol expr_list eol : { ?exprs('$1'), build_block('$3') }.
-kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),build_block('$4')] } }.
+rocket_block -> expr rocket_op expr_list : [ { ['$1'], build_block('$3') } ].
+rocket_block -> rocket_block eol expr rocket_op expr_list : [{ ['$3'], build_block('$5') }|'$1'].
+
+kv_item -> kv_eol expr_list eol : { ?exprs('$1'), build_block('$2') }.
+kv_item -> kv_eol rocket_block eol : { ?exprs('$1'), { '=>', ?line('$1'), lists:reverse('$2') } }.
+
+%% Those will be deprecated
+% kv_item -> kv_identifier comma_expr eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),nil] } }.
+% kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),build_block('$4')] } }.
 
 kv_list -> kv_item : ['$1'].
 kv_list -> kv_item kv_list : ['$1'|'$2'].

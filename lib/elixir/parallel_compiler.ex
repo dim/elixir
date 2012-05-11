@@ -80,24 +80,25 @@ defmodule Elixir.ParallelCompiler, do:
   # Wait for messages from child processes
   defp wait_for_messages(files, output, callback, waiting, queued, result), do:
     receive do:
-    match: { :compiled, child, file }
-      callback.(list_to_binary(file))
-      new_queued  = List.keydelete(queued, child, 1)
-      # Sometimes we may have spurious entries in the waiting
-      # list because someone invoked try/rescue UndefinedFunctionError
-      new_waiting = List.keydelete(waiting, child, 1)
-      spawn_compilers(files, output, callback, new_waiting, new_queued, result)
-    match: { :module_available, child, module, binary }
-      new_waiting = release_waiting_processes(module, waiting)
-      new_result  = [{module, binary}|result]
-      wait_for_messages(files, output, callback, new_waiting, queued, new_result)
-    match: { :waiting, child, on }
-      new_waiting = Orddict.store(child, on, waiting)
-      spawn_compilers(files, output, callback, new_waiting, queued, result)
-    match: { :failure, child, kind, reason, stacktrace }
-      extra = if match?({^child, module}, List.keyfind(waiting, child, 1)), do:
-        " (undefined module #{inspect module})"
-      end
+    match:
+      { :compiled, child, file } =>
+        callback.(list_to_binary(file))
+        new_queued  = List.keydelete(queued, child, 1)
+        # Sometimes we may have spurious entries in the waiting
+        # list because someone invoked try/rescue UndefinedFunctionError
+        new_waiting = List.keydelete(waiting, child, 1)
+        spawn_compilers(files, output, callback, new_waiting, new_queued, result)
+      { :module_available, child, module, binary } =>
+        new_waiting = release_waiting_processes(module, waiting)
+        new_result  = [{module, binary}|result]
+        wait_for_messages(files, output, callback, new_waiting, queued, new_result)
+      { :waiting, child, on } =>
+        new_waiting = Orddict.store(child, on, waiting)
+        spawn_compilers(files, output, callback, new_waiting, queued, result)
+      { :failure, child, kind, reason, stacktrace } =>
+        extra = if match?({^child, module}, List.keyfind(waiting, child, 1)), do:
+          " (undefined module #{inspect module})"
+        end
 
       {^child, file} = List.keyfind(queued, child, 1)
       IO.puts "== Compilation error on file #{list_to_binary(file)}#{extra} =="

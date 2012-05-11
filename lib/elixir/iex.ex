@@ -8,10 +8,9 @@ defmodule Elixir.IEx.UnicodeIO, do:
   """
   def get(cache, _count), do:
     prompt = case cache, do:
-    match: []
-      "iex> "
-    match: _
-      "...> "
+    match:
+      [] => "iex> "
+      _ => "...> "
     end
     :unicode.characters_to_list(Erlang.io.get_line(prompt))
   end
