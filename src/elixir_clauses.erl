@@ -1,6 +1,5 @@
-%% Handle code related to match/after/else and args/guard
-%% clauses for receive/case/fn and friends. try is
-%% handled in elixir_try.
+%% Handle code related to rocket args, guard and => matching
+%% for case, fn, receive and friends. try is handled in elixir_try.
 -module(elixir_clauses).
 -export([match/3, simple_match/3, assigns/3, assigns_block/5, assigns_block/6,
   extract_args/1, extract_guards/1, extract_last_guards/1]).
@@ -72,7 +71,7 @@ extract_args({ Name, _, Args }) when is_atom(Name), is_atom(Args) -> { Name, [] 
 extract_args({ Name, _, Args }) when is_atom(Name), is_list(Args) -> { Name, Args }.
 
 simple_match(Line, Clauses, S) ->
-  Decoupled = elixir_kw_block:decouple(handle_else(Clauses)),
+  Decoupled = elixir_kw_block:decouple(Clauses),
   Transformer = fun(X, Acc) -> each_clause(Line, X, umergec(S, Acc)) end,
   lists:mapfoldl(Transformer, S, Decoupled).
 
@@ -80,7 +79,7 @@ simple_match(Line, Clauses, S) ->
 
 match(Line, Clauses, RawS) ->
   S = RawS#elixir_scope{clause_vars=dict:new()},
-  DecoupledClauses = elixir_kw_block:decouple(handle_else(Clauses)),
+  DecoupledClauses = elixir_kw_block:decouple(Clauses),
 
   case DecoupledClauses of
     [DecoupledClause] ->
@@ -149,34 +148,12 @@ match(Line, Clauses, RawS) ->
       end
   end.
 
-% Handle else clauses by moving them under the given Kind.
-handle_else(Clauses) ->
-  case orddict:find(else, Clauses) of
-    { ok, Else } -> orddict:erase(else, Clauses) ++ [{else,Else}];
-    _ -> Clauses
-  end.
-
 % Handle each key/value clause pair and translate them accordingly.
 
-% Do clauses have no conditions. So we are done.
-each_clause(Line, { do, _, _ } = Block, S) ->
-  elixir_kw_block:validate(Line, Block, 0, S),
-  { _, [], Expr } = Block,
-  elixir_translator:translate_each(Expr, S);
-
-each_clause(Line, { match, _, _ } = Block, S) ->
+each_clause(Line, { Key, _, _ } = Block, S) when Key == do; Key == match ->
   elixir_kw_block:validate(Line, Block, 1, S),
   { _, [Condition], Expr } = Block,
   assigns_block(Line, fun elixir_translator:translate_each/2, Condition, [Expr], S);
-
-each_clause(Line, { else, [], Exprs }, S) ->
-  each_clause(Line, { match, [{'_', Line, nil}], Exprs }, S);
-
-each_clause(Line, { else, [Expr], nil }, S) ->
-  each_clause(Line, { match, [{'_', Line, nil}], Expr }, S);
-
-each_clause(Line, { else, [Expr], Other }, S) ->
-  each_clause(Line, { match, [{'_', Line, nil}], prepend_to_block(Line, Expr, Other) }, S);
 
 each_clause(Line, { 'after', _, _ } = Block, S) ->
   elixir_kw_block:validate(Line, Block, 1, S),
@@ -250,11 +227,3 @@ generate_match(Line, LeftVars, RightVars) ->
 
 listify(Expr) when not is_list(Expr) -> [Expr];
 listify(Expr) -> Expr.
-
-%% Prepend a given expression to a block.
-
-prepend_to_block(_Line, Expr, { '__block__', Line, Args }) ->
-  { '__block__', Line, [Expr|Args] };
-
-prepend_to_block(Line, Expr, Args) ->
-  { '__block__', Line, [Expr, Args] }.

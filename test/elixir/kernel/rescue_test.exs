@@ -218,7 +218,6 @@ defmodule Kernel.RescueTest, do:
     x = :example
     result = try do:
       case :other, do:
-      match:
         ^x => nil
       end
     rescue: x in [CaseClauseError]

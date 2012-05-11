@@ -80,7 +80,6 @@ defmodule Elixir.ParallelCompiler, do:
   # Wait for messages from child processes
   defp wait_for_messages(files, output, callback, waiting, queued, result), do:
     receive do:
-    match:
       { :compiled, child, file } =>
         callback.(list_to_binary(file))
         new_queued  = List.keydelete(queued, child, 1)

@@ -314,10 +314,10 @@ kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwb
 kv_list -> kv_item : ['$1'].
 kv_list -> kv_item kv_list : ['$1'|'$2'].
 
-kv_block -> kv_eol 'end'                       : build_kw_block('$1', [], []).
-kv_block -> kv_eol kv_list 'end'               : build_kw_block('$1', [], '$2').
-kv_block -> kv_eol expr_list end_eol           : build_kw_block('$1', '$2', []).
-kv_block -> kv_eol expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
+kv_block -> kv_eol 'end'                              : build_kw_block('$1', [], []).
+kv_block -> kv_eol kv_list 'end'                      : build_kw_block('$1', [], '$2').
+kv_block -> kv_eol rocket_expr_list end_eol           : build_kw_block('$1', '$2', []).
+kv_block -> kv_eol rocket_expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
 
 stab_block -> stab_eol 'end'             : build_kw_block('$1', [], []).
 stab_block -> stab_eol expr_list end_eol : build_kw_block('$1', '$2', []).
@@ -384,8 +384,10 @@ build_block(Exprs)                         -> { '__block__', 0, lists:reverse(Ex
 % Handle keywords blocks
 build_kw_block(Delimiter, Contents, IncompleteList) ->
   Line = ?line(Delimiter),
-  List = [{do,build_block(Contents)}|IncompleteList],
+  %% TODO: Remove hardcoded
+  List = [{ do, build_kw(lists:reverse(Contents)) }|IncompleteList],
   {'[:]', Line, sort_kv(List)}.
+  
 
 %% Args
 % Build args by transforming [:] into the final form []

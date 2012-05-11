@@ -8,7 +8,6 @@ defmodule Elixir.IEx.UnicodeIO, do:
   """
   def get(cache, _count), do:
     prompt = case cache, do:
-    match:
       [] => "iex> "
       _ => "...> "
     end

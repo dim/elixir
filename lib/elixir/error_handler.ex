@@ -15,13 +15,11 @@ defmodule Elixir.ErrorHandler, do:
 
   defp ensure_loaded(module), do:
     case Code.ensure_loaded(module), do:
-    match:
       { :module, _ } => []
       { :error, _ } =>
         parent = Process.get(:elixir_parent_compiler)
         parent <- { :waiting, Process.self, module }
         receive do:
-        match:
           { :release, ^parent } => :ok
         end
     end

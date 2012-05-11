@@ -67,7 +67,6 @@ defmodule Elixir.CLI, do:
 
   defp shared_option?(list, config, callback), do:
     case process_shared(list, config), do:
-    match:
       { [h|t], _ } when h == hd(list) =>
         invalid_option h
       { new_list, new_config } =>
@@ -131,7 +130,6 @@ defmodule Elixir.CLI, do:
 
   def process_options([h|t] = list, config), do:
     case h, do:
-    match:
       '-' ++ _ =>
         shared_option? list, config, process_options(&1, &2)
       _ =>
@@ -169,7 +167,6 @@ defmodule Elixir.CLI, do:
 
   defp process_compiler([h|t] = list, config), do:
     case h, do:
-    match:
       '-' ++ _ =>
         shared_option? list, config, process_compiler(&1, &2)
       _ =>
@@ -238,7 +235,6 @@ defmodule Elixir.CLI, do:
 
   defp wait_for_messages(files, waiting), do:
     receive do:
-    match:
       { :required, child } =>
         spawn_requires(files, List.delete(waiting, child))
       { :failure, _child, kind, reason, stacktrace } =>

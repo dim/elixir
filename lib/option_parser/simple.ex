@@ -30,7 +30,6 @@ defmodule OptionParser.Simple, do:
     option = normalize_option(option, aliases)
 
     case h, do:
-    match:
       <<?-, _|:binary>> =>
         dict = Keyword.put dict, option, true
         parse([h|t], aliases, dict, args)

@@ -250,7 +250,6 @@ defmodule List, do:
 
   def range(first, last, step) when is_integer(first) and is_integer(last) and first <= last, do:
     step = case step, do:
-    match:
       nil =>
         Erlang.lists.seq(first, last, 1)
       x when x < 0 =>
@@ -262,10 +261,8 @@ defmodule List, do:
 
   def range(first, last, step) when is_integer(first) and is_integer(last) and first > last, do:
     step = case step, do:
-    match:
       nil =>
         Erlang.lists.seq(first, last, -1)
-    match:
       x when x > 0 =>
         []
       _ =>
@@ -345,9 +342,7 @@ defmodule List, do:
   def find_index(list, term), do:
     index = Erlang.string.str(list, [term])
     case index == 0, do:
-    match:
       true  => nil
-    match:
       false => index
     end
   end
@@ -431,10 +426,8 @@ defmodule List, do:
 
   defp do_uniq([h|t], acc), do:
     case Erlang.lists.member(h, acc), do:
-    match:
       true =>
         do_uniq(t, acc)
-    match:
       false =>
         [h|do_uniq(t, [h|acc])]
     end
@@ -459,7 +452,6 @@ defmodule List, do:
     {mlist, heads} = :lists.mapfoldl converter, [], list
 
     case heads, do:
-    match:
       nil =>
         :lists.reverse acc
       _ =>

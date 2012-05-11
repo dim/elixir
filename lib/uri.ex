@@ -38,7 +38,6 @@ defmodule URI, do:
       try do:
         List.foldl parts, dict, fn(kvstr, acc) ->
           case Regex.split(%r/=/, kvstr), do:
-          match:
             [ key, value ] when key != "" =>
               impl.put acc, decode(key), decode(value)
             _ =>

@@ -53,8 +53,7 @@ translate_macro({'@', Line, [{ Name, _, Args }]}, S) ->
 
 %% Case
 
-translate_macro({'case', Line, [Expr, RawClauses]}, S) ->
-  Clauses = orddict:erase(do, RawClauses),
+translate_macro({'case', Line, [Expr, Clauses]}, S) ->
   { TExpr, NS } = translate_each(Expr, S),
   { TClauses, TS } = elixir_clauses:match(Line, Clauses, NS),
   { { 'case', Line, TExpr, TClauses }, TS };
@@ -82,8 +81,7 @@ translate_macro({'try', Line, [Clauses]}, RawS) ->
 
 %% Receive
 
-translate_macro({'receive', Line, [RawClauses] }, S) ->
-  Clauses = orddict:erase(do, RawClauses),
+translate_macro({'receive', Line, [Clauses] }, S) ->
   case orddict:find('after', Clauses) of
     { ok, After } ->
       AClauses = orddict:erase('after', Clauses),

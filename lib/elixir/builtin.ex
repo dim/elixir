@@ -818,7 +818,6 @@ defmodule Elixir.Builtin, do:
       child   = spawn(fn -> current <- { Process.self, 1 + 2 } end)
 
       receive
-      match:
         { ^child, 3 } => IO.puts "Received 3 back"
       end
 
@@ -1165,7 +1164,6 @@ defmodule Elixir.Builtin, do:
     end)
 
     opts = case Keyword.key?(opts, :moduledoc), do:
-    match:
       false =>
         Keyword.put(opts, :moduledoc, nil)
       _ =>
@@ -1578,7 +1576,6 @@ defmodule Elixir.Builtin, do:
   defmacro match?(left, right), do:
     quote do:
       case unquote(right), do:
-      match:
         unquote(left) =>
           true
         _ =>
@@ -1593,7 +1590,6 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       case thing, do:
-      match:
         { :selector, i, value } when is_integer(i) =>
           value
         value => value
@@ -1908,7 +1904,6 @@ defmodule Elixir.Builtin, do:
     List.foldl left, right, fn(item, acc) ->
       quote do:
         case unquote(acc), do:
-        match:
           [unquote(item)|t] =>
             t
           other when other == [] or other == nil =>
@@ -2003,7 +1998,6 @@ defmodule Elixir.Builtin, do:
   defmacro :&&.(left, right), do:
     quote do:
       case unquote(left), do:
-      match:
         andand in [false, nil] =>
           andand
         _ =>
@@ -2031,7 +2025,6 @@ defmodule Elixir.Builtin, do:
   defmacro :||.(left, right), do:
     quote do:
       case unquote(left), do:
-      match:
         oror in [false, nil] =>
           unquote(right)
         oror =>
@@ -2079,7 +2072,6 @@ defmodule Elixir.Builtin, do:
   defmacro :!.({:!, _, [expr]}), do:
     quote do:
       case unquote(expr), do:
-      match:
         false => false
         nil => false
         _ => true
@@ -2090,7 +2082,6 @@ defmodule Elixir.Builtin, do:
   defmacro :!.(expr), do:
     quote do:
       case unquote(expr), do:
-      match:
         false => true
         nil => true
         _ => false
@@ -2269,7 +2260,6 @@ defmodule Elixir.Builtin, do:
   defp build_if_clauses([{ :match, [condition], clause }|t], acc), do:
     new_acc = quote do:
       case !unquote(condition), do:
-      match:
         false => unquote(clause)
         _ => unquote(acc)
       end

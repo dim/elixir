@@ -90,7 +90,6 @@ defmodule Code, do:
     file = find_file(file, relative_to)
 
     case server_call({ :loaded, file }), do:
-    match:
       :ok =>
         Erlang.elixir_compiler.file to_char_list(file)
         file

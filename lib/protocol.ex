@@ -110,7 +110,6 @@ defmodule Protocol, do:
 
       def __impl_for__(arg), do:
         case __raw_impl__(arg), do:
-        match:
           __MODULE__.Record =>
             target = Module.concat(__MODULE__, :erlang.element(1, arg))
             try do:
@@ -224,11 +223,9 @@ defmodule Protocol, do:
       defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)), do:
         first = :erlang.element(1, arg)
         case unquote(is_builtin?(conversions)), do:
-        match:
           true  => __MODULE__.Tuple
           false =>
             case atom_to_list(first), do:
-            match:
               '__MAIN__' ++ _ => __MODULE__.Record
               _ => __MODULE__.Tuple
             end
@@ -262,7 +259,6 @@ defmodule Protocol.DSL, do:
   defmacro def(expression), do:
     { name, arity } =
       case expression, do:
-      match:
         { _, _, args } when args == [] or is_atom(args) =>
           raise ArgumentError, message: "protocol functions expect at least one argument"
         { name, _, args } when is_atom(name) and is_list(args) =>
@@ -286,14 +282,12 @@ defmodule Protocol.DSL, do:
       Elixir.Builtin.def unquote(name).(unquote_splicing(args)), do:
         args = [unquote_splicing(args)]
         case __raw_impl__(xA), do:
-        match:
           __MODULE__.Record =>
             try do:
               target = Module.concat(__MODULE__, :erlang.element(1, xA))
               apply target, unquote(name), args
             rescue: UndefinedFunctionError
               case __fallback__, do:
-              match:
                 nil =>
                   raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
                 other =>

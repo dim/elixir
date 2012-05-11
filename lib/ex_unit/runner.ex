@@ -26,7 +26,6 @@ defmodule ExUnit.Runner, do:
   # attempt to spawn new ones.
   defp do_loop(config), do:
     receive do:
-    match:
       { pid, :each, { test_case, test, final } } =>
         call_formatter config, { :each, test_case, test, final }
         do_loop config
@@ -39,7 +38,6 @@ defmodule ExUnit.Runner, do:
   # Spawn the maximum possible of cases according to the max_cases value.
   defp spawn_async_cases(config), do:
     case config.cases, do:
-    match:
       [test_case|t] =>
         if config.taken_cases < config.max_cases, do:
           spawn_case test_case

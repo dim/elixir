@@ -16,7 +16,6 @@ defmodule Kernel.CaseTest, do:
 
   test :match_with_in, do:
     assert(case 3, do:
-    match:
       x in [1,2,3] =>
         true
     end)
@@ -24,10 +23,8 @@ defmodule Kernel.CaseTest, do:
     y = 3
 
     assert(case 3, do:
-    match:
       x in [1,2,3] when y == 2 =>
         false
-    match:
       x in [1,2,3] when y == 1 when y == 3 =>
         true
     end)
@@ -42,12 +39,10 @@ defmodule Kernel.CaseTest, do:
 
   defp get_case, do:
     case internal, do:
-    match:
       :invalid =>
         status = :fail
       1 =>
         case other_internal, do:
-        match:
           status =>
             status
         end
@@ -65,13 +60,11 @@ defmodule Kernel.CaseTest, do:
 
   defp vars_case(x, vx), do:
     case x > 400, do:
-    match:
       true =>
         x = 400
         vx = -vx
       _ =>
         case x < 0, do:
-        match:
           true =>
             x = 0
             vx = -vx

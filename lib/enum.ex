@@ -513,7 +513,6 @@ defmodule Enum, do:
   """
   def times(times, function) when times >= 0, do:
     case is_function(function, 0), do:
-    match:
       true =>
         do_times_0(times, 1, function)
       _ => 
@@ -543,7 +542,6 @@ defmodule Enum, do:
 
   defp do_all?({ h, next }, iterator, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         false
       _ =>
@@ -559,7 +557,6 @@ defmodule Enum, do:
 
   defp do_any?({ h, next }, iterator, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         do_any?(iterator.(next), iterator, fun)
       _ =>
@@ -575,7 +572,6 @@ defmodule Enum, do:
 
   defp do_drop_while({ h, next }, iterator, fun, module), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         module.to_list(h, next)
       _ =>
@@ -591,7 +587,6 @@ defmodule Enum, do:
 
   defp do_find({ h, next }, iterator, ifnone, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         do_find(iterator.(next), iterator, ifnone, fun)
       _ =>
@@ -607,7 +602,6 @@ defmodule Enum, do:
 
   defp do_find_value({ h, next }, iterator, ifnone, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         do_find_value(iterator.(next), iterator, ifnone, fun)
       other =>
@@ -634,7 +628,6 @@ defmodule Enum, do:
 
   defp do_filter({ h, next }, iterator, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         do_filter(iterator.(next), iterator, fun)
       _ =>
@@ -650,7 +643,6 @@ defmodule Enum, do:
 
   defp do_filter_map({ h, next }, iterator, filter, mapper), do:
     case filter.(h), do:
-    match:
       x in [false, nil] =>
         do_filter_map(iterator.(next), iterator, filter, mapper)
       _ =>
@@ -676,7 +668,6 @@ defmodule Enum, do:
 
   defp do_split_with({ h, next }, iterator, fun, acc, module), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         { List.reverse(acc), module.to_list(h, next) }
       _ =>
@@ -759,7 +750,6 @@ defmodule Enum, do:
 
   defp do_partition({ h, next }, iterator, fun, acc1, acc2), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         do_partition(iterator.(next), iterator, fun, acc1, [h|acc2])
       _ =>
@@ -837,7 +827,6 @@ defmodule Enum, do:
 
   defp do_take_while({ h, next }, iterator, fun), do:
     case fun.(h), do:
-    match:
       x in [false, nil] =>
         []
       _ =>

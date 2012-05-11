@@ -54,7 +54,6 @@ defmodule Kernel.LoopTest, do:
 
     result = loop do:
       receive do:
-      match:
         x => Process.put x, -x; recur
       after:
         0 => :ok

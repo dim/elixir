@@ -36,7 +36,6 @@ defmodule Kernel.RequireTest, do:
 
   test :default_required, do:
     result = Elixir.Builtin.case 1, do:
-    match:
       1 => true
       _ => false
     end

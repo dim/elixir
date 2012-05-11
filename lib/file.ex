@@ -203,7 +203,6 @@ defmodule File, do:
   """
   def read!(path), do:
     case read(path), do:
-    match:
       { :ok, binary } =>
         binary
       { :error, reason } =>
@@ -279,7 +278,6 @@ defmodule File, do:
   """
   def read_info(path, opts // []), do:
     case :file.read_file_info(path, opts), do:
-    match:
       {:ok, fileinfo} =>
         {:ok, Info.new fileinfo}
       error =>
@@ -293,7 +291,6 @@ defmodule File, do:
   """
   def read_info!(path, opts // []), do:
     case read_info(path, opts), do:
-    match:
       {:ok, info} =>
         info
       {:error, reason} =>
