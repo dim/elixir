@@ -14,13 +14,11 @@ each_clause(Line, {'catch',Raw,Expr} = Catch, S) ->
   elixir_kw_block:validate(Line, Catch, 3, S),
 
   Final = case Args of
+    %% TODO: Remove the array
+    [{ '|', _, [{ '|', _, [X, Y]}, Z]}] -> [X, Y, Z];
+    [{ '|', _, [X, Y]}] -> [X, Y, { '_', Line, nil }];
     [X]     -> [throw, X, { '_', Line, nil }];
-    [X,Y]   -> [X, Y, { '_', Line, nil }];
-    [_,_,_] -> Args;
-    [] ->
-      elixir_errors:syntax_error(Line, S#elixir_scope.filename, "no condition given for catch");
-    _ ->
-      elixir_errors:syntax_error(Line, S#elixir_scope.filename, "too many conditions given for catch")
+    [X,Y]   -> [X, Y, { '_', Line, nil }]
   end,
 
   Condition = { '{}', Line, Final },

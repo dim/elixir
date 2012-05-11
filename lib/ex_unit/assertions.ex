@@ -153,8 +153,9 @@ defmodule ExUnit.Assertions, do:
       try do:
         unquote(expected) = unquote(received)
         true
-      rescue: x in [MatchError]
-        raise ExUnit.AssertionError, message: x.message
+      rescue:
+        x in [MatchError] =>
+          raise ExUnit.AssertionError, message: x.message
       end
     end
   end
@@ -200,16 +201,16 @@ defmodule ExUnit.Assertions, do:
   def assert_raise(exception, function), do:
     function.()
     flunk "Expected #{inspect exception} exception but nothing was raised"
-  rescue: error in [exception]
-    error
-  rescue: error
-    name = error.__record__(:name)
+  rescue:
+    error in [exception] => error
+    error =>
+      name = error.__record__(:name)
 
-    if name == ExUnit.AssertionError, do:
-      raise(error)
-    else:
-      flunk "Expected exception #{inspect exception}, got #{inspect name}"
-    end
+      if name == ExUnit.AssertionError, do:
+        raise(error)
+      else:
+        flunk "Expected exception #{inspect exception}, got #{inspect name}"
+      end
   end
 
   @doc """
@@ -296,10 +297,11 @@ defmodule ExUnit.Assertions, do:
   defp assert_catch(expected_type, expected_value, function), do:
     function.()
     flunk "Expected #{expected_type} #{inspect expected_value}, got nothing"
-  catch: ^expected_type, ^expected_value
-    expected_value
-  catch: ^expected_type, actual_value
-    flunk "Expected #{expected_type} #{inspect expected_value}, got #{inspect actual_value}"
+  catch:
+    ^expected_type | ^expected_value =>
+      expected_value
+    ^expected_type | actual_value =>
+      flunk "Expected #{expected_type} #{inspect expected_value}, got #{inspect actual_value}"
   end
 
   @doc """
@@ -329,8 +331,8 @@ defmodule ExUnit.Assertions, do:
       try do:
         unquote(expected) = unquote(received)
         flunk "Unexpected right side #{inspect unquote(received)} match"
-      rescue: x in [MatchError]
-        true
+      rescue:
+        x in [MatchError] => true
       end
     end
   end

@@ -75,14 +75,16 @@ defmodule Protocol, do:
   def assert_protocol(module), do:
     try do:
       module.__info__(:data)
-    rescue: UndefinedFunctionError
-      raise ArgumentError, message: "#{module} is not loaded"
+    rescue:
+      UndefinedFunctionError =>
+        raise ArgumentError, message: "#{module} is not loaded"
     end
 
     try do:
       module.__protocol__(:name)
-    rescue: UndefinedFunctionError
-      raise ArgumentError, message: "#{module} is not a protocol"
+    rescue:
+      UndefinedFunctionError =>
+        raise ArgumentError, message: "#{module} is not a protocol"
     end
   end
 
@@ -115,8 +117,8 @@ defmodule Protocol, do:
             try do:
               target.__impl__
               target
-            rescue: UndefinedFunctionError
-              __fallback__
+            rescue:
+              UndefinedFunctionError => __fallback__
             end
           other =>
             other
@@ -287,13 +289,14 @@ defmodule Protocol.DSL, do:
             try do:
               target = Module.concat(__MODULE__, :erlang.element(1, xA))
               apply target, unquote(name), args
-            rescue: UndefinedFunctionError
-              case __fallback__, do:
-                nil =>
-                  raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
-                other =>
-                  apply other, unquote(name), args
-              end
+            rescue:
+              UndefinedFunctionError =>
+                case __fallback__, do:
+                  nil =>
+                    raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
+                  other =>
+                    apply other, unquote(name), args
+                end
             end
           nil =>
             raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA

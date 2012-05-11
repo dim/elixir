@@ -63,18 +63,20 @@ defmodule Elixir.IEx, do:
           Erlang.elixir.eval(code, config.binding, counter, config.scope)
         io.put result
         config.binding(new_binding).cache('').scope(scope)
-      rescue: TokenMissingError
-        config.cache(code)
-      rescue: exception
-        stacktrace = System.stacktrace
-        io.error "** (#{inspect exception.__record__(:name)}) #{exception.message}"
-        print_stacktrace io, stacktrace
-        config.cache('')
-      catch: kind, error
-        stacktrace = System.stacktrace
-        io.error "** (#{kind}) #{inspect(error)}"
-        print_stacktrace io, stacktrace
-        config.cache('')
+      rescue:
+        TokenMissingError =>
+          config.cache(code)
+        exception =>
+          stacktrace = System.stacktrace
+          io.error "** (#{inspect exception.__record__(:name)}) #{exception.message}"
+          print_stacktrace io, stacktrace
+          config.cache('')
+      catch:
+        kind | error =>
+          stacktrace = System.stacktrace
+          io.error "** (#{kind}) #{inspect(error)}"
+          print_stacktrace io, stacktrace
+          config.cache('')
       end
 
     do_loop(new_config)

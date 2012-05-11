@@ -22,24 +22,26 @@ defmodule Elixir.CLI, do:
         at_exit(0)
         halt(0)
       end
-    rescue: exception
-      at_exit(1)
-      stacktrace = System.stacktrace
-      IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
-      print_stacktrace(stacktrace)
-      halt(1)
-    catch: :exit, reason when is_integer(reason)
-      at_exit(reason)
-      halt(reason)
-    catch: :exit, :normal
-      at_exit(0)
-      halt(0)
-    catch: kind, reason
-      at_exit(1)
-      stacktrace = System.stacktrace
-      IO.puts :standard_error, "** (#{kind}) #{inspect(reason)}"
-      print_stacktrace(stacktrace)
-      halt(1)
+    rescue:
+      exception =>
+        at_exit(1)
+        stacktrace = System.stacktrace
+        IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
+        print_stacktrace(stacktrace)
+        halt(1)
+    catch:
+      :exit | reason when is_integer(reason) =>
+        at_exit(reason)
+        halt(reason)
+      :exit | :normal =>
+        at_exit(0)
+        halt(0)
+      kind | reason =>
+        at_exit(1)
+        stacktrace = System.stacktrace
+        IO.puts :standard_error, "** (#{kind}) #{inspect(reason)}"
+        print_stacktrace(stacktrace)
+        halt(1)
     end
   end
 
@@ -50,12 +52,14 @@ defmodule Elixir.CLI, do:
     lc hook in hooks, do:
       try do:
         hook.(status)
-      rescue: exception
-        IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
-        print_stacktrace(System.stacktrace)
-      catch: kind, reason
-        IO.puts :standard_error, "** #{kind} #{inspect(reason)}"
-        print_stacktrace(System.stacktrace)
+      rescue:
+        exception =>
+          IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
+          print_stacktrace(System.stacktrace)
+      catch:
+        kind | reason =>
+          IO.puts :standard_error, "** #{kind} #{inspect(reason)}"
+          print_stacktrace(System.stacktrace)
       end
     end
   end
@@ -225,8 +229,9 @@ defmodule Elixir.CLI, do:
       try do:
         Code.require_file(h)
         parent <- { :required, Process.self }
-      catch: kind, reason
-        parent <- { :failure, Process.self, kind, reason, System.stacktrace }
+      catch:
+        kind | reason =>
+          parent <- { :failure, Process.self, kind, reason, System.stacktrace }
       end
     end
 

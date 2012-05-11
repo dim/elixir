@@ -44,8 +44,8 @@ defmodule URI, do:
               throw :malformed_query_string
           end
         end
-      catch: :malformed_query_string
-        nil
+      catch:
+        :malformed_query_string => nil
       end
     end
   end
@@ -140,8 +140,8 @@ defmodule URI, do:
       module =
         try do:
           Module.safe_concat(URI, :string.to_upper(binary_to_list(scheme)))
-        rescue: ArgumentError
-          nil
+        rescue:
+          ArgumentError => nil
         end
 
       if module && match?({:module,^module}, Code.ensure_loaded(module)), do:

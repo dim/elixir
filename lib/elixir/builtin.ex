@@ -1640,10 +1640,12 @@ defmodule Elixir.Builtin, do:
 
       try do:
         do_something_that_may_fail(some_arg)
-      rescue: ArgumentError
-        IO.puts "Invalid argument given"
-      catch: value
-        IO.puts "caught \#{value}"
+      rescue:
+        ArgumentError =>
+          IO.puts "Invalid argument given"
+      catch:
+        value =>
+          IO.puts "caught \#{value}"
       after:
         IO.puts "This is printed regardless if it failed or succeed"
       end
@@ -1665,24 +1667,28 @@ defmodule Elixir.Builtin, do:
 
       try do:
         UndefinedModule.undefined_function
-      rescue: UndefinedFunctionError
+      rescue:
+        UndefinedFunctionError => nil
       end
 
       try do:
         UndefinedModule.undefined_function
-      rescue: [UndefinedFunctionError]
+      rescue:
+        [UndefinedFunctionError] => nil
       end
 
       # rescue and assign to x
       try do:
         UndefinedModule.undefined_function
-      rescue: x in [UndefinedFunctionError]
+      rescue:
+        x in [UndefinedFunctionError] => nil
       end
 
       # rescue all and assign to x
       try do:
         UndefinedModule.undefined_function
-      rescue: x
+      rescue:
+        x => nil
       end
 
   ## Variable visibility
@@ -1696,8 +1702,8 @@ defmodule Elixir.Builtin, do:
         x = 1
         do_something_that_may_fail(same_arg)
         :ok
-      catch: _, _
-        :failed
+      catch:
+        _ | _ => :failed
       end
 
       x #=> Cannot access `x`
@@ -1712,14 +1718,15 @@ defmodule Elixir.Builtin, do:
 
       try do:
         exit(1)
-      catch: :exit, 1
-        IO.puts "Exited with 1"
+      catch:
+        :exit | 1 => IO.puts "Exited with 1"
       end
 
       try do:
         error(:sample)
-      catch: :error, :sample
-        IO.puts "sample error"
+      catch:
+        :error | :sample =>
+          IO.puts "sample error"
       end
 
   Although the second form should be avoided in favor of raise/rescue
@@ -2115,9 +2122,10 @@ defmodule Elixir.Builtin, do:
 
       try do:
         1 + :foo
-      rescue: x in [BadargError]
-        IO.puts "that was expected"
-        raise x
+      rescue:
+        x in [BadargError] =>
+          IO.puts "that was expected"
+          raise x
       end
 
   """

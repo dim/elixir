@@ -55,8 +55,9 @@ defmodule Elixir.ParallelCompiler, do:
           Erlang.elixir_compiler.file(h)
         end
         parent <- { :compiled, Process.self(), h }
-      catch: kind, reason
-        parent <- { :failure, Process.self(), kind, reason, System.stacktrace }
+      catch:
+        kind | reason =>
+          parent <- { :failure, Process.self(), kind, reason, System.stacktrace }
       end
     end
 
