@@ -16,7 +16,7 @@ Nonterminals
   comma_expr call_args_comma_expr last_args
   call_args call_args_parens call_args_no_parens
   kv_comma base_orddict kv_eol kv_block
-  end_eol kv_item kv_list stab_eol stab_block rocket_block
+  end_eol kv_item kv_list stab_eol stab_block rocket_expr rocket_expr_list
   parens_call dot_op dot_identifier dot_do_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
@@ -299,15 +299,17 @@ stab_eol -> '->' eol : '$1'.
 end_eol -> 'end' : '$1'.
 end_eol -> eol 'end' : '$2'.
 
-rocket_block -> expr rocket_op expr_list : [ { ['$1'], build_block('$3') } ].
-rocket_block -> rocket_block eol expr rocket_op expr_list : [{ ['$3'], build_block('$5') }|'$1'].
+rocket_expr_list -> rocket_expr : ['$1'].
+rocket_expr_list -> rocket_expr_list eol rocket_expr : ['$3'|'$1'].
 
-kv_item -> kv_eol expr_list eol : { ?exprs('$1'), build_block('$2') }.
-kv_item -> kv_eol rocket_block eol : { ?exprs('$1'), { '=>', ?line('$1'), lists:reverse('$2') } }.
+rocket_expr -> expr : '$1'.
+rocket_expr -> expr rocket_op expr : build_op('$2', '$1', '$3').
+
+kv_item -> kv_eol rocket_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
 
 %% Those will be deprecated
-% kv_item -> kv_identifier comma_expr eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),nil] } }.
-% kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),build_block('$4')] } }.
+kv_item -> kv_identifier comma_expr eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),nil] } }.
+kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),build_block('$4')] } }.
 
 kv_list -> kv_item : ['$1'].
 kv_list -> kv_item kv_list : ['$1'|'$2'].
@@ -438,6 +440,28 @@ build_list_string({ list_string, Line, Args }) -> { binary_to_list, Line, [{ '<<
 build_atom({ atom, _Line, [H] }) when is_atom(H) -> H;
 build_atom({ atom, _Line, [H] }) when is_binary(H) -> binary_to_atom(H, utf8);
 build_atom({ atom, Line, Args }) -> { binary_to_atom, Line, [{ '<<>>', Line, Args}, utf8] }.
+
+%% build_kw
+%% TODO: Pass the line forward
+
+build_kw([{ '=>', Line, [Left, Right] }|T]) ->
+  { '=>', Line, build_kw(T, Left, [Right], []) };
+
+build_kw(Else) ->
+  %% LOL PERFZ
+  build_block(lists:reverse(Else)).
+
+build_kw([{ '=>', _, [Left, Right] }|T], Marker, Temp, Acc) ->
+  %% TODO: Marker probably shouldn't be wrapped
+  H = { [Marker], build_block(Temp) },
+  build_kw(T, Left, [Right], [H|Acc]);
+
+build_kw([H|T], Marker, Temp, Acc) ->
+  build_kw(T, Marker, [H|Temp], Acc);
+
+build_kw([], Marker, Temp, Acc) ->
+  H = { [Marker], build_block(Temp) },
+  lists:reverse([H|Acc]).
 
 %% Helpers
 

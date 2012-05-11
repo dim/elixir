@@ -250,12 +250,13 @@ defmodule List, do:
 
   def range(first, last, step) when is_integer(first) and is_integer(last) and first <= last, do:
     step = case step, do:
-    match: nil
-      Erlang.lists.seq(first, last, 1)
-    match: x when x < 0
-      []
-    else:
-      Erlang.lists.seq(first, last, step)
+    match:
+      nil =>
+        Erlang.lists.seq(first, last, 1)
+      x when x < 0 =>
+        []
+      _ =>
+        Erlang.lists.seq(first, last, step)
     end
   end
 
