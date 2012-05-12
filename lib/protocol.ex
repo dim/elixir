@@ -169,10 +169,10 @@ defmodule Protocol, do:
 
     conversions =
       if only, do:
-        L.map(&> (i) L.keyfind(i, 1, kinds) end, only)
+        L.map(=> (i) L.keyfind(i, 1, kinds) end, only)
       else:
         except = except || [Any]
-        L.foldl(&> (i, list) L.keydelete(i, 1, list) end, kinds, except)
+        L.foldl(=> (i, list) L.keydelete(i, 1, list) end, kinds, except)
       end
 
     fallback = cond do:

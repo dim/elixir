@@ -74,10 +74,10 @@ tokenize(Line, [$?,Char|T], Tokens) ->
 tokenize(Line, "->" ++ Rest, Tokens) ->
   tokenize(Line, Rest, [{'->',Line}|Tokens]);
 
-tokenize(Line, "&>" ++ Rest, Tokens) ->
+tokenize(Line, "=>" ++ Rest, Tokens) ->
   case next_is_paren(Rest) of
-    false -> tokenize(Line, Rest, [{'&>',Line}|Tokens]);
-    Tail  -> tokenize(Line, Tail, [{'&>(',Line}|Tokens])
+    false -> tokenize(Line, Rest, [{'=>',Line}|Tokens]);
+    Tail  -> tokenize(Line, Tail, [{'=>(',Line}|Tokens])
   end;
 
 % Dot operators

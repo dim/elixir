@@ -33,7 +33,7 @@ Terminals
   'true' 'false' 'nil'
   '=' '+' '-' '*' '/' '++' '--' '**' '//'
   '(' ')' '[' ']' '{' '}' '<<' '>>'
-  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '->' '&>' '&>('
+  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>' '=>('
   '&&' '||' '!'
   .
 
@@ -141,10 +141,10 @@ lambda -> lambda_paren_op call_args_comma_expr close_paren grammar 'end' :
 lambda -> lambda_op grammar 'end' :
   { 'fn', ?line('$1'), [[{do,build_block('$2', false)}]] }.
 
-lambda_op -> '&>' : '$1'.
+lambda_op -> '=>' : '$1'.
 
-lambda_paren_op -> '&>(' : '$1'.
-lambda_paren_op -> '&>(' eol : '$1'.
+lambda_paren_op -> '=>(' : '$1'.
+lambda_paren_op -> '=>(' eol : '$1'.
 
 %% Helpers
 

@@ -31,7 +31,7 @@ defmodule Binary.Chars.BitStringTest, do:
   use ExUnit.Case
 
   test :bitstring, do:
-    assert_raise FunctionClauseError, &>
+    assert_raise FunctionClauseError, =>
       to_binary(<<1|12-:integer-:signed>>)
     end
   end

@@ -28,7 +28,7 @@ defmodule Kernel.AtomToBinaryTest, do:
     :existing_atom
     assert binary_to_existing_atom("existing_atom") == :existing_atom
 
-    assert_raise ArgumentError, &>
+    assert_raise ArgumentError, =>
       binary_to_existing_atom "nonexisting_atom"
     end
   end

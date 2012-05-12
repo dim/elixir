@@ -144,7 +144,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_raise_when_no_error, do:
-    "This should never be tested" = assert_raise ArgumentError, &>
+    "This should never be tested" = assert_raise ArgumentError, =>
       # nothing
     end
   rescue:
@@ -153,7 +153,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_raise_when_error, do:
-    error = assert_raise ArgumentError, &>
+    error = assert_raise ArgumentError, =>
       raise ArgumentError, message: "test error"
     end
 
@@ -161,7 +161,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_raise_when_other_error, do:
-    "This should never be tested" = assert_raise ArgumentError, &>
+    "This should never be tested" = assert_raise ArgumentError, =>
       Certainly.Undefined.function(1,2,3)
     end
   rescue:
@@ -170,7 +170,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_raise_when_erlang_error, do:
-    assert_raise SyntaxError, &>
+    assert_raise SyntaxError, =>
       List.flatten(1)
     end
   rescue:
@@ -321,7 +321,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_throw_when_no_throw, do:
-    "This should never be tested" = assert_throw 1, &>
+    "This should never be tested" = assert_throw 1, =>
       # nothing
     end
   rescue:
@@ -330,13 +330,13 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_throw_when_throw, do:
-    1 = assert_throw 1, &>
+    1 = assert_throw 1, =>
       throw 1
     end
   end
 
   test :assert_throw_when_other_throw, do:
-    "This should never be tested" = assert_throw 1, &>
+    "This should never be tested" = assert_throw 1, =>
       throw 2
     end
   rescue:
@@ -345,7 +345,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_exit_when_no_exit, do:
-    "This should never be tested" = assert_exit 1, &>
+    "This should never be tested" = assert_exit 1, =>
       # nothing
     end
   rescue:
@@ -354,13 +354,13 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_exit_when_exit, do:
-    1 = assert_exit 1, &>
+    1 = assert_exit 1, =>
       exit 1
     end
   end
 
   test :assert_exit_when_other_exit, do:
-    "This should never be tested" = assert_exit 1, &>
+    "This should never be tested" = assert_exit 1, =>
       exit 2
     end
   rescue:
@@ -369,7 +369,7 @@ defmodule ExUnit.AssertionsTest, do:
   end
 
   test :assert_error_when_error, do:
-    :function_clause = assert_error :function_clause, &>
+    :function_clause = assert_error :function_clause, =>
       List.flatten(1)
     end
   end

@@ -179,7 +179,7 @@ defmodule Module, do:
     registered = ETS.lookup_element(table, :registered_attributes, 2)
     data       = lc kv in data, do: normalize_data(kv)
 
-    { attrs, new } = :lists.partition &> ({k,_}) List.member?(registered, k) end, data
+    { attrs, new } = :lists.partition => ({k,_}) List.member?(registered, k) end, data
     lc {k,v} in attrs, do: add_attribute(module, k, v)
     ETS.insert(table, { :data,  Keyword.merge(old, new) })
   end

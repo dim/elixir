@@ -97,7 +97,7 @@ defmodule Record, do:
     # an ordered dict of options (opts) and it will try to fetch
     # the given key from the ordered dict, falling back to the
     # default value if one does not exist.
-    selective = Enum.map values, &> ({k,v})
+    selective = Enum.map values, => ({k,v})
       quote do: Keyword.get(opts, unquote(k), unquote(v))
     end
 
@@ -207,7 +207,7 @@ defmodule Record.Extractor, do:
   # list of second order tuples where the first element
   # is the field and the second is its default value.
   defp parse_record({ _name, fields }), do:
-    cons = List.foldr fields, { nil, 0 }, &> (f, acc)
+    cons = List.foldr fields, { nil, 0 }, => (f, acc)
       { :cons, 0, parse_field(f), acc }
     end
     { :value, list, _ } = Erlang.erl_eval.expr(cons, [])

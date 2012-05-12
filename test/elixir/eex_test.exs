@@ -63,25 +63,25 @@ defmodule EExTest, do:
   end
 
   test "raises a syntax error when the token is invalid", do:
-    assert_raise EEx.SyntaxError, "invalid token: ' bar'", &>
+    assert_raise EEx.SyntaxError, "invalid token: ' bar'", =>
       EEx.compile_string "foo <%= bar"
     end
   end
 
   test "raises a syntax error when end expression is found without a start expression", do:
-    assert_raise EEx.SyntaxError, "unexpected token: ' end ' at line 1",  &>
+    assert_raise EEx.SyntaxError, "unexpected token: ' end ' at line 1",  =>
       EEx.compile_string "foo <% end %>"
     end
   end
 
   test "raises a syntax error when start expression is found without an end expression", do:
-    assert_raise EEx.SyntaxError, "unexpected end of string. expecting a closing <% end %>.", &>
+    assert_raise EEx.SyntaxError, "unexpected end of string. expecting a closing <% end %>.", =>
       EEx.compile_string "foo <% if true do %>"
     end
   end
 
   test "raises a syntax error when nested end expression is found without an start expression", do:
-    assert_raise EEx.SyntaxError, "unexpected token: ' end ' at line 1", &>
+    assert_raise EEx.SyntaxError, "unexpected token: ' end ' at line 1", =>
       EEx.compile_string "foo <% if true do %><% end %><% end %>"
     end
   end
@@ -197,7 +197,7 @@ foo
   end
 
   test "raises an Exception when there's an error with the given file", do:
-    assert_raise File.Error, "could not read file non-existent.eex: no such file or directory", &>
+    assert_raise File.Error, "could not read file non-existent.eex: no such file or directory", =>
       filename = "non-existent.eex"
       EEx.compile_file(filename)
     end

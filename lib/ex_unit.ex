@@ -41,7 +41,7 @@ defmodule ExUnit, do:
   def start(options // []), do:
     ExUnit.Server.start_link
     configure(options)
-    System.at_exit &> (status)
+    System.at_exit => (status)
       if status == 0, do: ExUnit.run
     end
   end
