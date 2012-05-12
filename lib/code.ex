@@ -38,7 +38,7 @@ defmodule Code, do:
   ## Examples
 
       Code.eval "a + b", [a: 1, b: 2], file: __FILE__, line: __LINE__
-      # => { 3, [ {:a, 1}, {:b, 2} ] }
+      #=> { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
   def eval(string, binding // [], opts // []), do:
@@ -54,7 +54,7 @@ defmodule Code, do:
 
       contents = quote hygiene: false, do: a + b
       Code.eval_quoted contents, [a: 1, b: 2], file: __FILE__, line: __LINE__
-      # => { 3, [ {:a, 1}, {:b, 2} ] }
+      #=> { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
   def eval_quoted(quoted, binding // [], opts // []), do:
@@ -90,10 +90,10 @@ defmodule Code, do:
     file = find_file(file, relative_to)
 
     case server_call({ :loaded, file }), do:
-      :ok =>
+      :ok ->
         Erlang.elixir_compiler.file to_char_list(file)
         file
-      :duplicated => nil
+      :duplicated -> nil
     end
   end
 

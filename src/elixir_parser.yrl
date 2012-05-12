@@ -7,7 +7,7 @@ Nonterminals
   base_expr op_expr
   comma_separator
   add_op mult_op unary_op addadd_op multmult_op bin_concat_op
-  match_op arrow_op default_op when_op pipe_op in_op rocket_op
+  match_op arrow_op default_op when_op pipe_op in_op stab_op
   andand_op oror_op and_op or_op comp_expr_op
   open_paren close_paren
   open_bracket close_bracket
@@ -15,7 +15,7 @@ Nonterminals
   open_bit close_bit
   comma_expr call_args_comma_expr
   call_args call_args_parens call_args_no_parens
-  rocket_expr rocket_expr_list
+  stab_expr stab_expr_list
   kw_eol kw_expr kw_item kw_list kw_any kw_comma kw_base
   parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
@@ -33,13 +33,13 @@ Terminals
   'true' 'false' 'nil'
   '=' '+' '-' '*' '/' '++' '--' '**' '//'
   '(' ')' '[' ']' '{' '}' '<<' '>>'
-  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>' '&>' '&>('
+  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '->' '&>' '&>('
   '&&' '||' '!'
   .
 
 Rootsymbol grammar.
 
-Right     10 rocket_op.
+Right     10 stab_op.
 Left      20 ','.  % Solve nested call_args conflicts
 Right     30 default_op.
 Right     40 when_op.
@@ -238,8 +238,8 @@ in_op -> 'in' eol : '$1'.
 when_op -> 'when' : '$1'.
 when_op -> 'when' eol : '$1'.
 
-rocket_op -> '=>' : '$1'.
-rocket_op -> '=>' eol : '$1'.
+stab_op -> '->' : '$1'.
+stab_op -> '->' eol : '$1'.
 
 arrow_op -> '<-' : '$1'.
 arrow_op -> '<-' eol : '$1'.
@@ -292,13 +292,13 @@ call_args -> call_args_comma_expr : '$1'.
 kw_expr -> kw_identifier expr : {?exprs('$1'),'$2'}.
 kw_eol  -> kw_identifier eol : '$1'.
 
-rocket_expr_list -> rocket_expr : ['$1'].
-rocket_expr_list -> rocket_expr_list eol rocket_expr : ['$3'|'$1'].
+stab_expr_list -> stab_expr : ['$1'].
+stab_expr_list -> stab_expr_list eol stab_expr : ['$3'|'$1'].
 
-rocket_expr -> expr : '$1'.
-rocket_expr -> expr rocket_op expr : build_op('$2', '$1', '$3').
+stab_expr -> expr : '$1'.
+stab_expr -> expr stab_op expr : build_op('$2', '$1', '$3').
 
-kw_item -> kw_eol rocket_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
+kw_item -> kw_eol stab_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
 kw_item -> kw_eol : { ?exprs('$1'), nil }.
 
 kw_list -> kw_item : ['$1'].
@@ -415,13 +415,13 @@ build_atom({ atom, Line, Args }) -> { binary_to_atom, Line, [{ '<<>>', Line, Arg
 
 %% Keywords
 
-build_kw([{ '=>', Line, [Left, Right] }|T]) ->
-  { '=>', Line, build_kw(T, Left, [Right], []) };
+build_kw([{ '->', Line, [Left, Right] }|T]) ->
+  { '->', Line, build_kw(T, Left, [Right], []) };
 
 build_kw(Else) ->
   build_block(Else, false).
 
-build_kw([{ '=>', _, [Left, Right] }|T], Marker, Temp, Acc) ->
+build_kw([{ '->', _, [Left, Right] }|T], Marker, Temp, Acc) ->
   H = { Marker, build_block(Temp) },
   build_kw(T, Left, [Right], [H|Acc]);
 

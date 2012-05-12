@@ -188,7 +188,7 @@ defmodule Elixir.ErrorsTest, do:
 
   test :invalid_access_protocol_on_rescue, do:
     assert "nofile:1: cannot (yet) pattern match against erlang exceptions" ==
-      format_rescue 'try do\n1\nrescue:\nUndefinedFunctionError[arity: 1] => false\nend'
+      format_rescue 'try do\n1\nrescue:\nUndefinedFunctionError[arity: 1] -> false\nend'
   end
 
   test :invalid_bc, do:
@@ -203,7 +203,7 @@ defmodule Elixir.ErrorsTest, do:
       Erlang.elixir.eval(expr, [])
       nil
     rescue:
-      error => error.message
+      error -> error.message
     end
 
     result || raise(ExUnit.AssertionError, message: "Expected function given to format_rescue to fail")

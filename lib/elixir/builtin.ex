@@ -818,7 +818,7 @@ defmodule Elixir.Builtin, do:
       child   = spawn(&> current <- { Process.self, 1 + 2 } end)
 
       receive
-        { ^child, 3 } => IO.puts "Received 3 back"
+        { ^child, 3 } -> IO.puts "Received 3 back"
       end
 
   """
@@ -849,7 +849,7 @@ defmodule Elixir.Builtin, do:
       child   = spawn_link(&> current <- { Process.self, 1 + 2 } end)
 
       receive
-        { ^child, 3 } =>
+        { ^child, 3 } ->
           IO.puts "Received 3 back"
       end
 
@@ -1164,9 +1164,9 @@ defmodule Elixir.Builtin, do:
     end)
 
     opts = case Keyword.key?(opts, :moduledoc), do:
-      false =>
+      false ->
         Keyword.put(opts, :moduledoc, nil)
-      _ =>
+      _ ->
         opts
     end
 
@@ -1576,9 +1576,9 @@ defmodule Elixir.Builtin, do:
   defmacro match?(left, right), do:
     quote do:
       case unquote(right), do:
-        unquote(left) =>
+        unquote(left) ->
           true
-        _ =>
+        _ ->
           false
       end
     end
@@ -1590,9 +1590,9 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       case thing, do:
-        { :selector, i, value } when is_integer(i) =>
+        { :selector, i, value } when is_integer(i) ->
           value
-        value => value
+        value -> value
       end
 
   In the example above, we compare `thing` with each given
@@ -1605,7 +1605,7 @@ defmodule Elixir.Builtin, do:
 
       i = 1
       case 10, do:
-        i => i * 2
+        i -> i * 2
       end
 
   The example above will return 20, because `i` is assgined to 10
@@ -1614,7 +1614,7 @@ defmodule Elixir.Builtin, do:
 
       i = 1
       case 10, do:
-        ^i => i * 2
+        ^i -> i * 2
       end
 
   The example above will actually fail because 10 does not match 1.
@@ -1623,9 +1623,9 @@ defmodule Elixir.Builtin, do:
   of the clauses match:
 
       case thing, do:
-        { :selector, i, value } when is_integer(i) =>
+        { :selector, i, value } when is_integer(i) ->
           value
-        _ =>
+        _ ->
           thing
       end
 
@@ -1641,10 +1641,10 @@ defmodule Elixir.Builtin, do:
       try do:
         do_something_that_may_fail(some_arg)
       rescue:
-        ArgumentError =>
+        ArgumentError ->
           IO.puts "Invalid argument given"
       catch:
-        value =>
+        value ->
           IO.puts "caught \#{value}"
       after:
         IO.puts "This is printed regardless if it failed or succeed"
@@ -1668,27 +1668,27 @@ defmodule Elixir.Builtin, do:
       try do:
         UndefinedModule.undefined_function
       rescue:
-        UndefinedFunctionError => nil
+        UndefinedFunctionError -> nil
       end
 
       try do:
         UndefinedModule.undefined_function
       rescue:
-        [UndefinedFunctionError] => nil
+        [UndefinedFunctionError] -> nil
       end
 
       # rescue and assign to x
       try do:
         UndefinedModule.undefined_function
       rescue:
-        x in [UndefinedFunctionError] => nil
+        x in [UndefinedFunctionError] -> nil
       end
 
       # rescue all and assign to x
       try do:
         UndefinedModule.undefined_function
       rescue:
-        x => nil
+        x -> nil
       end
 
   ## Variable visibility
@@ -1703,7 +1703,7 @@ defmodule Elixir.Builtin, do:
         do_something_that_may_fail(same_arg)
         :ok
       catch:
-        _ | _ => :failed
+        _ | _ -> :failed
       end
 
       x #=> Cannot access `x`
@@ -1719,13 +1719,13 @@ defmodule Elixir.Builtin, do:
       try do:
         exit(1)
       catch:
-        :exit | 1 => IO.puts "Exited with 1"
+        :exit | 1 -> IO.puts "Exited with 1"
       end
 
       try do:
         error(:sample)
       catch:
-        :error | :sample =>
+        :error | :sample ->
           IO.puts "sample error"
       end
 
@@ -1741,11 +1741,11 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       receive do:
-        { :selector, i, value } when is_integer(i) =>
+        { :selector, i, value } when is_integer(i) ->
           value
-        value when is_atom(value) =>
+        value when is_atom(value) ->
           value
-        _ =>
+        _ ->
           IO.puts :standard_error, "Unexpected message received"
       end
 
@@ -1755,14 +1755,14 @@ defmodule Elixir.Builtin, do:
   received after the specified period of time:
 
       receive do:
-        { :selector, i, value } when is_integer(i) =>
+        { :selector, i, value } when is_integer(i) ->
           value
-        value when is_atom(value) =>
+        value when is_atom(value) ->
           value
-        _ =>
+        _ ->
           IO.puts :standard_error, "Unexpected message received"
       after:
-        5000 =>
+        5000 ->
           IO.puts :standard_error, "No message in 5 seconds"
       end
 
@@ -1843,8 +1843,8 @@ defmodule Elixir.Builtin, do:
 
     quote do:
       case !unquote(condition), do:
-        false => unquote(do)
-        true  => unquote(else)
+        false -> unquote(do)
+        true  -> unquote(else)
       end
     end
   end
@@ -1856,21 +1856,21 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       cond do
-        1 + 1 == 2 =>
+        1 + 1 == 2 ->
           "This will never match"
-        2 * 2 != 4 =>
+        2 * 2 != 4 ->
           "Nor this"
-        true =>
+        true ->
           "This will"
       end
 
   """
-  defmacro cond([do: { :"=>", _, pairs }]), do:
+  defmacro cond([do: { :"->", _, pairs }]), do:
     [{ condition, clause }|t] = List.reverse pairs
 
     new_acc = quote do:
       case !unquote(condition), do:
-        false => unquote(clause)
+        false -> unquote(clause)
       end
     end
 
@@ -1924,9 +1924,9 @@ defmodule Elixir.Builtin, do:
     List.foldl left, right, &> (item, acc)
       quote do:
         case unquote(acc), do:
-          [unquote(item)|t] =>
+          [unquote(item)|t] ->
             t
-          other when other == [] or other == nil =>
+          other when other == [] or other == nil ->
             unquote(item) = nil
         end
       end
@@ -2018,9 +2018,9 @@ defmodule Elixir.Builtin, do:
   defmacro :&&.(left, right), do:
     quote do:
       case unquote(left), do:
-        andand in [false, nil] =>
+        andand in [false, nil] ->
           andand
-        _ =>
+        _ ->
           unquote(right)
       end
     end
@@ -2045,9 +2045,9 @@ defmodule Elixir.Builtin, do:
   defmacro :||.(left, right), do:
     quote do:
       case unquote(left), do:
-        oror in [false, nil] =>
+        oror in [false, nil] ->
           unquote(right)
-        oror =>
+        oror ->
           oror
       end
     end
@@ -2092,9 +2092,9 @@ defmodule Elixir.Builtin, do:
   defmacro :!.({:!, _, [expr]}), do:
     quote do:
       case unquote(expr), do:
-        false => false
-        nil => false
-        _ => true
+        false -> false
+        nil -> false
+        _ -> true
       end
     end
   end
@@ -2102,9 +2102,9 @@ defmodule Elixir.Builtin, do:
   defmacro :!.(expr), do:
     quote do:
       case unquote(expr), do:
-        false => true
-        nil => true
-        _ => false
+        false -> true
+        nil -> true
+        _ -> false
       end
     end
   end
@@ -2122,7 +2122,7 @@ defmodule Elixir.Builtin, do:
       try do:
         1 + :foo
       rescue:
-        x in [BadargError] =>
+        x in [BadargError] ->
           IO.puts "that was expected"
           raise x
       end
@@ -2259,19 +2259,19 @@ defmodule Elixir.Builtin, do:
   # Builds cond clauses by nesting them recursively.
   #
   #     case !foo, do:
-  #       false => 1
-  #       true =>
+  #       false -> 1
+  #       true ->
   #         case !bar, do:
-  #           false => 2
-  #           true => 3
+  #           false -> 2
+  #           true -> 3
   #         end
   #     end
   #
   defp build_cond_clauses([{ condition, clause }|t], acc), do:
     new_acc = quote do:
       case !unquote(condition), do:
-        false => unquote(clause)
-        true  => unquote(acc)
+        false -> unquote(clause)
+        true  -> unquote(acc)
       end
     end
 

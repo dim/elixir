@@ -76,14 +76,14 @@ defmodule Protocol, do:
     try do:
       module.__info__(:data)
     rescue:
-      UndefinedFunctionError =>
+      UndefinedFunctionError ->
         raise ArgumentError, message: "#{module} is not loaded"
     end
 
     try do:
       module.__protocol__(:name)
     rescue:
-      UndefinedFunctionError =>
+      UndefinedFunctionError ->
         raise ArgumentError, message: "#{module} is not a protocol"
     end
   end
@@ -112,15 +112,15 @@ defmodule Protocol, do:
 
       def __impl_for__(arg), do:
         case __raw_impl__(arg), do:
-          __MODULE__.Record =>
+          __MODULE__.Record ->
             target = Module.concat(__MODULE__, :erlang.element(1, arg))
             try do:
               target.__impl__
               target
             rescue:
-              UndefinedFunctionError => __fallback__
+              UndefinedFunctionError -> __fallback__
             end
-          other =>
+          other ->
             other
         end
       end
@@ -176,11 +176,11 @@ defmodule Protocol, do:
       end
 
     fallback = cond do:
-      L.keyfind(Tuple, 1, conversions) =>
+      L.keyfind(Tuple, 1, conversions) ->
         Module.concat module, Tuple
-      L.keyfind(Any, 1, conversions) =>
+      L.keyfind(Any, 1, conversions) ->
         Module.concat module, Any
-      true =>
+      true ->
         nil
     end
 
@@ -226,11 +226,11 @@ defmodule Protocol, do:
       defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)), do:
         first = :erlang.element(1, arg)
         case unquote(is_builtin?(conversions)), do:
-          true  => __MODULE__.Tuple
-          false =>
+          true  -> __MODULE__.Tuple
+          false ->
             case atom_to_list(first), do:
-              '__MAIN__' ++ _ => __MODULE__.Record
-              _ => __MODULE__.Tuple
+              '__MAIN__' ++ _ -> __MODULE__.Record
+              _ -> __MODULE__.Tuple
             end
         end
       end
@@ -262,11 +262,11 @@ defmodule Protocol.DSL, do:
   defmacro def(expression), do:
     { name, arity } =
       case expression, do:
-        { _, _, args } when args == [] or is_atom(args) =>
+        { _, _, args } when args == [] or is_atom(args) ->
           raise ArgumentError, message: "protocol functions expect at least one argument"
-        { name, _, args } when is_atom(name) and is_list(args) =>
+        { name, _, args } when is_atom(name) and is_list(args) ->
           { name, length(args) }
-        _ =>
+        _ ->
           raise ArgumentError, message: "invalid args for defprotocol"
       end
 
@@ -285,22 +285,22 @@ defmodule Protocol.DSL, do:
       Elixir.Builtin.def unquote(name).(unquote_splicing(args)), do:
         args = [unquote_splicing(args)]
         case __raw_impl__(xA), do:
-          __MODULE__.Record =>
+          __MODULE__.Record ->
             try do:
               target = Module.concat(__MODULE__, :erlang.element(1, xA))
               apply target, unquote(name), args
             rescue:
-              UndefinedFunctionError =>
+              UndefinedFunctionError ->
                 case __fallback__, do:
-                  nil =>
+                  nil ->
                     raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
-                  other =>
+                  other ->
                     apply other, unquote(name), args
                 end
             end
-          nil =>
+          nil ->
             raise Protocol.UndefinedError, protocol: __MODULE__, structure: xA
-          other =>
+          other ->
             apply other, unquote(name), args
         end
       end

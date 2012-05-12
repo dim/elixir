@@ -21,9 +21,9 @@ defimpl Dict, for: Orddict.Record, do:
 
   def get(O[data: data], key, default // nil), do:
     case :orddict.find(key, data), do:
-      {:ok, value} =>
+      {:ok, value} ->
         value
-      :error =>
+      :error ->
         default
     end
   end

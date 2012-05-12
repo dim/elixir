@@ -35,21 +35,21 @@ defmodule System.GitCompiler, do:
 
     output = read_port port
     case output, do:
-      { 0, data } =>
+      { 0, data } ->
         Regex.replace_all %r/\n/, to_binary(data), ""
-      _ =>
+      _ ->
         ""
     end
   end
 
   defp read_port(port, data // []), do:
     receive do:
-      {^port, {:data, new_data}} =>
+      {^port, {:data, new_data}} ->
         read_port port, [new_data|data]
-      {^port, :eof} =>
+      {^port, :eof} ->
         :erlang.port_close port
         receive do:
-          {^port, {:exit_status, exit_status}} =>
+          {^port, {:exit_status, exit_status}} ->
             {exit_status, List.reverse data}
         end
     end
@@ -119,8 +119,8 @@ defmodule System, do:
   """
   def get_env(varname), do:
     case :os.getenv(to_char_list(varname)), do:
-      false => nil
-      other => list_to_binary(other)
+      false -> nil
+      other -> list_to_binary(other)
     end
   end
 

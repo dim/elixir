@@ -241,7 +241,7 @@ defmodule Elixir.SpecialForms, do:
 
       a = 10
       Hygiene.no_interference
-      a # => 10
+      a #=> 10
 
   In the example above, `a` returns 10 even if the macro
   is apparently setting it to 1 because the variables defined
@@ -259,14 +259,14 @@ defmodule Elixir.SpecialForms, do:
 
       a = 10
       NoHygiene.interference
-      a # => 11
+      a #=> 11
 
   Notice that references are not hygienic in Elixir unless
   you explicitly access it via __MAIN__ to the reference name.
 
       quote do:
-        __MAIN__.Foo # => Access the root Foo
-        Foo   # => Access the Foo reference in the current
+        __MAIN__.Foo #=> Access the root Foo
+        Foo   #=> Access the Foo reference in the current
                    module (if any is set), then fallback to root
       end
 
@@ -352,9 +352,9 @@ defmodule Elixir.SpecialForms, do:
   as all clauses expects the same number of arguments:
 
       fun = fn do:
-        [x, y] when y < 0 =>
+        [x, y] when y < 0 ->
           x - y
-        [x, y] =>
+        [x, y] ->
           x + y
       end
 
@@ -372,9 +372,9 @@ defmodule Elixir.SpecialForms, do:
       list = [1,2,3]
 
       loop list, [], do:
-        [[h|t], acc] =>
+        [[h|t], acc] ->
           recur t, [h*2|acc]
-        [[], acc] =>
+        [[], acc] ->
           acc
       end
       #=> [6,4,2]

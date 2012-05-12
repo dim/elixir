@@ -65,12 +65,12 @@ defmodule ExUnit.Case, do:
   defmacro test(message, contents), do:
     contents =
       case contents, do:
-        [do: block] =>
+        [do: block] ->
           quote do:
             unquote(contents)
             :ok
           end
-        _ =>
+        _ ->
           quote do:
             try(unquote(contents))
             :ok

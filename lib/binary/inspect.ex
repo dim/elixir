@@ -38,12 +38,12 @@ defimpl Binary.Inspect, for: Atom, do:
     binary = atom_to_binary(atom)
 
     cond do:
-      valid_identifier?(binary) == <<>> =>
+      valid_identifier?(binary) == <<>> ->
           ":" <> binary
-      valid_ref_identifier?(binary) == <<>> =>
+      valid_ref_identifier?(binary) == <<>> ->
         "__MAIN__." <> rest = binary
         rest
-      true =>
+      true ->
         ":" <> Binary.escape(binary, ?")
     end
   end

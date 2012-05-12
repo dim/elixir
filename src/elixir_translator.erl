@@ -44,14 +44,14 @@ translate_each({ '__block__', Line, Args }, S) when is_list(Args) ->
   { TArgs, NS } = translate(Args, S),
   { { block, Line, TArgs }, NS };
 
-translate_each({ '=>', Line, _ }, S) ->
+translate_each({ '->', Line, _ }, S) ->
   case S#elixir_scope.macro of
     { Receiver, Name, Arity } ->
       Desc = [elixir_errors:inspect(Receiver), Name, Arity],
-      syntax_error(Line, S#elixir_scope.filename, "usafe of => out of context in macro ~s.~s/~B", Desc);
+      syntax_error(Line, S#elixir_scope.filename, "usafe of -> out of context in macro ~s.~s/~B", Desc);
     _ ->
       % TODO: This shuold be raised at runtime
-      syntax_error(Line, S#elixir_scope.filename, "usafe of => out of context", "")
+      syntax_error(Line, S#elixir_scope.filename, "usafe of -> out of context", "")
   end;
 
 %% Erlang op
@@ -475,9 +475,9 @@ translate_each(Bitstring, S) when is_bitstring(Bitstring) ->
 
 translate_fn(Line, Left, Right, S, ExtraArgs) ->
   Clauses = case { Left, Right } of
-    { [], [{do,{'=>',_,Pairs}}] } ->
+    { [], [{do,{'->',_,Pairs}}] } ->
       Pairs;
-    { _, [{do,{'=>',_,_}}] } ->
+    { _, [{do,{'->',_,_}}] } ->
       syntax_error(Line, S#elixir_scope.filename, "fn does not accept arguments when passing many clauses");
     { Args, [{do,Expr}] } ->
       [{Args,Expr}];

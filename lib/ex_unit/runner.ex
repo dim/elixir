@@ -10,11 +10,11 @@ defmodule ExUnit.Runner, do:
   def start(config), do:
     if config.cases == [], do:
       cond do:
-        config.taken_cases > 0 =>
+        config.taken_cases > 0 ->
           do_loop config
-        config.sync_cases == [] =>
+        config.sync_cases == [] ->
           call_formatter config, :finish
-        true =>
+        true ->
           do_loop spawn_sync_cases(config)
       end
     else:
@@ -27,10 +27,10 @@ defmodule ExUnit.Runner, do:
   # attempt to spawn new ones.
   defp do_loop(config), do:
     receive do:
-      { pid, :each, { test_case, test, final } } =>
+      { pid, :each, { test_case, test, final } } ->
         call_formatter config, { :each, test_case, test, final }
         do_loop config
-      { pid, :each_case, test_case } =>
+      { pid, :each_case, test_case } ->
         call_formatter config, { :each_case, test_case }
         start config.increment_taken_cases(-1)
     end
@@ -39,14 +39,14 @@ defmodule ExUnit.Runner, do:
   # Spawn the maximum possible of cases according to the max_cases value.
   defp spawn_async_cases(config), do:
     case config.cases, do:
-      [test_case|t] =>
+      [test_case|t] ->
         if config.taken_cases < config.max_cases, do:
           spawn_case test_case
           spawn_async_cases config.increment_taken_cases.cases(t)
         else:
           config
         end
-      [] =>
+      [] ->
         config
     end
   end
@@ -79,19 +79,19 @@ defmodule ExUnit.Runner, do:
         apply test_case, test, []
         nil
       rescue:
-        error1 =>
+        error1 ->
           { :error, error1, System.stacktrace }
       catch:
-        kind1 | error1 =>
+        kind1 | error1 ->
           { kind1, error1, System.stacktrace }
       end
 
       partial
     rescue:
-      error2 =>
+      error2 ->
         { :error, error2, System.stacktrace }
     catch:
-      kind2 | error2 =>
+      kind2 | error2 ->
         { kind2, error2, System.stacktrace }
     end
 

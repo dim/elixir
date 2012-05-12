@@ -75,10 +75,10 @@ defmodule List, do:
   ## Examples
 
       List.flatten [1,[[2],3]]
-      # => [1,2,3]
+      #=> [1,2,3]
 
       List.flatten [1,[[2],3]], [4,5]
-      # => [1,2,3,4,5]
+      #=> [1,2,3,4,5]
 
   """
   def flatten(list), do:
@@ -250,22 +250,22 @@ defmodule List, do:
 
   def range(first, last, step) when is_integer(first) and is_integer(last) and first <= last, do:
     step = case step, do:
-      nil =>
+      nil ->
         Erlang.lists.seq(first, last, 1)
-      x when x < 0 =>
+      x when x < 0 ->
         []
-      _ =>
+      _ ->
         Erlang.lists.seq(first, last, step)
     end
   end
 
   def range(first, last, step) when is_integer(first) and is_integer(last) and first > last, do:
     step = case step, do:
-      nil =>
+      nil ->
         Erlang.lists.seq(first, last, -1)
-      x when x > 0 =>
+      x when x > 0 ->
         []
-      _ =>
+      _ ->
         Erlang.lists.seq(first, last, step)
     end
   end
@@ -342,8 +342,8 @@ defmodule List, do:
   def find_index(list, term), do:
     index = Erlang.string.str(list, [term])
     case index == 0, do:
-      true  => nil
-      false => index
+      true  -> nil
+      false -> index
     end
   end
 
@@ -426,9 +426,9 @@ defmodule List, do:
 
   defp do_uniq([h|t], acc), do:
     case Erlang.lists.member(h, acc), do:
-      true =>
+      true ->
         do_uniq(t, acc)
-      false =>
+      false ->
         [h|do_uniq(t, [h|acc])]
     end
   end
@@ -452,9 +452,9 @@ defmodule List, do:
     {mlist, heads} = :lists.mapfoldl converter, [], list
 
     case heads, do:
-      nil =>
+      nil ->
         :lists.reverse acc
-      _ =>
+      _ ->
       do_zip mlist, [list_to_tuple(:lists.reverse(heads))|acc]
     end
   end

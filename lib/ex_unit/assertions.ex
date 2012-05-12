@@ -121,9 +121,9 @@ defmodule ExUnit.Assertions, do:
 
   defp guess_expected_and_actual(left, right), do:
     case right, do:
-      { fun, i, _ } when is_integer(i) and (fun != :<<>> or fun != :{}) =>
+      { fun, i, _ } when is_integer(i) and (fun != :<<>> or fun != :{}) ->
         { left, right }
-      _ =>
+      _ ->
         { right, left }
     end
   end
@@ -154,7 +154,7 @@ defmodule ExUnit.Assertions, do:
         unquote(expected) = unquote(received)
         true
       rescue:
-        x in [MatchError] =>
+        x in [MatchError] ->
           raise ExUnit.AssertionError, message: x.message
       end
     end
@@ -202,8 +202,8 @@ defmodule ExUnit.Assertions, do:
     function.()
     flunk "Expected #{inspect exception} exception but nothing was raised"
   rescue:
-    error in [exception] => error
-    error =>
+    error in [exception] -> error
+    error ->
       name = error.__record__(:name)
 
       if name == ExUnit.AssertionError, do:
@@ -298,9 +298,9 @@ defmodule ExUnit.Assertions, do:
     function.()
     flunk "Expected #{expected_type} #{inspect expected_value}, got nothing"
   catch:
-    ^expected_type | ^expected_value =>
+    ^expected_type | ^expected_value ->
       expected_value
-    ^expected_type | actual_value =>
+    ^expected_type | actual_value ->
       flunk "Expected #{expected_type} #{inspect expected_value}, got #{inspect actual_value}"
   end
 
@@ -332,7 +332,7 @@ defmodule ExUnit.Assertions, do:
         unquote(expected) = unquote(received)
         flunk "Unexpected right side #{inspect unquote(received)} match"
       rescue:
-        x in [MatchError] => true
+        x in [MatchError] -> true
       end
     end
   end

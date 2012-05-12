@@ -23,9 +23,9 @@ defimpl Dict, for: HashDict.Record, do:
 
   def get(HD[data: data], key, default // nil), do:
     case :dict.find(key, data), do:
-      {:ok, value} =>
+      {:ok, value} ->
         value
-      :error =>
+      :error ->
         default
     end
   end

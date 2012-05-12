@@ -1,4 +1,4 @@
-%% Handle code related to rocket args, guard and => matching
+%% Handle code related to rocket args, guard and -> matching
 %% for case, fn, receive and friends. try is handled in elixir_try.
 -module(elixir_clauses).
 -export([
@@ -11,10 +11,10 @@
 
 get_pairs(Line, Key, Clauses, S) ->
   case orddict:find(Key, Clauses) of
-    { ok, { '=>', _, Pairs } } ->
+    { ok, { '->', _, Pairs } } ->
       [{ Key, Left, Right } || { Left, Right } <- Pairs];
     { ok, _ } ->
-      elixir_errors:syntax_error(Line, S#elixir_scope.filename, "expected pairs with => for key ~s", [Key]);
+      elixir_errors:syntax_error(Line, S#elixir_scope.filename, "expected pairs with -> for key ~s", [Key]);
     _ ->
       []
   end.

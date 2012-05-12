@@ -38,14 +38,14 @@ defmodule URI, do:
       try do:
         List.foldl parts, dict, &> (kvstr, acc)
           case Regex.split(%r/=/, kvstr), do:
-            [ key, value ] when key != "" =>
+            [ key, value ] when key != "" ->
               impl.put acc, decode(key), decode(value)
-            _ =>
+            _ ->
               throw :malformed_query_string
           end
         end
       catch:
-        :malformed_query_string => nil
+        :malformed_query_string -> nil
       end
     end
   end
@@ -141,7 +141,7 @@ defmodule URI, do:
         try do:
           Module.safe_concat(URI, :string.to_upper(binary_to_list(scheme)))
         rescue:
-          ArgumentError => nil
+          ArgumentError -> nil
         end
 
       if module && match?({:module,^module}, Code.ensure_loaded(module)), do:

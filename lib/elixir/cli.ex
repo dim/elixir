@@ -23,20 +23,20 @@ defmodule Elixir.CLI, do:
         halt(0)
       end
     rescue:
-      exception =>
+      exception ->
         at_exit(1)
         stacktrace = System.stacktrace
         IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
         print_stacktrace(stacktrace)
         halt(1)
     catch:
-      :exit | reason when is_integer(reason) =>
+      :exit | reason when is_integer(reason) ->
         at_exit(reason)
         halt(reason)
-      :exit | :normal =>
+      :exit | :normal ->
         at_exit(0)
         halt(0)
-      kind | reason =>
+      kind | reason ->
         at_exit(1)
         stacktrace = System.stacktrace
         IO.puts :standard_error, "** (#{kind}) #{inspect(reason)}"
@@ -53,11 +53,11 @@ defmodule Elixir.CLI, do:
       try do:
         hook.(status)
       rescue:
-        exception =>
+        exception ->
           IO.puts :standard_error, "** (#{inspect exception.__record__(:name)}) #{exception.message}"
           print_stacktrace(System.stacktrace)
       catch:
-        kind | reason =>
+        kind | reason ->
           IO.puts :standard_error, "** #{kind} #{inspect(reason)}"
           print_stacktrace(System.stacktrace)
       end
@@ -71,9 +71,9 @@ defmodule Elixir.CLI, do:
 
   defp shared_option?(list, config, callback), do:
     case process_shared(list, config), do:
-      { [h|t], _ } when h == hd(list) =>
+      { [h|t], _ } when h == hd(list) ->
         invalid_option h
-      { new_list, new_config } =>
+      { new_list, new_config } ->
         callback.(new_list, new_config)
     end
   end
@@ -134,9 +134,9 @@ defmodule Elixir.CLI, do:
 
   def process_options([h|t] = list, config), do:
     case h, do:
-      '-' ++ _ =>
+      '-' ++ _ ->
         shared_option? list, config, process_options(&1, &2)
-      _ =>
+      _ ->
         { config.prepend_commands([{:require, h}]), t }
     end
   end
@@ -171,9 +171,9 @@ defmodule Elixir.CLI, do:
 
   defp process_compiler([h|t] = list, config), do:
     case h, do:
-      '-' ++ _ =>
+      '-' ++ _ ->
         shared_option? list, config, process_compiler(&1, &2)
-      _ =>
+      _ ->
         pattern = if File.dir?(h), do: '#{h}/**/*.ex', else: h
         process_compiler t, config.prepend_compile [pattern]
     end
@@ -230,7 +230,7 @@ defmodule Elixir.CLI, do:
         Code.require_file(h)
         parent <- { :required, Process.self }
       catch:
-        kind | reason =>
+        kind | reason ->
           parent <- { :failure, Process.self, kind, reason, System.stacktrace }
       end
     end
@@ -240,9 +240,9 @@ defmodule Elixir.CLI, do:
 
   defp wait_for_messages(files, waiting), do:
     receive do:
-      { :required, child } =>
+      { :required, child } ->
         spawn_requires(files, List.delete(waiting, child))
-      { :failure, _child, kind, reason, stacktrace } =>
+      { :failure, _child, kind, reason, stacktrace } ->
         Erlang.erlang.raise(kind, reason, stacktrace)
     end
   end

@@ -8,8 +8,8 @@ defmodule Elixir.IEx.UnicodeIO, do:
   """
   def get(cache, _count), do:
     prompt = case cache, do:
-      [] => "iex> "
-      _ => "...> "
+      [] -> "iex> "
+      _ -> "...> "
     end
     :unicode.characters_to_list(Erlang.io.get_line(prompt))
   end
@@ -64,15 +64,15 @@ defmodule Elixir.IEx, do:
         io.put result
         config.binding(new_binding).cache('').scope(scope)
       rescue:
-        TokenMissingError =>
+        TokenMissingError ->
           config.cache(code)
-        exception =>
+        exception ->
           stacktrace = System.stacktrace
           io.error "** (#{inspect exception.__record__(:name)}) #{exception.message}"
           print_stacktrace io, stacktrace
           config.cache('')
       catch:
-        kind | error =>
+        kind | error ->
           stacktrace = System.stacktrace
           io.error "** (#{kind}) #{inspect(error)}"
           print_stacktrace io, stacktrace

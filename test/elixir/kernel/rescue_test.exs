@@ -7,7 +7,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       RescueUndefinedModule.go
     rescue:
-      _ => true
+      _ -> true
     end
 
     assert result
@@ -17,9 +17,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       RescueUndefinedModule.go
     catch:
-      _ | _ => false
+      _ | _ -> false
     rescue:
-      _ => true
+      _ -> true
     end
 
     assert result
@@ -29,9 +29,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise "an exception"
     rescue:
-      RuntimeError => true
+      RuntimeError -> true
     catch:
-      :error | value => false
+      :error | value -> false
     end
 
     assert result
@@ -39,9 +39,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise "an exception"
     rescue:
-      AnotherError => true
+      AnotherError -> true
     catch:
-      :error | _ => false
+      :error | _ -> false
     end
 
     refute result
@@ -51,9 +51,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise "an exception"
     rescue:
-      x in [RuntimeError] => x.message
+      x in [RuntimeError] -> x.message
     catch:
-      :error | _ => false
+      :error | _ -> false
     end
 
     assert result == "an exception"
@@ -63,7 +63,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
      raise ArgumentError, message: ""
     rescue:
-      ArgumentError => true
+      ArgumentError -> true
     end
 
     assert result
@@ -75,9 +75,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       Certainly.Undefined.function(1,2,3)
     rescue:
-      x in [named] => x.message
+      x in [named] -> x.message
     catch:
-      :error | _ => "didn't catch it"
+      :error | _ -> "didn't catch it"
     end
 
     assert result == "didn't catch it"
@@ -87,7 +87,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise "an exception"
     rescue:
-      x in _ => x.message
+      x in _ -> x.message
     end
 
     assert result == "an exception"
@@ -99,7 +99,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise Protocol.UndefinedError, protocol: Foo
     rescue:
-      ^var => true
+      ^var -> true
     end
 
     assert result, "Expected to rescue with success"
@@ -111,9 +111,9 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise RuntimeError, message: "an exception"
     rescue:
-      x in [expected, AnotherError] => x.message
+      x in [expected, AnotherError] -> x.message
     catch:
-      :error | _ => false
+      :error | _ -> false
     end
 
     assert result == "an exception"
@@ -123,7 +123,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       :erlang.error(:sample)
     rescue:
-      x in [RuntimeError, ErlangError] => x.message
+      x in [RuntimeError, ErlangError] -> x.message
     end
 
     assert result == "erlang error: :sample"
@@ -133,7 +133,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       DoNotExist.for_sure()
     rescue:
-      x in [UndefinedFunctionError] => x.message
+      x in [UndefinedFunctionError] -> x.message
     end
 
     assert result == "undefined function: DoNotExist.for_sure/0"
@@ -143,7 +143,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       zero(1)
     rescue:
-      x in [FunctionClauseError] => x.message
+      x in [FunctionClauseError] -> x.message
     end
 
     assert result == "no function clause matching: Kernel.RescueTest.zero(1)"
@@ -153,7 +153,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       :erlang.error(:badarg)
     rescue:
-      x in [ArgumentError] => x.message
+      x in [ArgumentError] -> x.message
     end
 
     assert result == "argument error"
@@ -163,7 +163,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       :erlang.error({ :badarg, [1,2,3] })
     rescue:
-      x in [ArgumentError] => x.message
+      x in [ArgumentError] -> x.message
     end
 
     assert result == "argument error: [1,2,3]"
@@ -173,7 +173,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       :erlang.error(:badarith)
     rescue:
-      x in [ArithmeticError] => x.message
+      x in [ArithmeticError] -> x.message
     end
 
     assert result == "bad argument in arithmetic expression"
@@ -186,7 +186,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       fun.(1,2)
     rescue:
-      x in [BadArityError] => x.message
+      x in [BadArityError] -> x.message
     end
 
     assert result == string
@@ -197,7 +197,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       x.(2)
     rescue:
-      x in [BadFunctionError] => x.message
+      x in [BadFunctionError] -> x.message
     end
 
     assert result == "bad function: :example"
@@ -208,7 +208,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       ^x = :other
     rescue:
-      x in [MatchError] => x.message
+      x in [MatchError] -> x.message
     end
 
     assert result == "no match of right hand side value: :other"
@@ -218,10 +218,10 @@ defmodule Kernel.RescueTest, do:
     x = :example
     result = try do:
       case :other, do:
-        ^x => nil
+        ^x -> nil
       end
     rescue:
-      x in [CaseClauseError] => x.message
+      x in [CaseClauseError] -> x.message
     end
 
     assert result == "no case clause matching: :other"
@@ -232,7 +232,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       DoNotExist.for_sure()
     rescue:
-      x in [expected] => x.message
+      x in [expected] -> x.message
     end
 
     assert result == "undefined function: DoNotExist.for_sure/0"
@@ -242,7 +242,7 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       DoNotExist.for_sure()
     rescue:
-      x in [ErlangError] => x.message
+      x in [ErlangError] -> x.message
     end
 
     assert result == "undefined function: DoNotExist.for_sure/0"
@@ -252,8 +252,8 @@ defmodule Kernel.RescueTest, do:
     result = try do:
       raise Protocol.UndefinedError, protocol: Foo
     rescue:
-      Protocol.UndefinedError[protocol: Bar] => false
-      Protocol.UndefinedError[protocol: Foo] = x => x.message
+      Protocol.UndefinedError[protocol: Bar] -> false
+      Protocol.UndefinedError[protocol: Foo] = x -> x.message
     end
 
     assert result == "protocol Foo not implemented for nil"

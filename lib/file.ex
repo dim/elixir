@@ -203,9 +203,9 @@ defmodule File, do:
   """
   def read!(path), do:
     case read(path), do:
-      { :ok, binary } =>
+      { :ok, binary } ->
         binary
-      { :error, reason } =>
+      { :error, reason } ->
         raise File.Error, reason: reason, action: "read file", path: to_binary(path)
     end
   end
@@ -278,9 +278,9 @@ defmodule File, do:
   """
   def read_info(path, opts // []), do:
     case :file.read_file_info(path, opts), do:
-      {:ok, fileinfo} =>
+      {:ok, fileinfo} ->
         {:ok, Info.new fileinfo}
-      error =>
+      error ->
         error
     end
   end
@@ -291,9 +291,9 @@ defmodule File, do:
   """
   def read_info!(path, opts // []), do:
     case read_info(path, opts), do:
-      {:ok, info} =>
+      {:ok, info} ->
         info
-      {:error, reason} =>
+      {:error, reason} ->
         raise File.Error, reason: reason, action: "read file info", path: to_binary(path)
     end
   end
