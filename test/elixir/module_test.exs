@@ -116,7 +116,7 @@ defmodule ModuleTest, do:
 
   test :apply, do:
     assert apply(List, :reverse, [[1|[2,3]]]) == [3,2,1]
-    assert apply(fn(x) -> x * 2 end, [2]) == 4
+    assert apply(&> (x) x * 2 end, [2]) == 4
   end
 
   test :concat, do:
@@ -128,7 +128,7 @@ defmodule ModuleTest, do:
 
   test :safe_concat, do:
     assert Module.safe_concat(Foo, :Bar) == Foo.Bar
-    assert_raise ArgumentError, fn ->
+    assert_raise ArgumentError, &>
       Module.safe_concat SafeConcat, Doesnt.Exist
     end
   end

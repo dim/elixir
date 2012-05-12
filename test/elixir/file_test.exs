@@ -111,7 +111,7 @@ defmodule FileTest, do:
     assert File.read!(File.expand_path("../fixtures/foo.txt", __FILE__)) == "FOO\n"
     expected_message = "could not read file fixtures/missing.txt: no such file or directory"
 
-    assert_raise File.Error, expected_message, fn ->
+    assert_raise File.Error, expected_message, &>
       File.read!("fixtures/missing.txt")
     end
   end
@@ -130,7 +130,7 @@ defmodule FileTest, do:
   end
 
   test :read_info_with_invalid_file!, do:
-    assert_raise File.Error, fn ->
+    assert_raise File.Error, &>
       File.read_info!("./invalid_file")
     end
   end

@@ -460,7 +460,7 @@ defmodule Enum, do:
 
   ## Examples
 
-      Enum.split_with [1,2,3,4], fn(x) -> x == 2 end
+      Enum.split_with [1,2,3,4], &> (x) x == 2 end
       #=> { [1], [2, 3, 4] }
   """
   def split_with(collection, fun), do:

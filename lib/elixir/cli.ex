@@ -104,7 +104,7 @@ defmodule Elixir.CLI, do:
   end
 
   defp process_shared(['-r',h|t], config), do:
-    config = Enum.reduce File.wildcard(h), config, fn(path, config) ->
+    config = Enum.reduce File.wildcard(h), config, &> (path, config)
       config.prepend_commands [{:require, path}]
     end
     process_shared t, config
@@ -209,7 +209,7 @@ defmodule Elixir.CLI, do:
 
     Code.compiler_options(config.compiler_options)
     Elixir.ParallelCompiler.files_to_path(files, config.output,
-      fn(file) -> IO.puts "Compiled #{file}" end)
+      &> (file) IO.puts "Compiled #{file}" end)
   end
 
   # Responsible for spawning requires in parallel
@@ -225,7 +225,7 @@ defmodule Elixir.CLI, do:
   defp spawn_requires([h|t], waiting), do:
     parent = Process.self
 
-    child  = spawn_link fn ->
+    child  = spawn_link &>
       try do:
         Code.require_file(h)
         parent <- { :required, Process.self }

@@ -21,6 +21,7 @@ Nonterminals
   parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
+  lambda lambda_op lambda_paren_op
   .
 
 Terminals
@@ -33,7 +34,7 @@ Terminals
   'true' 'false' 'nil'
   '=' '+' '-' '*' '/' '++' '--' '**' '//'
   '(' ')' '[' ']' '{' '}' '<<' '>>'
-  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>'
+  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>' '&>' '&>('
   '&&' '||' '!'
   .
 
@@ -132,7 +133,24 @@ base_expr -> bin_string  : build_bin_string('$1').
 base_expr -> list_string : build_list_string('$1').
 base_expr -> bit_string : '$1'.
 base_expr -> '&' : '$1'.
+base_expr -> lambda : '$1'.
 base_expr -> sigil : build_sigil('$1').
+
+%% Lambdas
+
+lambda -> lambda_paren_op ')' close_paren grammar 'end' :
+  { 'fn', ?line('$1'), [[{do,build_block('$4', false)}]] }.
+
+lambda -> lambda_paren_op call_args_comma_expr close_paren grammar 'end' :
+  { 'fn', ?line('$1'), '$2' ++ [[{do,build_block('$4', false)}]] }.
+
+lambda -> lambda_op grammar 'end' :
+  { 'fn', ?line('$1'), [[{do,build_block('$2', false)}]] }.
+
+lambda_op -> '&>' : '$1'.
+
+lambda_paren_op -> '&>(' : '$1'.
+lambda_paren_op -> '&>(' eol : '$1'.
 
 %% Helpers
 
@@ -273,7 +291,7 @@ call_args_comma_expr -> comma_expr comma_separator kw_base : lists:reverse(['$3'
 call_args_parens -> open_paren ')' : [].
 call_args_parens -> open_paren call_args_comma_expr close_paren : '$2'.
 
-call_args -> call_args_comma_expr : build_args('$1').
+call_args -> call_args_comma_expr : '$1'.
 
 % KV
 
@@ -372,10 +390,6 @@ build_block([Expr], _) when not is_list(Expr) -> Expr;
 build_block(Exprs, true)                      -> { '__block__', 0, lists:reverse(Exprs) };
 build_block(Exprs, false)                     -> { '__block__', 0, Exprs }.
 
-%% Args
-
-build_args(Args) -> Args.
-
 %% Identifiers
 
 build_identifier(Expr, [], Block) ->
@@ -394,13 +408,13 @@ build_identifier({ '.', Line, _ } = Dot, Args) ->
     nil -> [];
     _ -> Args
   end,
-  { Dot, Line, build_args(FArgs) };
+  { Dot, Line, FArgs };
 
 build_identifier({ _, Line, Identifier }, nil) ->
   { Identifier, Line, nil };
 
 build_identifier({ _, Line, Identifier }, Args) ->
-  { Identifier, Line, build_args(Args) }.
+  { Identifier, Line, Args }.
 
 %% Access
 

@@ -5,7 +5,7 @@ defmodule Elixir.ParallelCompiler, do:
   A module responsible for compiling files in parallel.
   """
 
-  defmacrop default_callback, do: quote(do: fn(x) -> x end)
+  defmacrop default_callback, do: quote(do: &> (x) x end)
 
   @doc """
   Compiles the given files.
@@ -44,7 +44,7 @@ defmodule Elixir.ParallelCompiler, do:
   defp spawn_compilers([h|t], output, callback, waiting, queued, result), do:
     parent = Process.self()
 
-    child  = spawn_link fn ->
+    child  = spawn_link &>
       Process.put(:elixir_parent_compiler, parent)
       Process.flag(:error_handler, Elixir.ErrorHandler)
 
@@ -69,7 +69,7 @@ defmodule Elixir.ParallelCompiler, do:
 
   # Queued x, waiting for x: POSSIBLE ERROR! Release processes so we get the failures
   defp spawn_compilers([], output, callback, waiting, queued, result) when length(waiting) == length(queued), do:
-    Enum.each queued, fn({ child, _ }) -> child <- { :release, Process.self() } end
+    Enum.each queued, &> ({ child, _ }) child <- { :release, Process.self() } end
     wait_for_messages([], output, callback, waiting, queued, result)
   end
 
@@ -108,7 +108,7 @@ defmodule Elixir.ParallelCompiler, do:
 
   # Release waiting processes that are waiting for the given module
   defp release_waiting_processes(module, waiting), do:
-    Enum.filter waiting, fn({ child, waiting_module }) ->
+    Enum.filter waiting, &> ({ child, waiting_module })
       if waiting_module == module, do:
         child <- { :release, Process.self() }
         false

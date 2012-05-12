@@ -57,6 +57,6 @@ defmodule Kernel.RequireTest, do:
 
   test :cannot_be_called_dynamically_even_if_required, do:
     x = Nested
-    assert_raise UndefinedFunctionError, fn -> x.value end
+    assert_raise UndefinedFunctionError, &> x.value end
   end
 end

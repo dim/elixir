@@ -21,7 +21,7 @@ defmodule EnumTest.Common, do:
   end
 
   test :times_with_arity_2, do:
-    assert Enum.times(5, 0, fn(acc, x) -> acc + x end) == 15
+    assert Enum.times(5, 0, &> (acc, x) acc + x end) == 15
   end
 end
 
@@ -136,8 +136,8 @@ defmodule EnumTest.List, do:
   end
 
   test :map, do:
-    assert Enum.map([], fn(x) -> x * 2 end) == []
-    assert Enum.map([1,2,3], fn(x) -> x * 2 end) == [2,4,6]
+    assert Enum.map([], &> (x) x * 2 end) == []
+    assert Enum.map([1,2,3], &> (x) x * 2 end) == [2,4,6]
   end
 
   test :map_reduce, do:
@@ -272,10 +272,10 @@ defmodule EnumTest.Dict.Common, do:
       test :join, do:
         dict = unquote(module).new [a: 1, b: 2, c: 3]
 
-        assert_raise UndefinedFunctionError, fn ->
+        assert_raise UndefinedFunctionError, &>
           Enum.join dict, ","
         end
-        assert_raise UndefinedFunctionError, fn ->
+        assert_raise UndefinedFunctionError, &>
           Enum.join dict, ','
         end
       end
@@ -288,8 +288,8 @@ defmodule EnumTest.Dict.Common, do:
 
       test :map, do:
         dict = unquote(module).new [a: 1, b: 2, c: 3]
-        assert Enum.map(dict, fn({k, v}) -> { k, v * 2 } end) == [a: 2, b: 4, c: 6]
-        assert Enum.map(unquote(module).new, fn(x) -> x * 2 end) == []
+        assert Enum.map(dict, &> ({k, v}) { k, v * 2 } end) == [a: 2, b: 4, c: 6]
+        assert Enum.map(unquote(module).new, &> (x) x * 2 end) == []
       end
 
       test :map_reduce, do:
@@ -322,37 +322,37 @@ defmodule EnumTest.HashDict, do:
   EnumTest.Dict.Common.__using__(HashDict)
 
   test :drop, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.drop HashDict.new, 5
     end
   end
 
   test :drop_while, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.drop_while HashDict.new, fn(x, do: x)
     end
   end
 
   test :split, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.split HashDict.new, 5
     end
   end
 
   test :split_with, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.split_with HashDict.new, fn(x, do: x)
     end
   end
 
   test :take, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.take HashDict.new, 5
     end
   end
 
   test :take_while, do:
-    assert_raise Protocol.UndefinedError, fn ->
+    assert_raise Protocol.UndefinedError, &>
       Enum.take_while HashDict.new, fn(x, do: x)
     end
   end

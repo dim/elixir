@@ -144,7 +144,7 @@ defmodule System, do:
   to each key in `dict`.
   """
   def put_env(dict), do:
-    Enum.each dict, fn({key, val}) -> put_env key, val end
+    Enum.each dict, &> ({key, val}) put_env key, val end
   end
 
   @doc """

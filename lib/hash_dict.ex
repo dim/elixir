@@ -8,7 +8,7 @@ defimpl Dict, for: HashDict.Record, do:
   end
 
   def values(HD[data: data]), do:
-    :dict.fold fn(_key, value, acc) ->
+    :dict.fold &> (_key, value, acc)
       [value|acc]
     end, [], data
   end
@@ -39,7 +39,7 @@ defimpl Dict, for: HashDict.Record, do:
   end
 
   def merge(HD[data: d1], HD[data: d2]), do:
-    HD[data: :dict.merge fn(_k, _v1, v2) -> v2 end, d1, d2]
+    HD[data: :dict.merge &> (_k, _v1, v2) v2 end, d1, d2]
   end
 
   def merge(HD[data: d1], HD[data: d2], fun), do:

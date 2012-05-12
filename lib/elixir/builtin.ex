@@ -815,7 +815,7 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       current = Process.self
-      child   = spawn(fn -> current <- { Process.self, 1 + 2 } end)
+      child   = spawn(&> current <- { Process.self, 1 + 2 } end)
 
       receive
         { ^child, 3 } => IO.puts "Received 3 back"
@@ -846,7 +846,7 @@ defmodule Elixir.Builtin, do:
   ## Examples
 
       current = Process.self
-      child   = spawn_link(fn -> current <- { Process.self, 1 + 2 } end)
+      child   = spawn_link(&> current <- { Process.self, 1 + 2 } end)
 
       receive
         { ^child, 3 } =>
@@ -1013,7 +1013,7 @@ defmodule Elixir.Builtin, do:
   and the value as the value returned by the function:
 
       defmacro defkv(keywords), do:
-        Enum.map keywords, fn({k,v}) ->
+        Enum.map keywords, &> ({k,v})
           quote do:
             def unquote(k).(), do:
               unquote(v)
@@ -1782,7 +1782,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      apply fn(x) -> x * 2 end, [2]
+      apply &> (x) x * 2 end, [2]
       #=> 4
 
   """
@@ -1921,7 +1921,7 @@ defmodule Elixir.Builtin, do:
   it will raise a CaseClauseError.
   """
   defmacro destructure(left, right) when is_list(left), do:
-    List.foldl left, right, fn(item, acc) ->
+    List.foldl left, right, &> (item, acc)
       quote do:
         case unquote(acc), do:
           [unquote(item)|t] =>
@@ -2069,7 +2069,7 @@ defmodule Elixir.Builtin, do:
 
   """
   defmacro :in.(left, [h|t]), do:
-    :lists.foldl fn(x, acc) ->
+    :lists.foldl &> (x, acc)
       { :or, 0, [acc, { :==, 0, [left, x] }] }
     end, { :==, 0, [left, h] }, t
   end

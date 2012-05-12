@@ -77,6 +77,12 @@ tokenize(Line, "->" ++ Rest, Tokens) ->
 tokenize(Line, "=>" ++ Rest, Tokens) ->
   tokenize(Line, Rest, [{'=>',Line}|Tokens]);
 
+tokenize(Line, "&>" ++ Rest, Tokens) ->
+  case next_is_paren(Rest) of
+    false -> tokenize(Line, Rest, [{'&>',Line}|Tokens]);
+    Tail  -> tokenize(Line, Tail, [{'&>(',Line}|Tokens])
+  end;
+
 % Dot operators
 
 % ## Exception for .( as it needs to be treated specially in the parser
@@ -508,6 +514,10 @@ tokenize_call_identifier(Kind, Line, Atom, Rest) ->
     [$[|_] -> { bracket_identifier, Line, Atom };
     _      -> { Kind, Line, Atom }
   end.
+
+next_is_paren([Space|Tokens]) when Space == $\t; Space == $\s -> next_is_paren(Tokens);
+next_is_paren([$(|T]) -> T;
+next_is_paren(_) -> false.
 
 % Terminator
 terminator($() -> $);
