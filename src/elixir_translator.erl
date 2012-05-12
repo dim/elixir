@@ -478,15 +478,17 @@ translate_each(Bitstring, S) when is_bitstring(Bitstring) ->
 
 translate_fn(Line, Left, Right, S, ExtraArgs) ->
   Clauses = case { Left, Right } of
+    { [], [{do,{'=>',_,_}}] } ->
+      elixir_kw_block:decouple(Right);
+    { _, [{do,{'=>',_,_}}] } ->
+      syntax_error(Line, S#elixir_scope.filename, "fn does not accept arguments when passing many clauses");
     { Args, [{do,Expr}] } ->
-      [{match,Args,Expr}];
-    { [], KV } when is_list(KV) ->
-      elixir_kw_block:decouple(orddict:erase(do, KV));
+      [{do,Args,Expr}];
     _ ->
       syntax_error(Line, S#elixir_scope.filename, "no block given to fn")
   end,
 
-  Transformer = fun({ match, ArgsWithGuards, Expr }, Acc) ->
+  Transformer = fun({ do, ArgsWithGuards, Expr }, Acc) ->
     { FinalArgs, Guards } = elixir_clauses:extract_guards(ArgsWithGuards),
     elixir_clauses:assigns_block(Line, fun elixir_translator:translate/2, ExtraArgs ++ FinalArgs, [Expr], Guards, umergec(S, Acc))
   end,

@@ -136,7 +136,7 @@ match(Line, Clauses, RawS) ->
 
 % Handle each key/value clause pair and translate them accordingly.
 
-each_clause(Line, { Key, Condition, Expr }, S) when Key == do ->
+each_clause(Line, { do, Condition, Expr }, S) ->
   assigns_block(Line, fun elixir_translator:translate_each/2, Condition, [Expr], S);
 
 each_clause(Line, { 'after', Condition, Expr }, S) ->
