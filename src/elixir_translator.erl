@@ -255,58 +255,25 @@ translate_each({in_guard, _, [[{do,Guard},{else,Else}]]}, S) ->
 %% Functions
 
 translate_each({fn, Line, RawArgs}, S) when is_list(RawArgs) ->
-  Clauses = case lists:split(length(RawArgs) - 1, RawArgs) of
-    { Args, [[{do,Expr}]] } ->
-      [{match,Args,Expr}];
-    { [], [KV] } when is_list(KV) ->
-      elixir_kw_block:decouple(orddict:erase(do, KV));
-    _ ->
-      syntax_error(Line, S#elixir_scope.filename, "no block given to fn")
-  end,
-
-  Transformer = fun({ match, ArgsWithGuards, Expr }, Acc) ->
-    { FinalArgs, Guards } = elixir_clauses:extract_last_guards(ArgsWithGuards),
-    elixir_clauses:assigns_block(Line, fun elixir_translator:translate/2, FinalArgs, [Expr], Guards, umergec(S, Acc))
-  end,
-
-  { TClauses, NS } = lists:mapfoldl(Transformer, S, Clauses),
-  { { 'fun', Line, {clauses, TClauses} }, umergec(S, NS) };
+  { Left, Right } = lists:split(length(RawArgs) - 1, RawArgs),
+  translate_fn(Line, Left, hd(Right), S, []);
 
 %% Loop and recur
 
-translate_each({loop, Line, RawArgs}, S) when is_list(RawArgs) ->
-  case lists:split(length(RawArgs) - 1, RawArgs) of
-    { Args, [KV] } when is_list(KV) ->
-      %% Generate a variable that will store the function
-      { FunVar, VS }  = elixir_variables:build_ex(Line, S),
+translate_each({loop, Line, RawArgs}, RS) when is_list(RawArgs) ->
+  { Args, KV } = lists:split(length(RawArgs) - 1, RawArgs),
+  { ExVar, S } = elixir_variables:build_ex(Line, RS),
 
-      %% If there are no args and no match clause, generate one
-      KVFinal = case { Args, KV } of
-        { [], [{do, SingleBlock}] } ->
-          [{match, SingleBlock}];
-        _ -> orddict:erase(do, KV)
-      end,
+  FS = S#elixir_scope{recur=element(1,ExVar)},
+  { Function, SE } = translate_fn(Line, [], hd(KV), FS, [ExVar]),
 
-      %% Add this new variable to all match clauses
-      Normalized = elixir_kw_block:normalize(KVFinal),
-      NewMatches = [{ match, { '__kwblock__', BlockLine, [ [FunVar|Conds], Expr ] } } ||
-        { match, { '__kwblock__', BlockLine, [ Conds, Expr ] } } <- Normalized],
+  ErlVar = { var, Line, element(1, ExVar) },
+  { TArgs, SA } = translate_args(Args, umergec(S, SE)),
 
-      %% Generate a function with the match blocks
-      Function = { fn, Line, [NewMatches] },
-
-      %% Finally, assign the function to a variable and
-      %% invoke it passing the function itself as first arg
-      Block = { '__block__', Line, [
-        { '=', Line, [FunVar, Function] },
-        { { '.', Line, [FunVar] }, Line, [FunVar|Args] }
-      ] },
-
-      { TBlock, TS } = translate_each(Block, VS#elixir_scope{recur=element(1,FunVar)}),
-      { TBlock, TS#elixir_scope{recur=S#elixir_scope.recur} };
-    _ ->
-      syntax_error(Line, S#elixir_scope.filename, "invalid args for loop")
-  end;
+  { { block, Line, [
+    { match, Line, ErlVar, Function },
+    { call, Line, ErlVar, [ErlVar|TArgs] }
+  ] }, umergev(SE, SA) };
 
 translate_each({recur, Line, Args}, S) when is_list(Args) ->
   case S#elixir_scope.recur of
@@ -508,6 +475,24 @@ translate_each(Bitstring, S) when is_bitstring(Bitstring) ->
   { elixir_tree_helpers:abstract_syntax(Bitstring), S }.
 
 %% Helpers
+
+translate_fn(Line, Left, Right, S, ExtraArgs) ->
+  Clauses = case { Left, Right } of
+    { Args, [{do,Expr}] } ->
+      [{match,Args,Expr}];
+    { [], KV } when is_list(KV) ->
+      elixir_kw_block:decouple(orddict:erase(do, KV));
+    _ ->
+      syntax_error(Line, S#elixir_scope.filename, "no block given to fn")
+  end,
+
+  Transformer = fun({ match, ArgsWithGuards, Expr }, Acc) ->
+    { FinalArgs, Guards } = elixir_clauses:extract_guards(ArgsWithGuards),
+    elixir_clauses:assigns_block(Line, fun elixir_translator:translate/2, ExtraArgs ++ FinalArgs, [Expr], Guards, umergec(S, Acc))
+  end,
+
+  { TClauses, NS } = lists:mapfoldl(Transformer, S, Clauses),
+  { { 'fun', Line, {clauses, TClauses} }, umergec(S, NS) }.
 
 translate_local(Line, Name, Args, #elixir_scope{local=[]} = S) ->
   { TArgs, NS } = translate_args(Args, S),

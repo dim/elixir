@@ -1,8 +1,7 @@
 %% Handle code related to rocket args, guard and => matching
 %% for case, fn, receive and friends. try is handled in elixir_try.
 -module(elixir_clauses).
--export([match/3, simple_match/3, assigns/3, assigns_block/5, assigns_block/6,
-  extract_args/1, extract_guards/1, extract_last_guards/1]).
+-export([match/3, assigns/3, assigns_block/5, assigns_block/6, extract_args/1, extract_guards/1]).
 -import(elixir_variables, [umergec/2]).
 -include("elixir.hrl").
 
@@ -56,24 +55,11 @@ extract_guards(Else) -> { Else, [] }.
 extract_or_clauses({ 'when', _, [Left, Right] }, Acc) -> extract_or_clauses(Right, [Left|Acc]);
 extract_or_clauses(Term, Acc) -> [Term|Acc].
 
-% Extract guards when it is in the last element of the args
-
-extract_last_guards([]) -> { [], [] };
-extract_last_guards(Args) ->
-  { Left, [Right] } = lists:split(length(Args) - 1, Args),
-  { Bare, Guards } = extract_guards(Right),
-  { Left ++ [Bare], Guards }.
-
 % Extract name and args from the given expression.
 
 extract_args({ { '.', _, [Name] }, _, Args }) when is_atom(Name), is_list(Args) -> { Name, Args };
 extract_args({ Name, _, Args }) when is_atom(Name), is_atom(Args) -> { Name, [] };
 extract_args({ Name, _, Args }) when is_atom(Name), is_list(Args) -> { Name, Args }.
-
-simple_match(Line, Clauses, S) ->
-  Decoupled = elixir_kw_block:decouple(Clauses),
-  Transformer = fun(X, Acc) -> each_clause(Line, X, umergec(S, Acc)) end,
-  lists:mapfoldl(Transformer, S, Decoupled).
 
 % Function for translating macros with match style like case and receive.
 
@@ -150,14 +136,10 @@ match(Line, Clauses, RawS) ->
 
 % Handle each key/value clause pair and translate them accordingly.
 
-each_clause(Line, { Key, _, _ } = Block, S) when Key == do; Key == match ->
-  elixir_kw_block:validate(Line, Block, 1, S),
-  { _, [Condition], Expr } = Block,
+each_clause(Line, { Key, Condition, Expr }, S) when Key == do ->
   assigns_block(Line, fun elixir_translator:translate_each/2, Condition, [Expr], S);
 
-each_clause(Line, { 'after', _, _ } = Block, S) ->
-  elixir_kw_block:validate(Line, Block, 1, S),
-  { _, [Condition], Expr } = Block,
+each_clause(Line, { 'after', Condition, Expr }, S) ->
   { TCondition, SC } = elixir_translator:translate_each(Condition, S),
   { TBody, SB } = elixir_translator:translate([Expr], SC),
   { { clause, Line, [TCondition], [], TBody }, SB };

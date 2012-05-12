@@ -66,9 +66,6 @@ translate_macro({'try', Line, [Clauses]}, RawS) ->
   Do = proplists:get_value('do', Clauses, []),
   { TDo, SB } = translate([Do], S),
 
-  % Match = [Tuple || { X, _ } = Tuple <- Clauses, X == 'match' orelse X == 'else'],
-  % { TMatch, SM } = elixir_clauses:simple_match(Line, Match, umergec(S, SB)),
-
   Catch = [Tuple || { X, _ } = Tuple <- Clauses, X == 'rescue' orelse X == 'catch'],
   { TCatch, SC } = elixir_try:clauses(Line, Catch, umergec(S, SB)),
 

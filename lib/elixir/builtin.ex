@@ -1867,7 +1867,7 @@ defmodule Elixir.Builtin, do:
   defmacro cond(opts), do:
     # TODO: Support more than two
     [h|t] = List.reverse Erlang.elixir_kw_block.decouple(opts)
-    { :do, [condition], clause } = h
+    { :do, condition, clause } = h
 
     new_acc = quote do:
       case !unquote(condition), do:
@@ -2279,7 +2279,7 @@ defmodule Elixir.Builtin, do:
   #         end
   #     end
   #
-  defp build_if_clauses([{ key, [condition], clause }|t], acc) when key == :match or key == :do, do:
+  defp build_if_clauses([{ key, condition, clause }|t], acc) when key == :match or key == :do, do:
     new_acc = quote do:
       case !unquote(condition), do:
         false => unquote(clause)
@@ -2288,10 +2288,6 @@ defmodule Elixir.Builtin, do:
     end
 
     build_if_clauses(t, new_acc)
-  end
-
-  defp build_if_clauses([{ :match, _, _clause }|_], _), do:
-    raise ArgumentError, message: "No or too many conditions given to elsif clause"
   end
 
   defp build_if_clauses([], acc), do: acc

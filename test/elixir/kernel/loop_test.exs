@@ -7,9 +7,9 @@ defmodule Kernel.LoopTest, do:
     list = [1,2,3]
 
     result = loop list, [], do:
-    match: [h|t], acc
+    match: [[h|t], acc]
       recur t, [h*2|acc]
-    match: [], acc
+    match: [[], acc]
       acc
     end
 
@@ -20,15 +20,15 @@ defmodule Kernel.LoopTest, do:
     list = [[1,2],[2,3],[3,4]]
 
     result = loop list, [], do:
-    match: [h|t], acc
+    match: [[h|t], acc]
       result = loop h, 0, do:
-      match: [h|t], acc
+      match: [[h|t], acc]
         recur t, acc + h*2
-      match: [], acc
+      match: [[], acc]
         acc
       end
       recur t, [result|acc]
-    match: [], acc
+    match: [[], acc]
       acc
     end
 
@@ -37,9 +37,9 @@ defmodule Kernel.LoopTest, do:
 
   test :do_loop_base, do:
     fun = fn do:
-    match: { 1, 2 }, []
+    match: [{ 1, 2 }, []]
       1
-    match: [], x when x == []
+    match: [[], x] when x == []
       2
     end
 
