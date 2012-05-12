@@ -4,8 +4,8 @@
 -include("elixir.hrl").
 
 clauses(Line, Clauses, S) ->
-  DecoupledClauses = elixir_kw_block:decouple(Clauses),
-  { Catch, Rescue } = lists:partition(fun(X) -> element(1, X) == 'catch' end, DecoupledClauses),
+  Catch  = elixir_clauses:get_pairs(Line, 'catch', Clauses, S),
+  Rescue = elixir_clauses:get_pairs(Line, rescue, Clauses, S),
   Transformer = fun(X, Acc) -> each_clause(Line, X, umergec(S, Acc)) end,
   lists:mapfoldl(Transformer, S, Rescue ++ Catch).
 

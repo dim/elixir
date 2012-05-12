@@ -44,17 +44,14 @@ translate_each({ '__block__', Line, Args }, S) when is_list(Args) ->
   { TArgs, NS } = translate(Args, S),
   { { block, Line, TArgs }, NS };
 
-translate_each({ '__kwblock__', _, [[Expr],nil] }, S) ->
-  translate_each(Expr, S);
-
-translate_each({ '__kwblock__', Line, Args }, S) when is_list(Args) ->
+translate_each({ '=>', Line, _ }, S) ->
   case S#elixir_scope.macro of
     { Receiver, Name, Arity } ->
       Desc = [elixir_errors:inspect(Receiver), Name, Arity],
-      syntax_error(Line, S#elixir_scope.filename, "keywords block not supported by ~s.~s/~B", Desc);
+      syntax_error(Line, S#elixir_scope.filename, "usafe of => out of context in macro ~s.~s/~B", Desc);
     _ ->
       % TODO: This shuold be raised at runtime
-      syntax_error(Line, S#elixir_scope.filename, "unhandled keywords block", "")
+      syntax_error(Line, S#elixir_scope.filename, "usafe of => out of context", "")
   end;
 
 %% Erlang op
@@ -478,17 +475,17 @@ translate_each(Bitstring, S) when is_bitstring(Bitstring) ->
 
 translate_fn(Line, Left, Right, S, ExtraArgs) ->
   Clauses = case { Left, Right } of
-    { [], [{do,{'=>',_,_}}] } ->
-      elixir_kw_block:decouple(Right);
+    { [], [{do,{'=>',_,Pairs}}] } ->
+      Pairs;
     { _, [{do,{'=>',_,_}}] } ->
       syntax_error(Line, S#elixir_scope.filename, "fn does not accept arguments when passing many clauses");
     { Args, [{do,Expr}] } ->
-      [{do,Args,Expr}];
+      [{Args,Expr}];
     _ ->
       syntax_error(Line, S#elixir_scope.filename, "no block given to fn")
   end,
 
-  Transformer = fun({ do, ArgsWithGuards, Expr }, Acc) ->
+  Transformer = fun({ ArgsWithGuards, Expr }, Acc) ->
     { FinalArgs, Guards } = elixir_clauses:extract_guards(ArgsWithGuards),
     elixir_clauses:assigns_block(Line, fun elixir_translator:translate/2, ExtraArgs ++ FinalArgs, [Expr], Guards, umergec(S, Acc))
   end,

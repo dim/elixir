@@ -1865,9 +1865,8 @@ defmodule Elixir.Builtin, do:
       end
 
   """
-  defmacro cond(opts), do:
-    [h|t] = List.reverse Erlang.elixir_kw_block.decouple(opts)
-    { :do, condition, clause } = h
+  defmacro cond([do: { :"=>", _, pairs }]), do:
+    [{ condition, clause }|t] = List.reverse pairs
 
     new_acc = quote do:
       case !unquote(condition), do:
@@ -2268,7 +2267,7 @@ defmodule Elixir.Builtin, do:
   #         end
   #     end
   #
-  defp build_cond_clauses([{ :do, condition, clause }|t], acc), do:
+  defp build_cond_clauses([{ condition, clause }|t], acc), do:
     new_acc = quote do:
       case !unquote(condition), do:
         false => unquote(clause)

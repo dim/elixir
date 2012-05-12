@@ -1,11 +1,26 @@
 %% Handle code related to rocket args, guard and => matching
 %% for case, fn, receive and friends. try is handled in elixir_try.
 -module(elixir_clauses).
--export([match/3, assigns/3, assigns_block/5, assigns_block/6, extract_args/1, extract_guards/1]).
+-export([
+  assigns/3, assigns_block/5, assigns_block/6,
+  get_pairs/4, match/3, extract_args/1, extract_guards/1]).
 -import(elixir_variables, [umergec/2]).
 -include("elixir.hrl").
 
+%% Get pairs from a clause.
+
+get_pairs(Line, Key, Clauses, S) ->
+  case orddict:find(Key, Clauses) of
+    { ok, { '=>', _, Pairs } } ->
+      [{ Key, Left, Right } || { Left, Right } <- Pairs];
+    { ok, _ } ->
+      elixir_errors:syntax_error(Line, S#elixir_scope.filename, "expected pairs with => for key ~s", [Key]);
+    _ ->
+      []
+  end.
+
 % Function for translating assigns.
+
 assigns(Fun, Args, #elixir_scope{assign=false} = S) ->
   { Result, NewS } = assigns(Fun, Args, S#elixir_scope{assign=true, temp_vars=dict:new()}),
   { Result, NewS#elixir_scope{assign=false} };
@@ -63,9 +78,8 @@ extract_args({ Name, _, Args }) when is_atom(Name), is_list(Args) -> { Name, Arg
 
 % Function for translating macros with match style like case and receive.
 
-match(Line, Clauses, RawS) ->
+match(Line, DecoupledClauses, RawS) ->
   S = RawS#elixir_scope{clause_vars=dict:new()},
-  DecoupledClauses = elixir_kw_block:decouple(Clauses),
 
   case DecoupledClauses of
     [DecoupledClause] ->

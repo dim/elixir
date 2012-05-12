@@ -298,7 +298,7 @@ kw_any -> kw_list 'end' : '$1'.
 kw_comma -> kw_any : '$1'.
 kw_comma -> kw_any comma_separator kw_comma : '$1' ++ '$3'.
 
-kw_base -> kw_comma : elixir_kw_block:sort('$1').
+kw_base -> kw_comma : sort_kw('$1').
 
 %% Stab block
 
@@ -364,11 +364,13 @@ build_tuple(Marker, Args) ->
 
 %% Blocks
 
-% Handle args that expects blocks of code
-build_block([])                            -> nil;
-build_block([nil])                         -> { '__block__', 0, [nil] };
-build_block([Expr]) when not is_list(Expr) -> Expr;
-build_block(Exprs)                         -> { '__block__', 0, lists:reverse(Exprs) }.
+build_block(Exprs) -> build_block(Exprs, true).
+
+build_block([], _)                            -> nil;
+build_block([nil], _)                         -> { '__block__', 0, [nil] };
+build_block([Expr], _) when not is_list(Expr) -> Expr;
+build_block(Exprs, true)                      -> { '__block__', 0, lists:reverse(Exprs) };
+build_block(Exprs, false)                     -> { '__block__', 0, Exprs }.
 
 %% Args
 
@@ -427,17 +429,18 @@ build_kw([{ '=>', Line, [Left, Right] }|T]) ->
   { '=>', Line, build_kw(T, Left, [Right], []) };
 
 build_kw(Else) ->
-  %% LOL PERFZ
-  build_block(lists:reverse(Else)).
+  build_block(Else, false).
 
 build_kw([{ '=>', _, [Left, Right] }|T], Marker, Temp, Acc) ->
-  %% TODO: Marker probably shouldn't be wrapped
-  H = { [Marker], build_block(Temp) },
+  H = { Marker, build_block(Temp) },
   build_kw(T, Left, [Right], [H|Acc]);
 
 build_kw([H|T], Marker, Temp, Acc) ->
   build_kw(T, Marker, [H|Temp], Acc);
 
 build_kw([], Marker, Temp, Acc) ->
-  H = { [Marker], build_block(Temp) },
+  H = { Marker, build_block(Temp) },
   lists:reverse([H|Acc]).
+
+sort_kw(List) -> lists:sort(fun sort_kw/2, List).
+sort_kw({ A, _ }, { B, _ }) -> A =< B.

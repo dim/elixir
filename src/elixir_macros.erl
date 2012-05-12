@@ -53,7 +53,8 @@ translate_macro({'@', Line, [{ Name, _, Args }]}, S) ->
 
 %% Case
 
-translate_macro({'case', Line, [Expr, Clauses]}, S) ->
+translate_macro({'case', Line, [Expr, KV]}, S) ->
+  Clauses = elixir_clauses:get_pairs(Line, do, KV, S),
   { TExpr, NS } = translate_each(Expr, S),
   { TClauses, TS } = elixir_clauses:match(Line, Clauses, NS),
   { { 'case', Line, TExpr, TClauses }, TS };
@@ -78,16 +79,18 @@ translate_macro({'try', Line, [Clauses]}, RawS) ->
 
 %% Receive
 
-translate_macro({'receive', Line, [Clauses] }, S) ->
-  case orddict:find('after', Clauses) of
-    { ok, After } ->
-      AClauses = orddict:erase('after', Clauses),
-      { TClauses, SC } = elixir_clauses:match(Line, AClauses ++ [{'after',After}], S),
+translate_macro({'receive', Line, [KV] }, S) ->
+  Do = elixir_clauses:get_pairs(Line, do, KV, S),
+
+  case orddict:is_key('after', KV) of
+    true ->
+      After = elixir_clauses:get_pairs(Line, 'after', KV, S),
+      { TClauses, SC } = elixir_clauses:match(Line, Do ++ After, S),
       { FClauses, [TAfter] } = lists:split(length(TClauses) - 1, TClauses),
       { _, _, [FExpr], _, FAfter } = TAfter,
       { { 'receive', Line, FClauses, FExpr, FAfter }, SC };
-    error ->
-      { TClauses, SC } = elixir_clauses:match(Line, Clauses, S),
+    false ->
+      { TClauses, SC } = elixir_clauses:match(Line, Do, S),
       { { 'receive', Line, TClauses }, SC }
   end;
 
