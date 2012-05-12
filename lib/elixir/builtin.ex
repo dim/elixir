@@ -1146,8 +1146,8 @@ defmodule Elixir.Builtin, do:
       defrecord Config, [counter: 0, failures: []], moduledoc: "A simple record"
 
   """
-  defmacro defrecord(name, values, opts // [], do_block // []), do:
-    Record.defrecord(name, values, Keyword.merge(opts, do_block))
+  defmacro defrecord(name, values, opts // []), do:
+    Record.defrecord(name, values, opts)
   end
 
   @doc """
@@ -1259,18 +1259,18 @@ defmodule Elixir.Builtin, do:
   to implement the protocol for each Elixir type. For example:
 
       # Numbers are never blank
-      defimpl Blank, [for: Number], do:
+      defimpl Blank, for: Number, do:
         def blank?(number), do: false
       end
 
       # Just empty list is blank
-      defimpl Blank, [for: List], do:
+      defimpl Blank, for: List, do:
         def blank?([]), do: true
         def blank?(_),  do: false
       end
 
       # Just the atoms false and nil are blank
-      defimpl Blank, [for: Atom], do:
+      defimpl Blank, for: Atom, do:
         def blank?(false), do: true
         def blank?(nil),   do: true
         def blank?(_),     do: false
@@ -1309,7 +1309,7 @@ defmodule Elixir.Builtin, do:
   nor Tuple, nor List, nor BitString, Elixir will now dispatch to
   Any. That said, the default behavior could be implemented as:
 
-      defimpl Blank, [for: Any], do:
+      defimpl Blank, for: Any, do:
         def blank?(_), do: false
       end
 
@@ -1325,7 +1325,7 @@ defmodule Elixir.Builtin, do:
   in case it has no items. To achieve this, the developer just needs to
   implement the protocol for `RedBlack.Tree`:
 
-      defimpl Blank, [for: RedBlack.Tree], do:
+      defimpl Blank, for: RedBlack.Tree, do:
         def blank?(tree), do: RedBlack.empty?(tree)
       end
 
@@ -1345,8 +1345,8 @@ defmodule Elixir.Builtin, do:
   Defines an implementation for the given protocol. See
   `defprotocol/2` for examples.
   """
-  defmacro defimpl(name, [for: for], [do: block]), do:
-    Protocol.defimpl(name, [for: for], [do: block])
+  defmacro defimpl(name, [do: _, for: _] = opts), do:
+    Protocol.defimpl(name, opts)
   end
 
   @doc """

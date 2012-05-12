@@ -133,7 +133,7 @@ tokenize(Line, [H|T], Tokens) when H == $"; H == $' ->
       case Parts of
         [Bin] when is_binary(Bin) ->
           Atom = binary_to_atom(unescape_chars(Bin), utf8),
-          tokenize(NewLine, Rest, [{kv_identifier,Line,Atom}|Tokens]);
+          tokenize(NewLine, Rest, [{kw_identifier,Line,Atom}|Tokens]);
         _ ->
           { error, { Line, "invalid interpolation in key", [$"|T] } }
       end;
@@ -497,12 +497,12 @@ tokenize_any_identifier(Line, String, Acc) ->
     [$:,$:|_] ->
       { Rest, { identifier, Line, list_to_atom(Identifier) } };
     [$:|T] ->
-      { T, { kv_identifier, Line, list_to_atom(Identifier) } };
+      { T, { kw_identifier, Line, list_to_atom(Identifier) } };
     _ ->
       { Rest, tokenize_call_identifier(identifier, Line, list_to_atom(Identifier), Rest) }
   end.
 
-% Tokenize identifiers related to function calls. Doesn't emit kv_identifiers.
+% Tokenize identifiers related to function calls. Doesn't emit kw_identifiers.
 tokenize_call_identifier(Kind, Line, Atom, Rest) ->
   case Rest of
     [$(|_] -> { paren_identifier, Line, Atom };

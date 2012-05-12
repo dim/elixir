@@ -19,7 +19,7 @@ defprotocol Binary.Chars, do:
   def to_binary(thing)
 end
 
-defimpl Binary.Chars, [for: Atom], do:
+defimpl Binary.Chars, for: Atom, do:
   @doc """
   Convert the atom literally to a binary, except
   `nil` which is converted to an empty string.
@@ -33,7 +33,7 @@ defimpl Binary.Chars, [for: Atom], do:
   end
 end
 
-defimpl Binary.Chars, [for: BitString], do:
+defimpl Binary.Chars, for: BitString, do:
   @doc """
   Simply returns the binary itself.
   """
@@ -42,7 +42,7 @@ defimpl Binary.Chars, [for: BitString], do:
   end
 end
 
-defimpl Binary.Chars, [for: List], do:
+defimpl Binary.Chars, for: List, do:
   @doc """
   Consider the list is an iolist and converts it
   to a binary. This allows a list of binaries, or
@@ -60,7 +60,7 @@ defimpl Binary.Chars, [for: List], do:
   end
 end
 
-defimpl Binary.Chars, [for: Number], do:
+defimpl Binary.Chars, for: Number, do:
   @doc """
   Simply converts the number (integer or a float) to a binary.
   """

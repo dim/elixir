@@ -22,19 +22,19 @@ end
 
 defrecord ProtocolTest.Foo, a: 0, b: 0
 
-defimpl ProtocolTest.WithAll, [for: ProtocolTest.Foo], do:
+defimpl ProtocolTest.WithAll, for: ProtocolTest.Foo, do:
   def blank(record), do:
     record.a + record.b == 0
   end
 end
 
-defimpl ProtocolTest.WithOnly, [for: ProtocolTest.Foo], do:
+defimpl ProtocolTest.WithOnly, for: ProtocolTest.Foo, do:
   def blank(record), do:
     record.a + record.b == 0
   end
 end
 
-defimpl ProtocolTest.Plus, [for: Number], do:
+defimpl ProtocolTest.Plus, for: Number, do:
   def plus(thing), do: thing + 1
   def plus(thing, other), do: thing + other
 end

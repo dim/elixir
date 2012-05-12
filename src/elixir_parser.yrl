@@ -13,10 +13,10 @@ Nonterminals
   open_bracket close_bracket
   open_curly close_curly
   open_bit close_bit
-  comma_expr call_args_comma_expr last_args
+  comma_expr call_args_comma_expr
   call_args call_args_parens call_args_no_parens
-  kv_comma base_orddict
-  kv_eol kv_item kv_list rocket_expr rocket_expr_list kv_block
+  rocket_expr rocket_expr_list
+  kw_eol kw_expr kw_item kw_list kw_any kw_comma kw_base
   stab_eol stab_block end_eol
   parens_call dot_op dot_identifier dot_do_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
@@ -25,7 +25,7 @@ Nonterminals
 
 Terminals
   'end' '__ref__'
-  identifier kv_identifier punctuated_identifier
+  identifier kw_identifier punctuated_identifier
   bracket_identifier paren_identifier do_identifier
   number signed_number atom bin_string list_string sigil
   dot_call_op special_op comp_op
@@ -263,42 +263,26 @@ parens_call -> expr dot_call_op : { '.', ?line('$2'), ['$1'] }. % Fun/local call
 
 % Function calls
 
-last_args -> base_orddict : ['$1'].
-last_args -> kv_block : ['$1'].
-last_args -> base_orddict comma_separator kv_block : ['$1', '$2'].
-
 call_args_no_parens -> comma_expr : lists:reverse('$1').
-call_args_no_parens -> last_args : '$1'.
-call_args_no_parens -> comma_expr comma_separator last_args : lists:reverse('$1') ++ '$3'.
+call_args_no_parens -> kw_base : ['$1'].
+call_args_no_parens -> comma_expr comma_separator kw_base : lists:reverse(['$3'|'$1']).
 
 comma_expr -> expr : ['$1'].
 comma_expr -> comma_expr comma_separator expr : ['$3'|'$1'].
 
 call_args_comma_expr -> comma_expr : lists:reverse('$1').
-call_args_comma_expr -> last_args : '$1'.
-call_args_comma_expr -> comma_expr comma_separator last_args : lists:reverse('$1') ++ '$3'.
+call_args_comma_expr -> kw_base : ['$1'].
+call_args_comma_expr -> comma_expr comma_separator kw_base : lists:reverse(['$3'|'$1']).
 
 call_args_parens -> open_paren ')' : [].
 call_args_parens -> open_paren call_args_comma_expr close_paren : '$2'.
 
 call_args -> call_args_comma_expr : build_args('$1').
 
-% KV and orddict
+% KV
 
-kv_comma -> kv_identifier expr : [{?exprs('$1'),'$2'}].
-kv_comma -> kv_identifier expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
-
-base_orddict -> kv_comma : sort_kv('$1').
-
-% KV blocks
-
-kv_eol -> kv_identifier eol : '$1'.
-
-stab_eol -> '->' : '$1'.
-stab_eol -> '->' eol : '$1'.
-
-end_eol -> 'end' : '$1'.
-end_eol -> eol 'end' : '$2'.
+kw_expr -> kw_identifier expr : {?exprs('$1'),'$2'}.
+kw_eol  -> kw_identifier eol : '$1'.
 
 rocket_expr_list -> rocket_expr : ['$1'].
 rocket_expr_list -> rocket_expr_list eol rocket_expr : ['$3'|'$1'].
@@ -306,13 +290,27 @@ rocket_expr_list -> rocket_expr_list eol rocket_expr : ['$3'|'$1'].
 rocket_expr -> expr : '$1'.
 rocket_expr -> expr rocket_op expr : build_op('$2', '$1', '$3').
 
-kv_item -> kv_eol rocket_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
-kv_item -> kv_eol : { ?exprs('$1'), nil }.
+kw_item -> kw_eol rocket_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
+kw_item -> kw_eol : { ?exprs('$1'), nil }.
 
-kv_list -> kv_item : ['$1'].
-kv_list -> kv_item kv_list : ['$1'|'$2'].
+kw_list -> kw_item : ['$1'].
+kw_list -> kw_item kw_list : ['$1'|'$2'].
 
-kv_block -> kv_list 'end' : sort_kv('$1').
+kw_any -> kw_expr : ['$1'].
+kw_any -> kw_list 'end' : '$1'.
+
+kw_comma -> kw_any : '$1'.
+kw_comma -> kw_any comma_separator kw_comma : '$1' ++ '$3'.
+
+kw_base -> kw_comma : elixir_kw_block:sort('$1').
+
+%% Stab block
+
+stab_eol -> '->' : '$1'.
+stab_eol -> '->' eol : '$1'.
+
+end_eol -> 'end' : '$1'.
+end_eol -> eol 'end' : '$2'.
 
 stab_block -> stab_eol 'end'             : [{do,nil}].
 stab_block -> stab_eol expr_list end_eol : [{do,build_block('$2')}].
@@ -321,10 +319,10 @@ stab_block -> stab_eol expr_list end_eol : [{do,build_block('$2')}].
 
 bracket_access -> open_bracket ']' : { [], ?line('$1') }.
 bracket_access -> open_bracket expr close_bracket : { '$2', ?line('$1') }.
-bracket_access -> open_bracket kv_comma close_bracket : { sort_kv('$2'), ?line('$1') }.
+bracket_access -> open_bracket kw_base close_bracket : { '$2', ?line('$1') }.
 
 list -> open_bracket ']' : [].
-list -> open_bracket kv_comma close_bracket : sort_kv('$2').
+list -> open_bracket kw_base close_bracket : '$2'.
 list -> open_bracket expr close_bracket : ['$2'].
 list -> open_bracket expr comma_separator call_args close_bracket : ['$2'|'$4'].
 
@@ -447,7 +445,3 @@ build_kw([H|T], Marker, Temp, Acc) ->
 build_kw([], Marker, Temp, Acc) ->
   H = { [Marker], build_block(Temp) },
   lists:reverse([H|Acc]).
-
-%% Helpers
-
-sort_kv(List) -> elixir_kw_block:sort(List).

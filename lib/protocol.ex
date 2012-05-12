@@ -51,7 +51,7 @@ defmodule Protocol, do:
   It also defines a `__impl__` function which
   returns the protocol being implemented.
   """
-  def defimpl(protocol, [for: for], [do: block]), do:
+  def defimpl(protocol, [do: block, for: for]), do:
     quote do:
       protocol = unquote(protocol)
       for      = unquote(for)
