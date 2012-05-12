@@ -223,7 +223,7 @@ defmodule Elixir.SpecialForms, do:
       2.0          #=> Floats
       [1,2]        #=> Lists
       "binaries"   #=> Binaries
-      {key, value} #=> Key-value pairs (i.e. a tuple with two elements)
+      {key, value} #=> Tuple with two elements
 
   ## Hygiene
 

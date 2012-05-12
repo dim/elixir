@@ -422,8 +422,7 @@ build_atom({ atom, _Line, [H] }) when is_atom(H) -> H;
 build_atom({ atom, _Line, [H] }) when is_binary(H) -> binary_to_atom(H, utf8);
 build_atom({ atom, Line, Args }) -> { binary_to_atom, Line, [{ '<<>>', Line, Args}, utf8] }.
 
-%% build_kw
-%% TODO: Pass the line forward
+%% Keywords
 
 build_kw([{ '=>', Line, [Left, Right] }|T]) ->
   { '=>', Line, build_kw(T, Left, [Right], []) };
