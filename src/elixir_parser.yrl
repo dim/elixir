@@ -3,7 +3,7 @@
 
 Nonterminals
   grammar expr_list
-  expr stab_expr bracket_expr call_expr max_expr
+  expr bracket_expr call_expr max_expr
   base_expr op_expr
   comma_separator
   add_op mult_op unary_op addadd_op multmult_op bin_concat_op
@@ -17,7 +17,6 @@ Nonterminals
   call_args call_args_parens call_args_no_parens
   rocket_expr rocket_expr_list
   kw_eol kw_expr kw_item kw_list kw_any kw_comma kw_base
-  stab_eol stab_block end_eol
   parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
@@ -80,7 +79,7 @@ expr_list -> expr_list eol expr : ['$3'|'$1'].
 expr -> expr op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
 expr -> unary_op expr : build_unary_op('$1', '$2').
 expr -> special_op expr : build_special_op('$1', '$2').
-expr -> stab_expr : '$1'.
+expr -> call_expr : '$1'.
 
 op_expr -> match_op expr : { '$1', '$2' }.
 op_expr -> add_op expr : { '$1', '$2' }.
@@ -98,11 +97,6 @@ op_expr -> when_op expr : { '$1', '$2' }.
 op_expr -> arrow_op expr : { '$1', '$2' }.
 op_expr -> default_op expr : { '$1', '$2' }.
 op_expr -> comp_expr_op expr : { '$1', '$2' }.
-
-stab_expr -> parens_call call_args_parens stab_block : build_identifier('$1', '$2', '$3').
-stab_expr -> dot_punctuated_identifier stab_block : build_identifier('$1', [], '$2').
-stab_expr -> dot_identifier stab_block : build_identifier('$1', [], '$2').
-stab_expr -> call_expr : '$1'.
 
 call_expr -> dot_punctuated_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_identifier call_args_no_parens : build_identifier('$1', '$2').
@@ -318,17 +312,6 @@ kw_comma -> kw_any comma_separator kw_comma : '$1' ++ '$3'.
 
 kw_base -> kw_comma : sort_kw('$1').
 
-%% Stab block
-
-stab_eol -> '->' : '$1'.
-stab_eol -> '->' eol : '$1'.
-
-end_eol -> 'end' : '$1'.
-end_eol -> eol 'end' : '$2'.
-
-stab_block -> stab_eol 'end'             : [{do,nil}].
-stab_block -> stab_eol expr_list end_eol : [{do,build_block('$2')}].
-
 % Lists
 
 bracket_access -> open_bracket ']' : { [], ?line('$1') }.
@@ -391,12 +374,6 @@ build_block(Exprs, true)                      -> { '__block__', 0, lists:reverse
 build_block(Exprs, false)                     -> { '__block__', 0, Exprs }.
 
 %% Identifiers
-
-build_identifier(Expr, [], Block) ->
-  build_identifier(Expr, [Block]);
-
-build_identifier(Expr, Args, Block) ->
-  build_identifier(Expr, Args ++ [Block]).
 
 build_identifier({ '.', DotLine, [Expr, { Kind, _, Identifier }] }, Args) when
   Kind == identifier; Kind == punctuated_identifier; Kind == bracket_identifier;
