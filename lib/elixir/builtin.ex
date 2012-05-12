@@ -1800,7 +1800,7 @@ defmodule Elixir.Builtin, do:
   def apply(module, fun, args)
 
   @doc """
-  Provides an `if` macro. The macro expects the first argument to
+  Provides an `if` macro. This macro expects the first argument to
   be a condition and the rest are keywords arguments.
 
   ## One-liner examples
@@ -1814,7 +1814,7 @@ defmodule Elixir.Builtin, do:
 
       if(foo, do: bar, else: bar)
 
-  ## Key-value blocks examples
+  ## Keyword blocks examples
 
   When several expressions must be passed to if, the most appropriate
   form is thorugh keywords blocks. The first example above would then
@@ -1834,38 +1834,38 @@ defmodule Elixir.Builtin, do:
         baz
       end
 
-  Notice that extra keys follows the regular `else:` form. You can also
-  add extra `elsif:` clauses:
+  If you want to compare more than two clauses, you can use the `cond/1`
+  macro.
 
+  """
+  defmacro if(condition, [{:do,do}|tail]), do:
+    else = Keyword.get(tail, :else, nil)
 
-      if foo, do:
-        bar
-      elsif: some_condition
-        bar + baz
-      else:
-        baz
+    quote do:
+      case !unquote(condition), do:
+        false => unquote(do)
+        true  => unquote(else)
+      end
+    end
+  end
+
+  @doc """
+  Execute the first clause where the condition returns true,
+  raises an error otherwise.
+
+  ## Examples
+
+      cond do
+        1 + 1 == 2 =>
+          "This will never match"
+        2 * 2 != 4 =>
+          "Nor this"
+        true =>
+          "This will"
       end
 
   """
-  defmacro if(condition, [{:do,do_clause}|tail]), do:
-    # Transform the condition and the expressions in the
-    # do_clause to a keywords block. Get the else clause.
-    if_clause   = { :__kwblock__, 0, [ [condition], do_clause ] }
-    else_clause = Keyword.get(tail, :else, nil)
-
-    # Convert all :elsif clauses into matches
-    converted   = lc {:elsif,rest} in tail, do: {:match,rest}
-    merged      = [{:match,if_clause}|converted]
-
-    # Decouple all if and elsif clauses into an array of tuples.
-    # Those tuples are made of three elements, the key-block key,
-    # the given condition and the block expressions
-    all = Erlang.elixir_kw_block.decouple(merged)
-    build_if_clauses(List.reverse(all), else_clause)
-  end
-
   defmacro cond(opts), do:
-    # TODO: Support more than two
     [h|t] = List.reverse Erlang.elixir_kw_block.decouple(opts)
     { :do, condition, clause } = h
 
@@ -1875,7 +1875,7 @@ defmodule Elixir.Builtin, do:
       end
     end
 
-    build_if_clauses(t, new_acc)
+    build_cond_clauses(t, new_acc)
   end
 
   @doc """
@@ -2257,18 +2257,7 @@ defmodule Elixir.Builtin, do:
     { :|, 0, [other, :binary] }
   end
 
-  # Builds if clauses by nesting them recursively.
-  # For instance, the following clause:
-  #
-  #     if foo, do:
-  #       1
-  #     elsif: bar
-  #       2
-  #     else:
-  #       3
-  #     end
-  #
-  # Becomes:
+  # Builds cond clauses by nesting them recursively.
   #
   #     case !foo, do:
   #       false => 1
@@ -2279,16 +2268,16 @@ defmodule Elixir.Builtin, do:
   #         end
   #     end
   #
-  defp build_if_clauses([{ key, condition, clause }|t], acc) when key == :match or key == :do, do:
+  defp build_cond_clauses([{ :do, condition, clause }|t], acc), do:
     new_acc = quote do:
       case !unquote(condition), do:
         false => unquote(clause)
-        _ => unquote(acc)
+        true  => unquote(acc)
       end
     end
 
-    build_if_clauses(t, new_acc)
+    build_cond_clauses(t, new_acc)
   end
 
-  defp build_if_clauses([], acc), do: acc
+  defp build_cond_clauses([], acc), do: acc
 end

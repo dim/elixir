@@ -256,8 +256,7 @@ tokenize(Line, [H|_] = String, Tokens) when ?is_upcase(H) ->
 
 tokenize(Line, [H|_] = String, Tokens) when ?is_downcase(H); H == $_ ->
   { Rest, { Kind, _, Identifier } } = tokenize_any_identifier(Line, String, []),
-  HasKeyword = Kind == identifier orelse Kind == do_identifier,
-  case HasKeyword andalso keyword(Identifier) of
+  case (Kind == identifier) andalso keyword(Identifier) of
     true  ->
       tokenize(Line, Rest, [{Identifier,Line}|Tokens]);
     false ->
@@ -507,25 +506,8 @@ tokenize_call_identifier(Kind, Line, Atom, Rest) ->
   case Rest of
     [$(|_] -> { paren_identifier, Line, Atom };
     [$[|_] -> { bracket_identifier, Line, Atom };
-    _ ->
-      case next_is_block(Rest) of
-        []              -> { Kind, Line, Atom };
-        BlockIdentifier -> { BlockIdentifier, Line, Atom }
-      end
+    _      -> { Kind, Line, Atom }
   end.
-
-next_is_block([Space|Tokens]) when Space == $\t; Space == $\s ->
-  next_is_block(Tokens);
-
-next_is_block([$d,$o,H|_]) when
-  ?is_digit(H); ?is_upcase(H); ?is_downcase(H); H == $_; H == $: ->
-  [];
-
-next_is_block([$d,$o|_]) ->
-  do_identifier;
-
-next_is_block(_) ->
-  [].
 
 % Terminator
 terminator($() -> $);
@@ -535,7 +517,6 @@ terminator($<) -> $>;
 terminator(O) -> O.
 
 % Keywords
-keyword('do')      -> true;
 keyword('end')     -> true;
 keyword('true')    -> true;
 keyword('false')   -> true;

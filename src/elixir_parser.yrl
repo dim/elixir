@@ -18,7 +18,7 @@ Nonterminals
   rocket_expr rocket_expr_list
   kw_eol kw_expr kw_item kw_list kw_any kw_comma kw_base
   stab_eol stab_block end_eol
-  parens_call dot_op dot_identifier dot_do_identifier dot_ref
+  parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
   .
@@ -26,7 +26,7 @@ Nonterminals
 Terminals
   'end' '__ref__'
   identifier kw_identifier punctuated_identifier
-  bracket_identifier paren_identifier do_identifier
+  bracket_identifier paren_identifier
   number signed_number atom bin_string list_string sigil
   dot_call_op special_op comp_op
   'not' 'and' 'or' 'xor' 'when' 'in'
@@ -106,7 +106,6 @@ stab_expr -> call_expr : '$1'.
 call_expr -> dot_punctuated_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_punctuated_identifier : build_identifier('$1', []).
-call_expr -> dot_do_identifier : build_identifier('$1', nil).
 call_expr -> var : build_identifier('$1', nil).
 call_expr -> bracket_expr : '$1'.
 
@@ -245,9 +244,6 @@ dot_identifier -> identifier : '$1'.
 dot_identifier -> expr dot_op identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_ref -> expr dot_op '__ref__' : { '.', ?line('$2'), ['$1', '$3'] }.
-
-dot_do_identifier -> do_identifier : '$1'.
-dot_do_identifier -> expr dot_op do_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
 
 dot_bracket_identifier -> bracket_identifier : '$1'.
 dot_bracket_identifier -> expr dot_op bracket_identifier : { '.', ?line('$2'), ['$1', '$3'] }.
@@ -388,7 +384,7 @@ build_identifier(Expr, Args, Block) ->
 
 build_identifier({ '.', DotLine, [Expr, { Kind, _, Identifier }] }, Args) when
   Kind == identifier; Kind == punctuated_identifier; Kind == bracket_identifier;
-  Kind == paren_identifier; Kind == do_identifier; Kind == curly_identifier ->
+  Kind == paren_identifier ->
   build_identifier({ '.', DotLine, [Expr, Identifier] }, Args);
 
 build_identifier({ '.', Line, _ } = Dot, Args) ->
