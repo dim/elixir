@@ -15,8 +15,9 @@ Nonterminals
   open_bit close_bit
   comma_expr call_args_comma_expr last_args
   call_args call_args_parens call_args_no_parens
-  kv_comma base_orddict kv_eol kv_block
-  end_eol kv_item kv_list stab_eol stab_block rocket_expr rocket_expr_list
+  kv_comma base_orddict
+  kv_eol kv_item kv_list rocket_expr rocket_expr_list kv_block
+  stab_eol stab_block end_eol
   parens_call dot_op dot_identifier dot_do_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
@@ -287,7 +288,7 @@ call_args -> call_args_comma_expr : build_args('$1').
 kv_comma -> kv_identifier expr : [{?exprs('$1'),'$2'}].
 kv_comma -> kv_identifier expr comma_separator kv_comma : [{?exprs('$1'),'$2'}|'$4'].
 
-base_orddict -> kv_comma : { '[:]', ?line(hd('$1')), '$1' }.
+base_orddict -> kv_comma : sort_kv('$1').
 
 % KV blocks
 
@@ -306,18 +307,12 @@ rocket_expr -> expr : '$1'.
 rocket_expr -> expr rocket_op expr : build_op('$2', '$1', '$3').
 
 kv_item -> kv_eol rocket_expr_list eol : { ?exprs('$1'), build_kw(lists:reverse('$2')) }.
-
-%% Those will be deprecated
-kv_item -> kv_identifier comma_expr eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),nil] } }.
-kv_item -> kv_identifier comma_expr eol expr_list eol : { ?exprs('$1'), { '__kwblock__', ?line('$1'), [lists:reverse('$2'),build_block('$4')] } }.
+kv_item -> kv_eol : { ?exprs('$1'), nil }.
 
 kv_list -> kv_item : ['$1'].
 kv_list -> kv_item kv_list : ['$1'|'$2'].
 
-kv_block -> kv_eol 'end'                              : build_kw_block('$1', [], []).
-kv_block -> kv_eol kv_list 'end'                      : build_kw_block('$1', [], '$2').
-kv_block -> kv_eol rocket_expr_list end_eol           : build_kw_block('$1', '$2', []).
-kv_block -> kv_eol rocket_expr_list eol kv_list 'end' : build_kw_block('$1', '$2', '$4').
+kv_block -> kv_list 'end' : sort_kv('$1').
 
 stab_block -> stab_eol 'end'             : [{do,nil}].
 stab_block -> stab_eol expr_list end_eol : [{do,build_block('$2')}].
@@ -381,20 +376,9 @@ build_block([nil])                         -> { '__block__', 0, [nil] };
 build_block([Expr]) when not is_list(Expr) -> Expr;
 build_block(Exprs)                         -> { '__block__', 0, lists:reverse(Exprs) }.
 
-% Handle keywords blocks
-build_kw_block(Delimiter, Contents, IncompleteList) ->
-  Line = ?line(Delimiter),
-  List = [{ ?exprs(Delimiter), build_kw(lists:reverse(Contents)) }|IncompleteList],
-  {'[:]', Line, sort_kv(List)}.
-  
-
 %% Args
-% Build args by transforming [:] into the final form []
-% and properly sorting the items.
 
-build_args(Args) -> lists:map(fun build_arg/1, Args).
-build_arg({ '[:]', _Line, Args }) -> sort_kv(Args);
-build_arg(Else) -> Else.
+build_args(Args) -> Args.
 
 %% Identifiers
 
