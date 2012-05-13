@@ -20,13 +20,13 @@ Nonterminals
   parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
-  lambda lambda_op lambda_paren_op
+  lambda lambda_op lambda_paren_op fn_expr fn_block
   .
 
 Terminals
-  'end' '__ref__'
   identifier kw_identifier punctuated_identifier
   bracket_identifier paren_identifier
+  fn fn_paren 'end' '__ref__'
   number signed_number atom bin_string list_string sigil
   dot_call_op special_op comp_op
   'not' 'and' 'or' 'xor' 'when' 'in'
@@ -79,7 +79,7 @@ expr_list -> expr_list eol expr : ['$3'|'$1'].
 expr -> expr op_expr : build_op(element(1, '$2'), '$1', element(2, '$2')).
 expr -> unary_op expr : build_unary_op('$1', '$2').
 expr -> special_op expr : build_special_op('$1', '$2').
-expr -> call_expr : '$1'.
+expr -> fn_expr : '$1'.
 
 op_expr -> match_op expr : { '$1', '$2' }.
 op_expr -> add_op expr : { '$1', '$2' }.
@@ -97,6 +97,14 @@ op_expr -> when_op expr : { '$1', '$2' }.
 op_expr -> arrow_op expr : { '$1', '$2' }.
 op_expr -> default_op expr : { '$1', '$2' }.
 op_expr -> comp_expr_op expr : { '$1', '$2' }.
+
+fn_expr -> fn_paren call_args_parens fn_block : build_identifier('$1', '$2' ++ ['$3']).
+fn_expr -> fn call_args_no_parens fn_block : build_identifier('$1', '$2' ++ ['$3']).
+fn_expr -> fn fn_block : build_identifier('$1', ['$2']).
+fn_expr -> fn_paren call_args_parens : build_identifier('$1', '$2').
+fn_expr -> fn call_args_no_parens : build_identifier('$1', '$2').
+fn_expr -> fn : build_identifier('$1', nil).
+fn_expr -> call_expr : '$1'.
 
 call_expr -> dot_punctuated_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_identifier call_args_no_parens : build_identifier('$1', '$2').
@@ -145,6 +153,8 @@ lambda_op -> '=>' : '$1'.
 
 lambda_paren_op -> '=>(' : '$1'.
 lambda_paren_op -> '=>(' eol : '$1'.
+
+fn_block -> '->' grammar 'end' : [{do,build_block('$1',false)}].
 
 %% Helpers
 
@@ -387,8 +397,8 @@ build_identifier({ '.', Line, _ } = Dot, Args) ->
   end,
   { Dot, Line, FArgs };
 
-build_identifier({ _, Line, Identifier }, nil) ->
-  { Identifier, Line, nil };
+build_identifier({ Keyword, Line }, Args) when Keyword == fn; Keyword == fn_paren ->
+  { fn, Line, Args };
 
 build_identifier({ _, Line, Identifier }, Args) ->
   { Identifier, Line, Args }.

@@ -259,11 +259,11 @@ tokenize(Line, [H|_] = String, Tokens) when ?is_upcase(H) ->
 
 tokenize(Line, [H|_] = String, Tokens) when ?is_downcase(H); H == $_ ->
   { Rest, { Kind, _, Identifier } } = tokenize_any_identifier(Line, String, []),
-  case (Kind == identifier) andalso keyword(Identifier) of
-    true  ->
-      tokenize(Line, Rest, [{Identifier,Line}|Tokens]);
+  case keyword(Line, Kind, Identifier) of
     false ->
-      tokenize(Line, Rest, [{Kind,Line,Identifier}|Tokens])
+      tokenize(Line, Rest, [{Kind,Line,Identifier}|Tokens]);
+    Else  ->
+      tokenize(Line, Rest, [Else|Tokens])
   end;
 
 % End of line
@@ -496,15 +496,12 @@ tokenize_any_identifier(Line, String, Acc) ->
     [H|T] when H == $?; H == $! ->
       Atom = ?ELIXIR_ATOM_CONCAT([Identifier, [H]]),
       { T, tokenize_call_identifier(punctuated_identifier, Line, Atom, T) };
-    [$:,$:|_] ->
-      { Rest, { identifier, Line, list_to_atom(Identifier) } };
     [$:|T] ->
       { T, { kw_identifier, Line, list_to_atom(Identifier) } };
     _ ->
       { Rest, tokenize_call_identifier(identifier, Line, list_to_atom(Identifier), Rest) }
   end.
 
-% Tokenize identifiers related to function calls. Doesn't emit kw_identifiers.
 tokenize_call_identifier(Kind, Line, Atom, Rest) ->
   case Rest of
     [$(|_] -> { paren_identifier, Line, Atom };
@@ -523,13 +520,19 @@ terminator(${) -> $};
 terminator($<) -> $>;
 terminator(O) -> O.
 
+% Lambda
+keyword(Line, identifier, 'fn')       -> { 'fn', Line };
+keyword(Line, paren_identifier, 'fn') -> { 'fn_paren', Line };
+keyword(Line, identifier, Other)      -> keyword(Other) andalso { Other, Line };
+keyword(_, _, _)                      -> false.
+
 % Keywords
 keyword('end')     -> true;
 keyword('true')    -> true;
 keyword('false')   -> true;
 keyword('nil')     -> true;
 
-% Keyword operators
+% Operator keywords
 keyword('not')     -> true;
 keyword('and')     -> true;
 keyword('or')      -> true;
