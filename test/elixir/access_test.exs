@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule Access.TupleTest, do:
+defmodule Access.TupleTest do
   use ExUnit.Case
 
   defrecord Config, other: { :a, :b, :c }
@@ -32,7 +32,7 @@ defmodule Access.TupleTest, do:
   end
 end
 
-defmodule Access.ListTest, do:
+defmodule Access.ListTest do
   use ExUnit.Case
 
   test :literal, do:
@@ -56,7 +56,7 @@ defmodule Access.ListTest, do:
   end
 end
 
-defmodule Access.BinaryTest, do:
+defmodule Access.BinaryTest do
   use ExUnit.Case
 
   test :literal, do:
@@ -74,7 +74,7 @@ defmodule Access.BinaryTest, do:
   end
 end
 
-defmodule Access.AtomTest, do:
+defmodule Access.AtomTest do
   use ExUnit.Case
 
   defrecord Config, integer: 0
@@ -116,7 +116,7 @@ defmodule Access.AtomTest, do:
   defp is_config(_), do: false
 end
 
-defmodule Access.FunctionTest, do:
+defmodule Access.FunctionTest do
   use ExUnit.Case
 
   test :any, do:

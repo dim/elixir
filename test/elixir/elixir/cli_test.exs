@@ -2,7 +2,7 @@ Code.require_file "../../test_helper", __FILE__
 
 require Erlang.os, as: OS
 
-defmodule Elixir.CLI.InitTest, do:
+defmodule Elixir.CLI.InitTest do
   use ExUnit.Case
 
   test :code_init, do:
@@ -13,7 +13,7 @@ defmodule Elixir.CLI.InitTest, do:
   end
 end
 
-defmodule Elixir.CLI.OptionParsingTest, do:
+defmodule Elixir.CLI.OptionParsingTest do
   use ExUnit.Case
 
   test :path, do:
@@ -39,7 +39,7 @@ defmodule Elixir.CLI.OptionParsingTest, do:
   end
 end
 
-defmodule Elixir.CLI.AtExitTest, do:
+defmodule Elixir.CLI.AtExitTest do
   use ExUnit.Case
 
   test :at_exit, do:
@@ -48,7 +48,7 @@ defmodule Elixir.CLI.AtExitTest, do:
   end
 end
 
-defmodule Elixir.CLI.ErrorTest, do:
+defmodule Elixir.CLI.ErrorTest do
   use ExUnit.Case
 
   test :code_error, do:
@@ -60,7 +60,7 @@ defmodule Elixir.CLI.ErrorTest, do:
   end
 end
 
-defmodule Elixir.CLI.SyntaxErrorTest, do:
+defmodule Elixir.CLI.SyntaxErrorTest do
   use ExUnit.Case
 
   test :syntax_code_error, do:
@@ -71,7 +71,7 @@ defmodule Elixir.CLI.SyntaxErrorTest, do:
   end
 end
 
-defmodule Elixir.CLI.CompileTest, do:
+defmodule Elixir.CLI.CompileTest do
   use ExUnit.Case
 
   test :compile_code, do:
@@ -83,7 +83,7 @@ defmodule Elixir.CLI.CompileTest, do:
   end
 end
 
-defmodule Elixir.CLI.ParallelCompilerTest, do:
+defmodule Elixir.CLI.ParallelCompilerTest do
   use ExUnit.Case
 
   test :compile_code, do:

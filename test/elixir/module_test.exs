@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule ModuleTest.ToBeUsed, do:
+defmodule ModuleTest.ToBeUsed do
   def value, do: 1
 
   defmacro __using__(target, _), do:
@@ -26,26 +26,26 @@ defmodule ModuleTest.ToBeUsed, do:
   end
 end
 
-defmodule ModuleTest.ToUse, do:
+defmodule ModuleTest.ToUse do
   30 = __LINE__ # Moving the next line around can make tests fail
   def original_value(2), do: true
   use ModuleTest.ToBeUsed
 end
 
-defmodule ModuleTest.DuplicateAttribute, do:
+defmodule ModuleTest.DuplicateAttribute do
   Module.add_attribute __MODULE__, :foo, 1
   Module.add_attribute __MODULE__, :foo, 2
   Module.add_attribute __MODULE__, :foo, 3
 end
 
-defmodule ModuleTest.DefinedFunctions, do:
+defmodule ModuleTest.DefinedFunctions do
   def foo(1,2,3), do: 4
   @defined_functions Module.defined_functions __MODULE__
   @defined_def  Module.defined_functions __MODULE__, :def
   @defined_defp Module.defined_functions __MODULE__, :defp
 end
 
-defmodule ModuleTest, do:
+defmodule ModuleTest do
   use ExUnit.Case
 
   Module.register_attribute __MODULE__, :register_example

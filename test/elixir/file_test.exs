@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule FileTest, do:
+defmodule FileTest do
   use ExUnit.Case
 
   test :expand_path_with_binary, do:

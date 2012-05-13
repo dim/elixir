@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.QuoteTest.Hygiene, do:
+defmodule Kernel.QuoteTest.Hygiene do
   defmacro no_interference, do:
     quote do: a = 1
   end
@@ -20,7 +20,7 @@ defmodule Kernel.QuoteTest.Hygiene, do:
   end
 end
 
-defmodule Kernel.QuoteTest, do:
+defmodule Kernel.QuoteTest do
   use ExUnit.Case
   import __MODULE__.Hygiene
 

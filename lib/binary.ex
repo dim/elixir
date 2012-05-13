@@ -1,4 +1,4 @@
-defmodule Binary, do:
+defmodule Binary do
   @moduledoc """
   Functions for working with binaries.
   """

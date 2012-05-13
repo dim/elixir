@@ -61,7 +61,7 @@ defimpl Dict, for: Orddict.Record, do:
   end
 end
 
-defmodule Orddict, do:
+defmodule Orddict do
   @moduledoc """
   This module implements a dictionary based that stores items
   as a list of tuples. It is a simple wrapper around

@@ -1,9 +1,9 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Elixir.ErrorsTest, do:
+defmodule Elixir.ErrorsTest do
   use ExUnit.Case
 
-  defmodule UnproperMacro, do:
+  defmodule UnproperMacro do
     defmacro unproper(args), do: args
     defmacro exit(args), do: args
   end

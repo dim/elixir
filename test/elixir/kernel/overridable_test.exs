@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.Overridable, do:
+defmodule Kernel.Overridable do
   def sample, do:
     1
   end
@@ -87,7 +87,7 @@ defmodule Kernel.Overridable, do:
   end
 end
 
-defmodule Kernel.OverridableTest, do:
+defmodule Kernel.OverridableTest do
   require Kernel.Overridable, as: Overridable
   use ExUnit.Case
 

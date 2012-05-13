@@ -77,7 +77,7 @@ defprotocol Enum.OrdIterator, do:
   def to_list(current, next)
 end
 
-defmodule Enum, do:
+defmodule Enum do
   require Enum.Iterator, as: I
   require Enum.OrdIterator, as: O
 

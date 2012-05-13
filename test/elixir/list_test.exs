@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule ListTest, do:
+defmodule ListTest do
   use ExUnit.Case
 
   test :brackets_function, do:

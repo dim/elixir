@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule Regex.BinaryTest, do:
+defmodule Regex.BinaryTest do
   use ExUnit.Case
 
   test :compile, do:
@@ -71,7 +71,7 @@ defmodule Regex.BinaryTest, do:
   end
 end
 
-defmodule Regex.ListTest, do:
+defmodule Regex.ListTest do
   use ExUnit.Case
 
   test :compile, do:

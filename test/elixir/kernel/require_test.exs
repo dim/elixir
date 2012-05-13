@@ -1,10 +1,10 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.RequireTest.Nested, do:
+defmodule Kernel.RequireTest.Nested do
   defmacro value, do: 1
 end
 
-defmodule Kernel.RequireTest, do:
+defmodule Kernel.RequireTest do
   require Kernel.RequireTest.Nested, as: Nested
 
   use ExUnit.Case

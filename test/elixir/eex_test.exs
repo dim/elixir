@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule EExTest, do:
+defmodule EExTest do
   use ExUnit.Case
 
   require EEx

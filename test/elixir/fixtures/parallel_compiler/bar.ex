@@ -1,4 +1,4 @@
-defmodule Bar, do:
+defmodule Bar do
 end
 
 require Foo

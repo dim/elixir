@@ -1,6 +1,6 @@
 defexception ExUnit.AssertionError, message: "assertion failed"
 
-defmodule ExUnit.Assertions, do:
+defmodule ExUnit.Assertions do
   @moduledoc """
   This module contains a set of assertions functions that are
   imported by default into your test cases.

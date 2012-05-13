@@ -1,4 +1,4 @@
-defmodule File, do:
+defmodule File do
   require Erlang.file,     as: F
   require Erlang.filename, as: FN
   require Erlang.filelib,  as: FL

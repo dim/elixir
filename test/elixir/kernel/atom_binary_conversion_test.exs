@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.AtomToBinaryTest, do:
+defmodule Kernel.AtomToBinaryTest do
   use ExUnit.Case
 
   test :atom_to_binary_defaults_to_utf8, do:

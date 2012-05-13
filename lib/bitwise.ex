@@ -1,4 +1,4 @@
-defmodule Bitwise, do:
+defmodule Bitwise do
   @moduledoc """
   This module provide macros for bitwise operators
   provided by Erlang. These macros can be used in guards.

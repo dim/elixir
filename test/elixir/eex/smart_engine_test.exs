@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule EEx.SmartEngineTest, do:
+defmodule EEx.SmartEngineTest do
   use ExUnit.Case
 
   test "evaluates simple string", do:

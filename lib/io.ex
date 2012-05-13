@@ -1,4 +1,4 @@
-defmodule IO, do:
+defmodule IO do
   @moduledoc """
   Module responsible for doing IO.
   It is incomplete now. More functions will be

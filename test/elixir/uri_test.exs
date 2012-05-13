@@ -1,4 +1,4 @@
-defmodule URITest, do:
+defmodule URITest do
   use ExUnit.Case
 
   test :encode_with_binary, do:

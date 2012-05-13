@@ -1,6 +1,6 @@
 import Elixir.Builtin, except: [raise: 1, raise: 2]
 
-defmodule Elixir.Builtin, do:
+defmodule Elixir.Builtin do
   @moduledoc """
   `Elixir.Builtin` provides the default macros and functions
   Elixir imports into your environment. Those macros and functions
@@ -928,7 +928,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         def bar, do: :baz
       end
 
@@ -938,8 +938,8 @@ defmodule Elixir.Builtin, do:
 
   Nesting a module inside the other affects its name:
 
-      defmodule Foo, do:
-        defmodule Bar, do:
+      defmodule Foo do
+        defmodule Bar do
         end
       end
 
@@ -968,7 +968,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         def bar, do: :baz
       end
 
@@ -976,7 +976,7 @@ defmodule Elixir.Builtin, do:
 
   A function that expects arguments can be defined as follow:
 
-      defmodule Foo, do:
+      defmodule Foo do
         def sum(a, b), do:
           a + b
         end
@@ -997,7 +997,7 @@ defmodule Elixir.Builtin, do:
 
   We can also use the atom format to define functions:
 
-      defmodule Foo, do:
+      defmodule Foo do
         def :sum.(a, b), do:
           a + b
         end
@@ -1075,7 +1075,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         def bar, do:
           sum(1, 2)
         end
@@ -1361,7 +1361,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      defmodule MyList, do:
+      defmodule MyList do
         defdelegate [reverse: 1], to: Erlang.lists
       end
 
@@ -1400,7 +1400,7 @@ defmodule Elixir.Builtin, do:
 
   ## Examples
 
-      defmodule AssertionTest, do:
+      defmodule AssertionTest do
         use ExUnit.Case
 
         def test_always_pass, do:
@@ -1412,7 +1412,7 @@ defmodule Elixir.Builtin, do:
   `ExUnit.Case` which will then do the proper setup. In other words,
   `use` is simply a translation to:
 
-      defmodule AssertionTest, do:
+      defmodule AssertionTest do
         require ExUnit.Case
         ExUnit.Case.__using__(AssertionTest)
 

@@ -1,4 +1,4 @@
-defmodule Port, do:
+defmodule Port do
   @moduledoc """
   Functions related to Erlang ports.
   """

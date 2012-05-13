@@ -1,4 +1,4 @@
-defmodule Elixir.SpecialForms, do:
+defmodule Elixir.SpecialForms do
   @moduledoc """
   In this module we define Elixir special forms. Those are called
   special forms because they cannot be overridden by the developer
@@ -42,7 +42,7 @@ defmodule Elixir.SpecialForms, do:
 
   `refer` can be used to setup an alias for any module:
 
-      defmodule Math, do:
+      defmodule Math do
         refer MyKeyword, as: Keyword
       end
 
@@ -87,7 +87,7 @@ defmodule Elixir.SpecialForms, do:
   `MyMacros`. If you want to invoke it, you need to first explicitly
   require the `MyMacros`:
 
-      defmodule Math, do:
+      defmodule Math do
         require MyMacros
         MyMacros.if do_something, it_works
       end
@@ -112,7 +112,7 @@ defmodule Elixir.SpecialForms, do:
   in your module and you don't want to always type `Keyword.values`,
   you can simply import it:
 
-      defmodule Math, do:
+      defmodule Math do
         import Keyword, only: [values: 1]
 
         def some_function, do:
@@ -138,7 +138,7 @@ defmodule Elixir.SpecialForms, do:
   It is important to notice that `import` is lexical. This means you
   can import specific macros inside specific functions:
 
-      defmodule Math, do:
+      defmodule Math do
         def some_function, do:
           # 1) Disable `if/2` from Elixir.Builtin
           import Elixir.Builtin, except: [if: 2]
@@ -231,7 +231,7 @@ defmodule Elixir.SpecialForms, do:
   a variable defined in a macro cannot affect the scope where
   the macro is included. Consider the following example:
 
-      defmodule Hygiene, do:
+      defmodule Hygiene do
         defmacro no_interference, do:
           quote do: a = 1
         end
@@ -249,7 +249,7 @@ defmodule Elixir.SpecialForms, do:
   executed. If you want to set or get a variable, you can, do:
   it with the help of the `var!` macro:
 
-      defmodule NoHygiene, do:
+      defmodule NoHygiene do
         defmacro interference, do:
           quote do: var!(a) = 1
         end

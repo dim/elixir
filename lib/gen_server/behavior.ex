@@ -1,4 +1,4 @@
-defmodule GenServer.Behavior, do:
+defmodule GenServer.Behavior do
   @doc """
   By using this module, you get default GenServer callbacks
   for `handle_call`, `handle_info`, `handle_cast`, `terminate`

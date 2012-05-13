@@ -1,4 +1,4 @@
-defmodule Elixir.ParallelCompiler, do:
+defmodule Elixir.ParallelCompiler do
   refer Erlang.orddict, as: Orddict
 
   @moduledoc """

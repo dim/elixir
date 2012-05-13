@@ -63,7 +63,7 @@ defimpl Dict, for: HashDict.Record, do:
   end
 end
 
-defmodule HashDict, do:
+defmodule HashDict do
   @moduledoc """
   This module implements a dictionary based on hashing of the keys.
   It is a simple wrapper around [Erlang's dict module](http://www.erlang.org/doc/man/dict.html)

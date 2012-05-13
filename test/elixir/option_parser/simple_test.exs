@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule OptionParser.SimpleTest, do:
+defmodule OptionParser.SimpleTest do
   use ExUnit.Case
 
   test "parses boolean option", do:

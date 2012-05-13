@@ -1,7 +1,7 @@
 # Since Elixir does not (yet) support local macros,
 # we need to wrap the step that extracts git information
 # in this module.
-defmodule System.GitCompiler, do:
+defmodule System.GitCompiler do
   @moduledoc false
 
   defmacro generate, do:
@@ -60,7 +60,7 @@ defmodule System.GitCompiler, do:
   end
 end
 
-defmodule System, do:
+defmodule System do
   @moduledoc """
   The System module provides access to some variables used or
   maintained by the VM and to functions that interact strongly

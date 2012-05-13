@@ -1,6 +1,6 @@
 defrecord EEx.State, engine: EEx.SmartEngine, dict: [], file: 'nofile', line: 1
 
-defmodule EEx.Compiler, do:
+defmodule EEx.Compiler do
   @moduledoc false
 
   @doc """

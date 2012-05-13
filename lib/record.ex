@@ -1,4 +1,4 @@
-defmodule Record, do:
+defmodule Record do
   @moduledoc """
   Functions to define and interact with Erlang records
   """
@@ -147,7 +147,7 @@ defmodule Record, do:
   defp getters_and_setters([], _i, acc, _), do: acc
 end
 
-defmodule Record.Extractor, do:
+defmodule Record.Extractor do
   @moduledoc false
 
 
@@ -227,7 +227,7 @@ defmodule Record.Extractor, do:
   end
 end
 
-defmodule Record.Definition, do:
+defmodule Record.Definition do
   @moduledoc false
 
   # Main entry point. It defines both default functions

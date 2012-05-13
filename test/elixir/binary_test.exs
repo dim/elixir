@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule BinaryTest, do:
+defmodule BinaryTest do
   use ExUnit.Case
 
   test :heredoc, do:

@@ -142,6 +142,7 @@ fn_expr -> call_expr : '$1'.
 call_expr -> dot_punctuated_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_identifier call_args_no_parens : build_identifier('$1', '$2').
 call_expr -> dot_punctuated_identifier : build_identifier('$1', []).
+call_expr -> dot_do_identifier : build_identifier('$1', nil).
 call_expr -> var : build_identifier('$1', nil).
 call_expr -> bracket_expr : '$1'.
 

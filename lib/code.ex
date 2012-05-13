@@ -1,4 +1,4 @@
-defmodule Code, do:
+defmodule Code do
   @moduledoc """
   The Code module is responsible to manage code compilation,
   code evaluation and code loading.

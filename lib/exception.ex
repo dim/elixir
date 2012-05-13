@@ -1,4 +1,4 @@
-defmodule Exception, do:
+defmodule Exception do
   @moduledoc """
   Several convenience functions to work and pretty print
   exceptions and backtraces.

@@ -1,4 +1,4 @@
-defmodule CompiledWithDocs, do:
+defmodule CompiledWithDocs do
   @moduledoc "moduledoc"
 
   @doc "Some example"

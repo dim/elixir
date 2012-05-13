@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule DictTest.Common, do:
+defmodule DictTest.Common do
   defmacro __using__(module, _opts // []), do:
     quote do:
       use ExUnit.Case
@@ -109,7 +109,7 @@ defmodule DictTest.Common, do:
   end
 end
 
-defmodule DictTest, do:
+defmodule DictTest do
   require DictTest.Common
   DictTest.Common.__using__(HashDict)
 
@@ -118,7 +118,7 @@ defmodule DictTest, do:
   end
 end
 
-defmodule OrddictTest, do:
+defmodule OrddictTest do
   require DictTest.Common
   DictTest.Common.__using__(Orddict)
 

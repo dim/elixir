@@ -1,4 +1,4 @@
-defmodule OptionParser.Simple, do:
+defmodule OptionParser.Simple do
   @doc """
   Parses the argv and returns one tuple with parsed options
   and the arguments.

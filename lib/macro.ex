@@ -1,4 +1,4 @@
-defmodule Macro, do:
+defmodule Macro do
   @moduledoc """
   This module provides conveniences for working with macros.
   """

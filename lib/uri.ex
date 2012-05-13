@@ -1,4 +1,4 @@
-defmodule URI, do:
+defmodule URI do
   @on_load :preload_parsers
 
   defrecord Info, [scheme: nil, path: nil, query: nil,

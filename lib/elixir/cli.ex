@@ -1,7 +1,7 @@
 defrecord Elixir.CLI.Config, commands: [], close: [],
   output: '.', compile: [], halt: true, compiler_options: []
 
-defmodule Elixir.CLI, do:
+defmodule Elixir.CLI do
   @moduledoc false
 
   import Exception, only: [format_stacktrace: 1]

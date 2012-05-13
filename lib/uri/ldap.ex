@@ -1,4 +1,4 @@
-defmodule URI.LDAP, do:
+defmodule URI.LDAP do
   @behavior URI.Parser
   def default_port(), do: 389
 

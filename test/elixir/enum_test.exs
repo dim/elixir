@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule EnumTest.Common, do:
+defmodule EnumTest.Common do
   use ExUnit.Case
 
   test :times_with_arity_0, do:
@@ -25,7 +25,7 @@ defmodule EnumTest.Common, do:
   end
 end
 
-defmodule EnumTest.List, do:
+defmodule EnumTest.List do
   use ExUnit.Case
 
   test :all?, do:
@@ -189,7 +189,7 @@ defmodule EnumTest.List, do:
   end
 end
 
-defmodule EnumTest.Dict.Common, do:
+defmodule EnumTest.Dict.Common do
   defmacro __using__(module, _opts // []), do:
     quote do:
       use ExUnit.Case
@@ -317,7 +317,7 @@ defmodule EnumTest.Dict.Common, do:
   end
 end
 
-defmodule EnumTest.HashDict, do:
+defmodule EnumTest.HashDict do
   require EnumTest.Dict.Common
   EnumTest.Dict.Common.__using__(HashDict)
 
@@ -358,7 +358,7 @@ defmodule EnumTest.HashDict, do:
   end
 end
 
-defmodule EnumTest.Orddict, do:
+defmodule EnumTest.Orddict do
   require EnumTest.Dict.Common
   EnumTest.Dict.Common.__using__(Orddict)
 

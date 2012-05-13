@@ -1,4 +1,4 @@
-defmodule ExUnit.Case, do:
+defmodule ExUnit.Case do
   @moduledoc """
   This module is meant to be used in other modules
   as a way to configure and prepare them for testing.
@@ -18,7 +18,7 @@ defmodule ExUnit.Case, do:
 
   ## Examples
 
-      defmodule AssertionTest, do:
+      defmodule AssertionTest do
         use ExUnit.Case
 
         def test_always_pass

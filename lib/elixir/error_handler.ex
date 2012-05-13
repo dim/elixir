@@ -1,6 +1,6 @@
 # Implement error_handler pattern for Erlang
 # which is integrated with Elixir.ParallelCompiler
-defmodule Elixir.ErrorHandler, do:
+defmodule Elixir.ErrorHandler do
   @moduledoc false
 
   def undefined_function(module, fun, args), do:

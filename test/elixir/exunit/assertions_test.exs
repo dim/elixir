@@ -1,12 +1,12 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule ExUnit.AssertionsTest.Value, do:
+defmodule ExUnit.AssertionsTest.Value do
   def tuple, do: { 2, 1 }
 end
 
 refer ExUnit.AssertionsTest.Value
 
-defmodule ExUnit.AssertionsTest, do:
+defmodule ExUnit.AssertionsTest do
   use ExUnit.Case, sync: false
 
   test :assert_when_value_is_true, do:

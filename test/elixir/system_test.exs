@@ -2,7 +2,7 @@ Code.require_file "../test_helper", __FILE__
 
 require Erlang.os, as: OS
 
-defmodule System.ARGVTest, do:
+defmodule System.ARGVTest do
   use ExUnit.Case
 
   test :argv, do:
@@ -12,7 +12,7 @@ defmodule System.ARGVTest, do:
   end
 end
 
-defmodule SystemTest, do:
+defmodule SystemTest do
   use ExUnit.Case
 
   test :at_exit, do:

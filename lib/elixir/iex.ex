@@ -1,4 +1,4 @@
-defmodule Elixir.IEx.UnicodeIO, do:
+defmodule Elixir.IEx.UnicodeIO do
   @moduledoc false
 
   @doc """
@@ -33,7 +33,7 @@ end
 
 defrecord Elixir.IEx.Config, io: nil, binding: nil, cache: '', counter: 0, scope: nil
 
-defmodule Elixir.IEx, do:
+defmodule Elixir.IEx do
   @moduledoc false
 
   import Exception, only: [format_stacktrace: 1]

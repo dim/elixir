@@ -1,4 +1,4 @@
-defmodule List, do:
+defmodule List do
   @moduledoc """
   Implements functions that only make sense for lists
   and cannot be part of the Enum protocol. In general,

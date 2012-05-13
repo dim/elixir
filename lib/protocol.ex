@@ -1,4 +1,4 @@
-defmodule Protocol, do:
+defmodule Protocol do
   @moduledoc false
 
   # We need to use Erlang.lists because Enum is not available yet
@@ -59,7 +59,7 @@ defmodule Protocol, do:
 
       Protocol.assert_protocol(protocol)
 
-      defmodule name, do:
+      defmodule name do
         def __impl__, do: unquote(protocol)
         unquote(block)
       end
@@ -256,7 +256,7 @@ defmodule Protocol, do:
   end
 end
 
-defmodule Protocol.DSL, do:
+defmodule Protocol.DSL do
   @moduledoc false
 
   defmacro def(expression), do:

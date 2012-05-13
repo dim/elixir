@@ -39,7 +39,7 @@ defimpl ProtocolTest.Plus, for: Number, do:
   def plus(thing, other), do: thing + other
 end
 
-defmodule ProtocolTest, do:
+defmodule ProtocolTest do
   use ExUnit.Case
 
   test :protocol_with_all, do:

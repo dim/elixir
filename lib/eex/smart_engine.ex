@@ -1,4 +1,4 @@
-defmodule EEx.TransformerEngine, do:
+defmodule EEx.TransformerEngine do
   @moduledoc """
   An abstract engine that is meant to be used and
   built upon in other modules. This engine implements
@@ -44,7 +44,7 @@ defmodule EEx.TransformerEngine, do:
   end
 end
 
-defmodule EEx.AssignsEngine, do:
+defmodule EEx.AssignsEngine do
   @moduledoc """
   An abstract engine that, when used with the
   `TransformerEngine`, allows a developer to access
@@ -54,7 +54,7 @@ defmodule EEx.AssignsEngine, do:
 
   ## Examples
 
-      defmodule MyEngine, do:
+      defmodule MyEngine do
         use EEx.TransformerEngine
         use EEx.AssignsEngine
       end
@@ -82,7 +82,7 @@ defmodule EEx.AssignsEngine, do:
   end
 end
 
-defmodule EEx.ForEngine, do:
+defmodule EEx.ForEngine do
   @moduledoc %B"""
   An abstract engine that, when used with the
   `TransformerEngine`, allows a developer to easily loop
@@ -92,7 +92,7 @@ defmodule EEx.ForEngine, do:
 
   ## Examples
 
-      defmodule MyEngine, do:
+      defmodule MyEngine do
         use EEx.TransformerEngine
         use EEx.ForEngine
       end
@@ -117,7 +117,7 @@ defmodule EEx.ForEngine, do:
   end
 end
 
-defmodule EEx.SmartEngine, do:
+defmodule EEx.SmartEngine do
   use EEx.TransformerEngine
   use EEx.AssignsEngine
   use EEx.ForEngine

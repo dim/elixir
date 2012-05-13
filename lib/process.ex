@@ -1,4 +1,4 @@
-defmodule Process, do:
+defmodule Process do
   @moduledoc """
   This module provides convenience functions around processes and
   the process dictionary. In Erlang, most of these functions are

@@ -1,4 +1,4 @@
-defmodule EEx.Tokenizer, do:
+defmodule EEx.Tokenizer do
   @moduledoc false
 
   @doc """

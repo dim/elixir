@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.LoopTest, do:
+defmodule Kernel.LoopTest do
   use ExUnit.Case
 
   test :do_loop, do:

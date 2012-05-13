@@ -1,12 +1,12 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule CodeTest, do:
+defmodule CodeTest do
   use ExUnit.Case
 
   def one, do: 1
 
   contents = quote do:
-    defmodule CodeTest.Sample, do:
+    defmodule CodeTest.Sample do
       def eval_quoted_info, do: { __MODULE__, __FILE__, __LINE__ }
     end
   end

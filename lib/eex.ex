@@ -1,6 +1,6 @@
 defexception EEx.SyntaxError, message: nil
 
-defmodule EEx, do:
+defmodule EEx do
   @moduledoc %B"""
   EEx stands for Embedded Elixir. It allows you to embed
   Elixir code inside a string in a robust way:
@@ -86,7 +86,7 @@ defmodule EEx, do:
 
   ## Examples
 
-      defmodule Sample, do:
+      defmodule Sample do
         require EEx
         EEx.function_from_string :def, :sample, "<%= a + b %>", [:a, :b]
       end
@@ -116,7 +116,7 @@ defmodule EEx, do:
       <%= a + b %>
 
       # sample.ex
-      defmodule Sample, do:
+      defmodule Sample do
         require EEx
         EEx.function_from_file :def, :sample, "sample.eex", [:a, :b]
       end

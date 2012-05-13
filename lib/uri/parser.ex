@@ -1,4 +1,4 @@
-defmodule URI.Parser, do:
+defmodule URI.Parser do
   @moduledoc """
   Defines the behavior for each URI.Parser.
   Check URI.HTTP for a possible implementation.

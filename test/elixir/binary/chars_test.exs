@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Binary.Chars.AtomTest, do:
+defmodule Binary.Chars.AtomTest do
   use ExUnit.Case
 
   test :basic, do:
@@ -27,7 +27,7 @@ defmodule Binary.Chars.AtomTest, do:
   end
 end
 
-defmodule Binary.Chars.BitStringTest, do:
+defmodule Binary.Chars.BitStringTest do
   use ExUnit.Case
 
   test :bitstring, do:
@@ -43,7 +43,7 @@ defmodule Binary.Chars.BitStringTest, do:
   end
 end
 
-defmodule Binary.Chars.NumberTest, do:
+defmodule Binary.Chars.NumberTest do
   use ExUnit.Case
 
   test :integer, do:
@@ -57,7 +57,7 @@ defmodule Binary.Chars.NumberTest, do:
   end
 end
 
-defmodule Binary.Chars.ListTest, do:
+defmodule Binary.Chars.ListTest do
   use ExUnit.Case
 
   test :basic, do:

@@ -2,7 +2,7 @@
 # which depends on protocol, which depends on this module.
 import Elixir.Builtin, except: [to_char_list: 1]
 
-defmodule Module, do:
+defmodule Module do
   require Erlang.ets, as: ETS
 
   @moduledoc """
@@ -22,7 +22,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         contents = quote do: (def sum(a, b), do: a + b)
         Module.eval_quoted __MODULE__, contents, [], file: __FILE__, line: __LINE__
       end
@@ -107,7 +107,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         Module.compiled?(__MODULE__) #=> false
       end
 
@@ -127,7 +127,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         Module.merge_data __MODULE__, value: 1
         Module.read_data __MODULE__ #=> [value: 1]
       end
@@ -143,7 +143,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         Module.merge_data __MODULE__, value: 1
         Module.read_data __MODULE__, :value #=> 1
       end
@@ -164,7 +164,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Foo, do:
+      defmodule Foo do
         Module.merge_data __MODULE__, value: 1
       end
 
@@ -193,7 +193,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule MyModule, do:
+      defmodule MyModule do
         Module.add_doc(__MODULE__, __LINE__ + 1, :def, { :version, 0 }, "Manually added docs")
         def version, do: 1
       end
@@ -230,7 +230,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Example, do:
+      defmodule Example do
         Module.function_defined? __MODULE__, { :version, 0 } #=> false
         def version, do: 1
         Module.function_defined? __MODULE__, { :version, 0 } #=> true
@@ -249,7 +249,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Example, do:
+      defmodule Example do
         Module.function_defined? __MODULE__, { :version, 0 }, :defp #=> false
         def version, do: 1
         Module.function_defined? __MODULE__, { :version, 0 }, :defp #=> false
@@ -265,7 +265,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Example, do:
+      defmodule Example do
         def version, do: 1
         Module.defined_functions __MODULE__ #=> [{:version,1}]
       end
@@ -283,7 +283,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule Example, do:
+      defmodule Example do
         def version, do: 1
         Module.defined_functions __MODULE__, :def  #=> [{:version,1}]
         Module.defined_functions __MODULE__, :defp #=> []
@@ -329,7 +329,7 @@ defmodule Module, do:
   Imagine you are creating a module/library that is meant for
   external usage called `MyLib`. It could be defined as:
 
-      defmodule MyLib, do:
+      defmodule MyLib do
         def __using__(target), do:
           Module.merge_data target, some_data: nil
           Module.add_compile_callback(target, __MODULE__, :__callback__)
@@ -343,7 +343,7 @@ defmodule Module, do:
 
   And a module could use `MyLib` with:
 
-      defmodule App, do:
+      defmodule App do
         use ModuleTest.ToBeUsed
         @some_data :new_value
       end
@@ -370,7 +370,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule MyModule, do:
+      defmodule MyModule do
         Module.add_attribute __MODULE__, :custom_threshold_for_lib, 10
       end
 
@@ -387,7 +387,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule MyModule, do:
+      defmodule MyModule do
         Module.add_attribute __MODULE__, :custom_threshold_for_lib, 10
         Module.delete_attribute __MODULE__, :custom_threshold_for_lib
       end
@@ -409,7 +409,7 @@ defmodule Module, do:
 
   ## Examples
 
-      defmodule MyModule, do:
+      defmodule MyModule do
         Module.register_attribute __MODULE__, :custom_threshold_for_lib
         @custom_threshold_for_lib 10
       end

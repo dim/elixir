@@ -1,4 +1,4 @@
-defmodule Node, do:
+defmodule Node do
   @moduledoc """
   Functions related to Erlang nodes.
   """

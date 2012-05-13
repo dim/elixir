@@ -1,4 +1,4 @@
-defmodule ExUnit, do:
+defmodule ExUnit do
   @moduledoc """
   Basic unit test structure for Elixir.
 
@@ -12,7 +12,7 @@ defmodule ExUnit, do:
       ExUnit.start
 
       # 2) Next we create a new TestCase and use ExUnit.Case
-      defmodule AssertionTest, do:
+      defmodule AssertionTest do
         use ExUnit.Case
 
         # 3) A test is a method which name finishes with _test

@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Binary.Inspect.AtomTest, do:
+defmodule Binary.Inspect.AtomTest do
   use ExUnit.Case
 
   test :basic, do:
@@ -31,7 +31,7 @@ defmodule Binary.Inspect.AtomTest, do:
   end
 end
 
-defmodule Binary.Inspect.BitStringTest, do:
+defmodule Binary.Inspect.BitStringTest do
   use ExUnit.Case
 
   test :bitstring, do:
@@ -57,7 +57,7 @@ defmodule Binary.Inspect.BitStringTest, do:
   end
 end
 
-defmodule Binary.Inspect.NumberTest, do:
+defmodule Binary.Inspect.NumberTest do
   use ExUnit.Case
 
   test :integer, do:
@@ -71,7 +71,7 @@ defmodule Binary.Inspect.NumberTest, do:
   end
 end
 
-defmodule Binary.Inspect.TupleTest, do:
+defmodule Binary.Inspect.TupleTest do
   use ExUnit.Case
 
   test :basic, do:
@@ -99,7 +99,7 @@ defmodule Binary.Inspect.TupleTest, do:
   end
 end
 
-defmodule Binary.Inspect.ListTest, do:
+defmodule Binary.Inspect.ListTest do
   use ExUnit.Case
 
   test :basic, do:
@@ -123,7 +123,7 @@ defmodule Binary.Inspect.ListTest, do:
   end
 end
 
-defmodule Binary.Inspect.AnyTest, do:
+defmodule Binary.Inspect.AnyTest do
   use ExUnit.Case
 
   test :funs, do:
@@ -132,7 +132,7 @@ defmodule Binary.Inspect.AnyTest, do:
   end
 end
 
-defmodule Binary.Inspect.RegexTest, do:
+defmodule Binary.Inspect.RegexTest do
   use ExUnit.Case
 
   test :regex, do:

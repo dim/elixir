@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.DestructureTest, do:
+defmodule Kernel.DestructureTest do
   use ExUnit.Case
 
   test :less, do:

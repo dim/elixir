@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.ImportOnlyTest, do:
+defmodule Kernel.ImportOnlyTest do
   use ExUnit.Case
 
   import Erlang.lists, only: [flatten: 1]
@@ -10,7 +10,7 @@ defmodule Kernel.ImportOnlyTest, do:
   end
 end
 
-defmodule Kernel.ImportAllTest, do:
+defmodule Kernel.ImportAllTest do
   use ExUnit.Case
 
   import Erlang.lists
@@ -20,7 +20,7 @@ defmodule Kernel.ImportAllTest, do:
   end
 end
 
-defmodule Kernel.ImportExceptTest, do:
+defmodule Kernel.ImportExceptTest do
   use ExUnit.Case
 
   import Erlang.lists, except: [each: 2]
@@ -30,7 +30,7 @@ defmodule Kernel.ImportExceptTest, do:
   end
 end
 
-defmodule Kernel.ImportTwiceWithExceptTest, do:
+defmodule Kernel.ImportTwiceWithExceptTest do
   use ExUnit.Case
 
   import Erlang.lists, except: [flatten: 1]
@@ -43,12 +43,12 @@ defmodule Kernel.ImportTwiceWithExceptTest, do:
   def flatten(list), do: list
 end
 
-defmodule Kernel.MessedBitwise, do:
+defmodule Kernel.MessedBitwise do
   defmacro bnot(x),   do: x
   defmacro bor(x, _), do: x
 end
 
-defmodule Kernel.ImportMacrosTest, do:
+defmodule Kernel.ImportMacrosTest do
   use ExUnit.Case
 
   import :macros, Bitwise

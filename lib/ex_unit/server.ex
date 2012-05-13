@@ -1,6 +1,6 @@
 defrecord ExUnit.Server.Config, options: [], cases: [], sync_cases: []
 
-defmodule ExUnit.Server, do:
+defmodule ExUnit.Server do
   @moduledoc false
 
   use GenServer.Behavior

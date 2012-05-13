@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule Kernel.ComprehensionTest, do:
+defmodule Kernel.ComprehensionTest do
   use ExUnit.Case
 
   test :list_comprehensions, do:

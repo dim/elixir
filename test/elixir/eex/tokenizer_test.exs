@@ -1,6 +1,6 @@
 Code.require_file "../../test_helper", __FILE__
 
-defmodule EEx.TokenizerTest, do:
+defmodule EEx.TokenizerTest do
   use ExUnit.Case
   require EEx.Tokenizer, as: T
 

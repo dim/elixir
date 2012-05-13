@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule KeywordTest, do:
+defmodule KeywordTest do
   use ExUnit.Case
 
   test :from_enum, do:
@@ -73,7 +73,7 @@ defmodule KeywordTest, do:
   defp create_keywords, do: [first_key: 1, second_key: 2]
 end
 
-defmodule Keyword.DuplicatedTest, do:
+defmodule Keyword.DuplicatedTest do
   use ExUnit.Case
 
   test :duplicated_entries, do:

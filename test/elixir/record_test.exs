@@ -6,7 +6,7 @@ defrecord RecordTest.FileInfo,
 name = RecordTest.DynamicName
 defrecord name, a: 0, b: 1
 
-defmodule RecordTest, do:
+defmodule RecordTest do
   use ExUnit.Case
 
   test :record_constructor_with_dict, do:

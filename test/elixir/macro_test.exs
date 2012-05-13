@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule MacroTest, do:
+defmodule MacroTest do
   use ExUnit.Case
 
   test :escapes_tuples_with_size_different_than_two, do:

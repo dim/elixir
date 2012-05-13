@@ -1,6 +1,6 @@
 Code.require_file "../test_helper", __FILE__
 
-defmodule CharListTest, do:
+defmodule CharListTest do
   use ExUnit.Case
 
   test :heredoc, do:
