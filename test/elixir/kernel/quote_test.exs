@@ -1,21 +1,21 @@
 Code.require_file "../../test_helper", __FILE__
 
 defmodule Kernel.QuoteTest.Hygiene do
-  defmacro no_interference, do:
+  defmacro no_interference do
     quote do: a = 1
   end
 
-  defmacro no_hygiene, do:
+  defmacro no_hygiene do
     quote [hygiene: false], do:
       a = 1
     end
   end
 
-  defmacro write_interference, do:
+  defmacro write_interference do
     quote do: var!(a) = 1
   end
 
-  defmacro read_interference, do:
+  defmacro read_interference do
     quote do: 10 = var!(a)
   end
 end

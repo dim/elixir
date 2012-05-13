@@ -12,7 +12,7 @@ defmodule Record do
       defrecord FileInfo, Record.extract(:file_info, from_lib: "kernel/include/file.hrl")
 
   """
-  def extract(name, opts), do:
+  def extract(name, opts) do
     Record.Extractor.retrieve(name, opts)
   end
 
@@ -21,13 +21,13 @@ defmodule Record do
   This is invoked directly by `Elixir.Builtin.defrecord`.
   Returns the quoted expression of a module given by name.
   """
-  def defrecord(name, values, opts), do:
+  def defrecord(name, values, opts) do
     moduledoc  = Keyword.get(opts, :moduledoc, false)
     block      = Keyword.get(opts, :do)
     definition = Keyword.get(opts, :definition, Record.Definition)
 
     quote do:
-      defmodule unquote(name), do:
+      defmodule unquote(name) do
         @moduledoc unquote(moduledoc)
         Record.define_functions(__MODULE__, unquote(values), unquote(definition))
         unquote(block)
@@ -37,7 +37,7 @@ defmodule Record do
 
   @doc false
   # Private endpoint that defines the functions for the Record.
-  def define_functions(module, values, definition), do:
+  def define_functions(module, values, definition) do
     # Escape the values so they are valid syntax nodes
     values = Macro.escape(values)
 
@@ -64,7 +64,7 @@ defmodule Record do
   #     FileInfo.__record__(:name)   #=> FileInfo
   #     FileInfo.__record__(:fields) #=> [atime: nil, mtime: nil]
   #
-  defp reflection(name, values), do:
+  defp reflection(name, values) do
     quote do:
       def __record__(kind),       do: __record__(kind, nil)
       def __record__(:name, _),   do: unquote(name)
@@ -90,7 +90,7 @@ defmodule Record do
   #       { FileInfo, Keyword.get(opts, :atime), Keyword.get(opts, :mtime) }
   #     end
   #
-  defp initializers(values), do:
+  defp initializers(values) do
     defaults = Enum.map values, elem(&1, 2)
 
     # For each value, define a piece of code that will receive
@@ -138,7 +138,7 @@ defmodule Record do
   # syntax as `unquote(key)(record)` wouldn't be valid (as Elixir
   # allows you to parenthesis just on specific cases as `foo()`
   # and `foo.bar()`)
-  defp getters_and_setters([{ key, default }|t], i, acc, definition), do:
+  defp getters_and_setters([{ key, default }|t], i, acc, definition) do
     i = i + 1
     functions = definition.functions_for(key, default, i)
     getters_and_setters(t, i, [functions | acc], definition)
@@ -153,7 +153,7 @@ defmodule Record.Extractor do
 
   # Retrieve a record definition from an Erlang file using
   # the same lookup as the *include* attribute from Erlang modules.
-  def retrieve(name, from: string), do:
+  def retrieve(name, from: string) do
     file = to_char_list(string)
 
     case Erlang.code.where_is_file(file), do:
@@ -166,7 +166,7 @@ defmodule Record.Extractor do
 
   # Retrieve a record definition from an Erlang file using
   # the same lookup as the *include_lib* attribute from Erlang modules.
-  def retrieve(name, from_lib: file), do:
+  def retrieve(name, from_lib: file) do
     [app|path] = Erlang.filename.split(to_char_list(file))
     case Erlang.code.lib_dir(to_char_list(app)), do:
       { :error, _ } ->
@@ -177,7 +177,7 @@ defmodule Record.Extractor do
   end
 
   # Retrieve the record with the given name from the given file
-  defp retrieve_record(name, file), do:
+  defp retrieve_record(name, file) do
     records = retrieve_from_file(file)
     if record = List.keyfind(records, name, 1), do:
       parse_record(record)
@@ -187,14 +187,14 @@ defmodule Record.Extractor do
   end
 
   # Parse the given file and retrieve all existent records.
-  defp retrieve_from_file(file), do:
+  defp retrieve_from_file(file) do
     lc { :attribute, _, :record, record } in read_file(file), do: record
   end
 
   # Read a file and return its abstract syntax form that also
   # includes record and other preprocessor modules. This is done
   # by using Erlang's epp_dodger.
-  defp read_file(file), do:
+  defp read_file(file) do
     case Erlang.epp_dodger.quick_parse_file(file), do:
       { :ok, form } ->
         form
@@ -206,7 +206,7 @@ defmodule Record.Extractor do
   # Parse a tuple with name and fields and returns a
   # list of second order tuples where the first element
   # is the field and the second is its default value.
-  defp parse_record({ _name, fields }), do:
+  defp parse_record({ _name, fields }) do
     cons = List.foldr fields, { nil, 0 }, fn f, acc ->
       { :cons, 0, parse_field(f), acc }
     end
@@ -214,15 +214,15 @@ defmodule Record.Extractor do
     list
   end
 
-  defp parse_field({ :typed_record_field, record_field, _type }), do:
+  defp parse_field({ :typed_record_field, record_field, _type }) do
     parse_field(record_field)
   end
 
-  defp parse_field({ :record_field, _, key }), do:
+  defp parse_field({ :record_field, _, key }) do
     { :tuple, 0, [key, {:atom, 0, :nil}] }
   end
 
-  defp parse_field({ :record_field, _, key, value }), do:
+  defp parse_field({ :record_field, _, key, value }) do
     { :tuple, 0, [key, value] }
   end
 end
@@ -232,7 +232,7 @@ defmodule Record.Definition do
 
   # Main entry point. It defines both default functions
   # via `default_for` and extensions via `extension_for`.
-  def functions_for(key, default, i), do:
+  def functions_for(key, default, i) do
     [
       default_for(key, default, i),
       extension_for(key, default, i)
@@ -240,25 +240,25 @@ defmodule Record.Definition do
   end
 
   # Skip the __exception__ for defexception.
-  def default_for(:__exception__, _default, _i), do:
+  def default_for(:__exception__, _default, _i) do
     nil
   end
 
   # Define the default functions for each field.
-  def default_for(key, _default, i), do:
+  def default_for(key, _default, i) do
     bin_update = "update_" <> atom_to_binary(key)
     update     = binary_to_atom(bin_update)
 
     quote do:
-      def unquote(key).(record), do:
+      def unquote(key).(record) do
         :erlang.element(unquote(i), record)
       end
 
-      def unquote(key).(value, record), do:
+      def unquote(key).(value, record) do
         :erlang.setelement(unquote(i), record, value)
       end
 
-      def unquote(update).(function, record), do:
+      def unquote(update).(function, record) do
         current = :erlang.element(unquote(i), record)
         :erlang.setelement(unquote(i), record, function.(current))
       end
@@ -266,30 +266,30 @@ defmodule Record.Definition do
   end
 
   # Define extensions based on the default type.
-  def extension_for(key, default, i) when is_list(default), do:
+  def extension_for(key, default, i) when is_list(default) do
     bin_key = atom_to_binary(key)
     prepend = :"prepend_#{bin_key}"
     merge   = :"merge_#{bin_key}"
 
     quote do:
-      def unquote(prepend).(value, record), do:
+      def unquote(prepend).(value, record) do
         current = :erlang.element(unquote(i), record)
         :erlang.setelement(unquote(i), record, value ++ current)
       end
 
-      def unquote(merge).(value, record), do:
+      def unquote(merge).(value, record) do
         current = :erlang.element(unquote(i), record)
         :erlang.setelement(unquote(i), record, Keyword.merge(current, value))
       end
     end
   end
 
-  def extension_for(key, default, i) when is_number(default), do:
+  def extension_for(key, default, i) when is_number(default) do
     bin_key   = atom_to_binary(key)
     increment = :"increment_#{bin_key}"
 
     quote do:
-      def unquote(increment).(value // 1, record), do:
+      def unquote(increment).(value // 1, record) do
         current = :erlang.element(unquote(i), record)
         :erlang.setelement(unquote(i), record, current + value)
       end

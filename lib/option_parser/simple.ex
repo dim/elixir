@@ -20,13 +20,13 @@ defmodule OptionParser.Simple do
       #=> { [debug: true], [] }
 
   """
-  def parse(options, aliases // []) when is_list(options) and is_list(aliases), do:
+  def parse(options, aliases // []) when is_list(options) and is_list(aliases) do
     parse(options, aliases, [], [])
   end
 
   ## Helpers
 
-  defp parse([<<?-, option|:binary>>, h|t], aliases, dict, args), do:
+  defp parse([<<?-, option|:binary>>, h|t], aliases, dict, args) do
     option = normalize_option(option, aliases)
 
     case h, do:
@@ -39,29 +39,29 @@ defmodule OptionParser.Simple do
     end
   end
 
-  defp parse([<<?-, option|:binary>>], aliases, dict, args), do:
+  defp parse([<<?-, option|:binary>>], aliases, dict, args) do
     option = normalize_option(option, aliases)
     dict = Keyword.put dict, option, true
     { dict, args }
   end
 
-  defp parse(value, _, dict, args), do:
+  defp parse(value, _, dict, args) do
     { dict, List.concat(args, value) }
   end
 
-  defp key_value(key, boolean, dict) when boolean in ["false", "true"], do:
+  defp key_value(key, boolean, dict) when boolean in ["false", "true"] do
     Keyword.put dict, key, binary_to_atom(boolean)
   end
 
-  defp key_value(key, value, dict), do:
+  defp key_value(key, value, dict) do
     Keyword.put dict, key, value
   end
 
-  defp normalize_option(<<?-, option|:binary>>, aliases), do:
+  defp normalize_option(<<?-, option|:binary>>, aliases) do
     normalize_option(option, aliases)
   end
 
-  defp normalize_option(option, aliases), do:
+  defp normalize_option(option, aliases) do
     option = binary_to_atom(option)
     aliases[option] || option
   end

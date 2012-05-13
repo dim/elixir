@@ -6,7 +6,7 @@ defmodule Elixir.IEx.UnicodeIO do
   code cache, the instructions counter and needs to
   return a list with the new characters inserted.
   """
-  def get(cache, _count), do:
+  def get(cache, _count) do
     prompt = case cache, do:
       [] -> "iex> "
       _ -> "...> "
@@ -18,7 +18,7 @@ defmodule Elixir.IEx.UnicodeIO do
   Implements the put IO API used by IEx. It receives the
   result and prints it.
   """
-  def put(result), do:
+  def put(result) do
     IO.inspect result
   end
 
@@ -26,7 +26,7 @@ defmodule Elixir.IEx.UnicodeIO do
   Implements the error IO API used by IEx. It prints error
   messages.
   """
-  def error(result), do:
+  def error(result) do
     IO.puts :standard_error, result
   end
 end
@@ -38,7 +38,7 @@ defmodule Elixir.IEx do
 
   import Exception, only: [format_stacktrace: 1]
 
-  def start(binding // [], io // Elixir.IEx.UnicodeIO), do:
+  def start(binding // [], io // Elixir.IEx.UnicodeIO) do
     IO.puts "Interactive Elixir (#{System.version}) - press Ctrl+C to exit"
     scope  = Erlang.elixir.scope_for_eval(
       file: 'iex',
@@ -49,7 +49,7 @@ defmodule Elixir.IEx do
     Erlang.user_drv.start([:"tty_sl -c -e", {:erlang, :spawn, [function]}])
   end
 
-  defp do_loop(config), do:
+  defp do_loop(config) do
     io = config.io
 
     config  = config.increment_counter
@@ -82,7 +82,7 @@ defmodule Elixir.IEx do
     do_loop(new_config)
   end
 
-  defp print_stacktrace(io, stacktrace), do:
+  defp print_stacktrace(io, stacktrace) do
     Enum.each stacktrace, fn(s, do: io.error "    #{format_stacktrace(s)}")
   end
 end

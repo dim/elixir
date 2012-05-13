@@ -14,14 +14,14 @@ defmodule Process do
 
   `pid` must refer to a process at the local node.
   """
-  def alive?(pid), do:
+  def alive?(pid) do
     :erlang.is_process_alive(pid)
   end
 
   @doc """
   Returns the current process.
   """
-  def self, do:
+  def self do
     :erlang.self()
   end
 
@@ -30,14 +30,14 @@ defmodule Process do
   with no specific ordering (i.e. they are
   not a keywords list).
   """
-  def get, do:
+  def get do
     :erlang.get()
   end
 
   @doc """
   Returns the value for the given key.
   """
-  def get(key, default // nil), do:
+  def get(key, default // nil) do
     case :erlang.get(key), do:
       :undefined ->
         default
@@ -54,21 +54,21 @@ defmodule Process do
   @doc """
   Stores the given key-value in the process dictionary.
   """
-  def put(key, value), do:
+  def put(key, value) do
     nillify :erlang.put(key, value)
   end
 
   @doc """
   Deletes all items in the dictionary.
   """
-  def delete(), do:
+  def delete() do
     :erlang.erase()
   end
 
   @doc """
   Deletes the given key from the dictionary.
   """
-  def delete(key), do:
+  def delete(key) do
     nillify :erlang.erase(key)
   end
 
@@ -206,7 +206,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#monitor-2 for more info.
   """
-  def monitor(item), do:
+  def monitor(item) do
     :erlang.monitor(:process, item)
   end
 
@@ -217,7 +217,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#demonitor-2 for more info.
   """
-  def demonitor(monitor_ref, options // []), do:
+  def demonitor(monitor_ref, options // []) do
     :erlang.demonitor(monitor_ref, options)
   end
 
@@ -231,7 +231,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#processes-0 for more info.
   """
-  def list, do:
+  def list do
     :erlang.processes()
   end
 
@@ -279,7 +279,7 @@ defmodule Process do
   @doc """
   Returns a list of names which have been registered using register/2.
   """
-  def registered, do:
+  def registered do
     :erlang.registered()
   end
 
@@ -289,7 +289,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#process_flag-2 for more info.
   """
-  def flag(flag, value), do:
+  def flag(flag, value) do
     :erlang.process_flag(flag, value)
   end
 
@@ -300,7 +300,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#process_flag-3 for more info.
   """
-  def flag(pid, flag, value), do:
+  def flag(pid, flag, value) do
     :erlang.process_flag(pid, flag, value)
   end
 
@@ -310,7 +310,7 @@ defmodule Process do
 
   See http://www.erlang.org/doc/man/erlang.html#process_info-2 for more info.
   """
-  def info(pid, spec), do:
+  def info(pid, spec) do
     :erlang.process_info(pid, spec)
   end
 

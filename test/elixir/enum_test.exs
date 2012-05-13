@@ -190,7 +190,7 @@ defmodule EnumTest.List do
 end
 
 defmodule EnumTest.Dict.Common do
-  defmacro __using__(module, _opts // []), do:
+  defmacro __using__(module, _opts // []) do
     quote do:
       use ExUnit.Case
 

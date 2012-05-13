@@ -62,7 +62,7 @@ defmodule Kernel.PartialApplicationTest do
     assert Enum.map([1,2,3], &1 * 2) == [2,4,6]
   end
 
-  defp minus(x, y), do:
+  defp minus(x, y) do
     x - y
   end
 end

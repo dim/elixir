@@ -37,7 +37,7 @@ defmodule Kernel.CaseTest do
     assert not y in [1, 2, 3]
   end
 
-  defp get_case, do:
+  defp get_case do
     case internal, do:
       :invalid ->
         status = :fail
@@ -50,15 +50,15 @@ defmodule Kernel.CaseTest do
     status
   end
 
-  defp internal, do:
+  defp internal do
     1
   end
 
-  defp other_internal, do:
+  defp other_internal do
     2
   end
 
-  defp vars_case(x, vx), do:
+  defp vars_case(x, vx) do
     case x > 400, do:
       true ->
         x = 400

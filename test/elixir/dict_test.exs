@@ -1,7 +1,7 @@
 Code.require_file "../test_helper", __FILE__
 
 defmodule DictTest.Common do
-  defmacro __using__(module, _opts // []), do:
+  defmacro __using__(module, _opts // []) do
     quote do:
       use ExUnit.Case
 

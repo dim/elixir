@@ -216,7 +216,7 @@ foo
     assert other_sample(1) == "foo 1\n"
   end
 
-  defp assert_eval(expected, actual), do:
+  defp assert_eval(expected, actual) do
     result = EEx.eval_string(actual, [], file: __FILE__, engine: EEx.Engine)
     assert result == expected
   end

@@ -7,7 +7,7 @@ defmodule ExUnit.Runner do
   # and expect messages as the cases finish. When all async cases are
   # spawned and finished, we start running the sync cases. When sync
   # cases finish, tell the formatter we finished and exit.
-  def start(config), do:
+  def start(config) do
     if config.cases == [], do:
       cond do:
         config.taken_cases > 0 ->
@@ -25,7 +25,7 @@ defmodule ExUnit.Runner do
   # Loop expecting messages from the spawned cases. Whenever a test
   # case has finished executing, decrease the taken cases counter and
   # attempt to spawn new ones.
-  defp do_loop(config), do:
+  defp do_loop(config) do
     receive do:
       { pid, :each, { test_case, test, final } } ->
         call_formatter config, { :each, test_case, test, final }
@@ -37,7 +37,7 @@ defmodule ExUnit.Runner do
   end
 
   # Spawn the maximum possible of cases according to the max_cases value.
-  defp spawn_async_cases(config), do:
+  defp spawn_async_cases(config) do
     case config.cases, do:
       [test_case|t] ->
         if config.taken_cases < config.max_cases, do:
@@ -52,28 +52,30 @@ defmodule ExUnit.Runner do
   end
 
   # After all cases were run, it is time to run the asynchronous ones.
-  def spawn_sync_cases(config), do:
+  def spawn_sync_cases(config) do
     [test_case|t] = config.sync_cases
     spawn_case test_case
     config.sync_cases(t)
   end
 
   # Spawn each test case in a new process.
-  defp spawn_case(test_case), do:
+  defp spawn_case(test_case) do
     pid = Process.self
     spawn_link fn -> run_tests(pid, test_case) end
   end
 
-  defp run_tests(pid, test_case), do:
-    tests = tests_for(test_case)
-    test_case.setup_all
-    Enum.each tests, run_test(pid, test_case, &1)
-    test_case.teardown_all
-  after:
-    pid <- { Process.self, :each_case, test_case }
+  defp run_tests(pid, test_case) do
+    try do:
+      tests = tests_for(test_case)
+      test_case.setup_all
+      Enum.each tests, run_test(pid, test_case, &1)
+      test_case.teardown_all
+    after:
+      pid <- { Process.self, :each_case, test_case }
+    end
   end
 
-  defp run_test(pid, test_case, test), do:
+  defp run_test(pid, test_case, test) do
     final = try do:
       partial = try do:
         apply test_case, test, []
@@ -98,17 +100,17 @@ defmodule ExUnit.Runner do
     pid <- { Process.self, :each, { test_case, test, final } }
   end
 
-  defp call_formatter(config, message), do:
+  defp call_formatter(config, message) do
     Erlang.gen_server.call(config.formatter, message)
   end
 
   # Retrieves test functions from the module.
-  defp tests_for(mod), do:
+  defp tests_for(mod) do
     exports = mod.__info__(:functions)
     tests_for exports, []
   end
 
-  defp tests_for([{function,0}|t], acc), do:
+  defp tests_for([{function,0}|t], acc) do
     list = atom_to_list(function)
     if match?('test_' ++ _, list) || match?('test ' ++ _, list), do:
       tests_for t, [function|acc]

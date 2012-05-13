@@ -22,7 +22,7 @@ defmodule IO do
       #=> "error"
 
   """
-  def print(device // :standard_io, item), do:
+  def print(device // :standard_io, item) do
     Erlang.io.put_chars device, to_binary(item)
   end
 
@@ -31,7 +31,7 @@ defmodule IO do
   similarly to print but adds a new line
   at the end.
   """
-  def puts(device // :standard_io, item), do:
+  def puts(device // :standard_io, item) do
     Erlang.io.put_chars device, to_binary(item)
     Erlang.io.nl(device)
   end
@@ -40,7 +40,7 @@ defmodule IO do
   Prints the given argument to the device
   but inspects it before.
   """
-  def inspect(device // :standard_io, item), do:
+  def inspect(device // :standard_io, item) do
     puts device, Elixir.Builtin.inspect(item)
   end
 end

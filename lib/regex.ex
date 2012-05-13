@@ -55,7 +55,7 @@ defmodule Regex do
   Check the module documentation for more information
   about the options supported by compile.
   """
-  def compile(source, options // ""), do:
+  def compile(source, options // "") do
     source  = to_binary(source)
     options = to_binary(options)
     re_opts = [:multiline|translate_options(options)]
@@ -72,7 +72,7 @@ defmodule Regex do
       Regex.match? %r/foo/, "bar" #=> false
 
   """
-  def match?({ Regex, compiled, _, _ }, string), do:
+  def match?({ Regex, compiled, _, _ }, string) do
     :nomatch != Erlang.re.run(string, compiled)
   end
 
@@ -86,7 +86,7 @@ defmodule Regex do
       Regex.run %r/e/, "abcd"     #=> nil
 
   """
-  def run({ Regex, compiled, _, _ }, string), do:
+  def run({ Regex, compiled, _, _ }, string) do
     case Erlang.re.run(string, compiled, [{ :capture, :all, return_for(string) }]), do:
       :nomatch ->
         nil
@@ -107,7 +107,7 @@ defmodule Regex do
       Regex.run %r/e/, "abcd"     #=> nil
 
   """
-  def indexes({ Regex, compiled, _, _ }, string), do:
+  def indexes({ Regex, compiled, _, _ }, string) do
     case Erlang.re.run(string, compiled, [{ :capture, :all, :index }, { :offset, 0 }]), do:
       :nomatch ->
         nil
@@ -119,7 +119,7 @@ defmodule Regex do
   @doc """
   Returns the underlying re_pattern in the regular expression.
   """
-  def re_pattern({ Regex, compiled, _, _ }), do:
+  def re_pattern({ Regex, compiled, _, _ }) do
     compiled
   end
 
@@ -131,7 +131,7 @@ defmodule Regex do
       Regex.source %r(foo) #=> "foo"
 
   """
-  def source({ Regex, _, source, _ }), do:
+  def source({ Regex, _, source, _ }) do
     source
   end
 
@@ -143,7 +143,7 @@ defmodule Regex do
       Regex.opts %r(foo)m #=> 'm'
 
   """
-  def opts({ Regex, _, _, opts }), do:
+  def opts({ Regex, _, _, opts }) do
     opts
   end
 
@@ -160,7 +160,7 @@ defmodule Regex do
       Regex.scan %r/e/, "abcd"             #=> []
 
   """
-  def scan({ Regex, compiled, _, _ }, string), do:
+  def scan({ Regex, compiled, _, _ }, string) do
     options = [{ :capture, :all, return_for(string) }, :global, { :offset, 0 }]
     case Erlang.re.run(string, compiled, options), do:
       :nomatch -> []
@@ -178,7 +178,7 @@ defmodule Regex do
   Split the given target in the number of parts specified. If no ammount
   of parts is given, it defaults to :infinity.
   """
-  def split({ Regex, compiled, _, _ }, string, parts // :infinity), do:
+  def split({ Regex, compiled, _, _ }, string, parts // :infinity) do
     options = [{ :return, return_for(string) }, :trim, { :parts, parts }]
     Erlang.re.split(string, compiled, options)
   end
@@ -199,7 +199,7 @@ defmodule Regex do
       Regex.replace(%r/(b)/, "abc", "[\\1]") #=> "a[b]c"
 
   """
-  def replace({ Regex, compiled, _, _ }, string, replacement), do:
+  def replace({ Regex, compiled, _, _ }, string, replacement) do
     Erlang.re.replace(string, compiled, replacement, [{ :return, return_for(string) }])
   end
 
@@ -208,7 +208,7 @@ defmodule Regex do
   expressions matches in the string. Please read `replace/3` for
   documentation and examples.
   """
-  def replace_all({ Regex, compiled, _, _ }, string, replacement), do:
+  def replace_all({ Regex, compiled, _, _ }, string, replacement) do
     Erlang.re.replace(string, compiled, replacement, [{ :return, return_for(string) }, :global])
   end
 

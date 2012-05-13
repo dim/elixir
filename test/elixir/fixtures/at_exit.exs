@@ -1,5 +1,5 @@
 defmodule AtExit do
-  def at_exit(str), do:
+  def at_exit(str) do
     System.at_exit fn(_, do: IO.print str)
   end
 end

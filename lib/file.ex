@@ -35,7 +35,7 @@ defmodule File do
   """
 
   defexception Error, [reason: nil, action: "", path: nil] do
-    def message(exception), do:
+    def message(exception) do
       formatted = list_to_binary(F.format_error(exception.reason))
       "could not #{exception.action} #{exception.path}: #{formatted}"
     end
@@ -50,7 +50,7 @@ defmodule File do
     File.expand_path("/foo/bar/../bar") == "/foo/bar"
 
   """
-  def expand_path(path), do:
+  def expand_path(path) do
     normalize FN.absname(path)
   end
 
@@ -65,7 +65,7 @@ defmodule File do
     File.expand_path("/foo/bar/../bar", "/baz") == "/foo/bar"
 
   """
-  def expand_path(path, relative_to), do:
+  def expand_path(path, relative_to) do
     normalize FN.absname(FN.absname(path, relative_to))
   end
 
@@ -76,14 +76,14 @@ defmodule File do
 
       File.regular? __FILE__ #=> true
   """
-  def regular?(path), do:
+  def regular?(path) do
     FL.is_regular(path)
   end
 
   @doc """
   Returns true if the path is a directory.
   """
-  def dir?(path), do:
+  def dir?(path) do
     FL.is_dir(path)
   end
 
@@ -104,7 +104,7 @@ defmodule File do
     #=> true
 
   """
-  def exists?(path), do:
+  def exists?(path) do
     match?({ :ok, _ }, F.read_file_info(path))
   end
 
@@ -124,7 +124,7 @@ defmodule File do
       #=> ""
 
   """
-  def basename(path), do:
+  def basename(path) do
     FN.basename(path)
   end
 
@@ -143,7 +143,7 @@ defmodule File do
       #=> "bar.old"
 
   """
-  def basename(path, extension), do:
+  def basename(path, extension) do
     FN.basename(path, extension)
   end
 
@@ -160,7 +160,7 @@ defmodule File do
       File.join(["/", "foo", "bar"])
       #=> "/foo/bar"
   """
-  def join(paths), do:
+  def join(paths) do
     FN.join(paths)
   end
 
@@ -173,7 +173,7 @@ defmodule File do
       #=> "foo/bar"
 
   """
-  def join(left, right), do:
+  def join(left, right) do
     FN.join(left, right)
   end
 
@@ -193,7 +193,7 @@ defmodule File do
 
   You can use `Erlang.file.format_error(reason)` to get a descriptive string of the error.
   """
-  def read(path), do:
+  def read(path) do
     F.read_file(path)
   end
 
@@ -201,7 +201,7 @@ defmodule File do
   Returns binary with the contents of the given filename or raises
   File.Error if an error occurs.
   """
-  def read!(path), do:
+  def read!(path) do
     case read(path), do:
       { :ok, binary } ->
         binary
@@ -224,7 +224,7 @@ defmodule File do
      #=> ["/", "foo", "bar"]
 
   """
-  def split(path), do:
+  def split(path) do
     FN.split(path)
   end
 
@@ -261,12 +261,12 @@ defmodule File do
       File.wildcard("projects/*/ebin/**/*.{beam,app}")
 
   """
-  def wildcard(glob) when is_binary(glob), do:
+  def wildcard(glob) when is_binary(glob) do
     paths = Erlang.elixir_glob.wildcard binary_to_list(glob)
     Enum.map paths, list_to_binary(&1)
   end
 
-  def wildcard(path) when is_list(path), do:
+  def wildcard(path) when is_list(path) do
     Erlang.elixir_glob.wildcard(path)
   end
 
@@ -276,7 +276,7 @@ defmodule File do
   `File.Info` record. Retuns `{ :error, reason }` with
   the same reasons as `File.read` if a failure occurs.
   """
-  def read_info(path, opts // []), do:
+  def read_info(path, opts // []) do
     case :file.read_file_info(path, opts), do:
       {:ok, fileinfo} ->
         {:ok, Info.new fileinfo}
@@ -289,7 +289,7 @@ defmodule File do
   Same as `read_info` but returns the `File.Info` directly and
   throws `File.Error` if an error is returned.
   """
-  def read_info!(path, opts // []), do:
+  def read_info!(path, opts // []) do
     case read_info(path, opts), do:
       {:ok, info} ->
         info
@@ -303,19 +303,19 @@ defmodule File do
   # Normalize the given path by removing "..".
   defp normalize(path), do: normalize(split(path), [])
 
-  defp normalize([top|t], [_|acc]) when top == ".." or top == '..', do:
+  defp normalize([top|t], [_|acc]) when top == ".." or top == '..' do
     normalize t, acc
   end
 
-  defp normalize([top|t], acc) when top == "." or top == '.', do:
+  defp normalize([top|t], acc) when top == "." or top == '.' do
     normalize t, acc
   end
 
-  defp normalize([h|t], acc), do:
+  defp normalize([h|t], acc) do
     normalize t, [h|acc]
   end
 
-  defp normalize([], acc), do:
+  defp normalize([], acc) do
     join List.reverse(acc)
   end
 end

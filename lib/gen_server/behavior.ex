@@ -16,29 +16,29 @@ defmodule GenServer.Behavior do
   http://www.erlang.org/doc/design_principles/gen_server_concepts.html
 
   """
-  defmacro __using__(_, _), do:
+  defmacro __using__(_, _) do
     quote do:
       @behavior :gen_server
 
-      def handle_call(_request, _from, state), do:
+      def handle_call(_request, _from, state) do
         { :reply, :undef, state }
       end
 
-      def handle_info(_msg, state), do:
+      def handle_info(_msg, state) do
         { :noreply, state }
       end
 
-      def handle_cast(_msg, state), do:
+      def handle_cast(_msg, state) do
         { :noreply, state }
       end
 
-      def terminate(reason, state), do:
+      def terminate(reason, state) do
         :error_logger.error_report('#{inspect __MODULE__} crashed:\n#{inspect reason}')
         :error_logger.error_report('#{inspect __MODULE__} snapshot:\n#{inspect state}')
         :ok
       end
 
-      def code_change(_old, state, _extra), do:
+      def code_change(_old, state, _extra) do
         { :ok, state }
       end
 

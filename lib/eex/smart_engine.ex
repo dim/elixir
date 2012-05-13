@@ -11,31 +11,31 @@ defmodule EEx.TransformerEngine do
   """
 
   @doc false
-  defmacro __using__(_, _), do:
+  defmacro __using__(_, _) do
     quote do:
       @behavior EEx.Engine
 
-      def handle_text(buffer, text), do:
+      def handle_text(buffer, text) do
         EEx.Engine.handle_text(buffer, text)
       end
 
-      def handle_expr(buffer, mark, expr), do:
+      def handle_expr(buffer, mark, expr) do
         EEx.Engine.handle_expr(buffer, mark, transform(expr))
       end
 
-      defp transform({ a, b, c }), do:
+      defp transform({ a, b, c }) do
         { transform(a), b, transform(c) }
       end
 
-      defp transform({ a, b }), do:
+      defp transform({ a, b }) do
         { transform(a), transform(b) }
       end
 
-      defp transform(list) when is_list(list), do:
+      defp transform(list) when is_list(list) do
         lc i in list, do: transform(i)
       end
 
-      defp transform(other), do:
+      defp transform(other) do
         other
       end
 
@@ -70,9 +70,9 @@ defmodule EEx.AssignsEngine do
   """
 
   @doc false
-  defmacro __using__(_, _), do:
+  defmacro __using__(_, _) do
     quote [unquote: false], do:
-      defp transform({ :@, line, [{ name, _, atom }] }) when is_atom(name) and is_atom(atom), do:
+      defp transform({ :@, line, [{ name, _, atom }] }) when is_atom(name) and is_atom(atom) do
         quote(do: Keyword.get var!(assigns), unquote(name))
       end
 
@@ -103,9 +103,9 @@ defmodule EEx.ForEngine do
   """
 
   @doc false
-  defmacro __using__(_, _), do:
+  defmacro __using__(_, _) do
     quote [unquote: false], do:
-      defp transform({ :for, line, [{ :in, _, [var, collection] }, opts] }), do:
+      defp transform({ :for, line, [{ :in, _, [var, collection] }, opts] }) do
         quote do:
           Enum.map_join(unquote(collection), "", fn(unquote(var), unquote(opts)))
         end

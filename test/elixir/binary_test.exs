@@ -91,11 +91,11 @@ bar
     assert_match <<a, b|s>>, "foo"
   end
 
-  defp is_match?(<<char, _|:binary>>, char), do:
+  defp is_match?(<<char, _|:binary>>, char) do
     true
   end
 
-  defp is_match?(_, _), do:
+  defp is_match?(_, _) do
     false
   end
 end

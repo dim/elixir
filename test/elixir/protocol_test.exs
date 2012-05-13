@@ -23,13 +23,13 @@ end
 defrecord ProtocolTest.Foo, a: 0, b: 0
 
 defimpl ProtocolTest.WithAll, for: ProtocolTest.Foo do
-  def blank(record), do:
+  def blank(record) do
     record.a + record.b == 0
   end
 end
 
 defimpl ProtocolTest.WithOnly, for: ProtocolTest.Foo do
-  def blank(record), do:
+  def blank(record) do
     record.a + record.b == 0
   end
 end
@@ -108,7 +108,7 @@ defmodule ProtocolTest do
   end
 
   # Assert that the given protocol is going to be dispatched.
-  defp assert_protocol_for(target, impl, thing), do:
+  defp assert_protocol_for(target, impl, thing) do
     joined  = Module.concat(target, impl)
     assert target.__impl_for__(thing) == joined
   end
@@ -116,7 +116,7 @@ defmodule ProtocolTest do
   # Dispatch `blank(thing)` to the given `target`
   # and check if it will dispatch (and successfully fail)
   # to the proper implementation `impl`.
-  defp assert_undef(target, impl, thing), do:
+  defp assert_undef(target, impl, thing) do
     try do:
       target.blank(thing)
       raise "Expected invocation to fail"

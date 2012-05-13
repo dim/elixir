@@ -40,7 +40,7 @@ defmodule ListTest do
     assert List.foldr([1,2,3,4], 0, fn x,y -> x - y end) == -2
   end
 
-  def test_member?, do:
+  def test_member? do
     assert List.member? [1,2,3], 1
     refute List.member? [1,2,3], 0
     refute List.member? [], 0

@@ -9,15 +9,15 @@ defmodule Kernel.RequireTest do
 
   use ExUnit.Case
 
-  defmacro my_macro, do:
+  defmacro my_macro do
     quote do: 1 + 1
   end
 
-  defmacrop my_private_macro, do:
+  defmacrop my_private_macro do
     quote do: 1 + 3
   end
 
-  defmacro my_macro_with_default(value // 5), do:
+  defmacro my_macro_with_default(value // 5) do
     quote do: 1 + unquote(value)
   end
 

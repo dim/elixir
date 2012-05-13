@@ -105,7 +105,7 @@ defmodule Access.AtomTest do
     refute_match Config[integer: 1], Config.new(integer: 0)
   end
 
-  defp get_var(Config[integer: integer]), do:
+  defp get_var(Config[integer: integer]) do
     integer
   end
 

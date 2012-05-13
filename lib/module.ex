@@ -29,7 +29,7 @@ defmodule Module do
 
       Foo.sum(1, 2) #=> 3
   """
-  def eval_quoted(module, quoted, binding // [], opts // []), do:
+  def eval_quoted(module, quoted, binding // [], opts // []) do
     assert_not_compiled!(:eval_quoted, module)
 
     { binding, scope } = Erlang.elixir_module.binding_and_scope_for_eval(opts, module, binding)
@@ -51,7 +51,7 @@ defmodule Module do
       Module.concat [Foo, 'Bar']  #=> Foo.Bar
 
   """
-  def concat(list) when is_list(list), do:
+  def concat(list) when is_list(list) do
     Erlang.elixir_ref.concat(list)
   end
 
@@ -66,7 +66,7 @@ defmodule Module do
       Module.concat Foo, 'Bar'  #=> Foo.Bar
 
   """
-  def concat(left, right), do:
+  def concat(left, right) do
     Erlang.elixir_ref.concat([left, right])
   end
 
@@ -82,7 +82,7 @@ defmodule Module do
       #=> ArgumentError
 
   """
-  def safe_concat(list) when is_list(list), do:
+  def safe_concat(list) when is_list(list) do
     Erlang.elixir_ref.safe_concat(list)
   end
 
@@ -98,7 +98,7 @@ defmodule Module do
       #=> ArgumentError
 
   """
-  def safe_concat(left, right), do:
+  def safe_concat(left, right) do
     Erlang.elixir_ref.safe_concat([left, right])
   end
 
@@ -114,7 +114,7 @@ defmodule Module do
       Module.compiled?(Foo) #=> true
 
   """
-  def compiled?(module), do:
+  def compiled?(module) do
     table = data_table_for(module)
     table == ETS.info(table, :name)
   end
@@ -133,7 +133,7 @@ defmodule Module do
       end
 
   """
-  def read_data(module), do:
+  def read_data(module) do
     assert_not_compiled!(:read_data, module)
     ETS.lookup_element(data_table_for(module), :data, 2)
   end
@@ -149,7 +149,7 @@ defmodule Module do
       end
 
   """
-  def read_data(module, at), do:
+  def read_data(module, at) do
     Keyword.get read_data(module), at
   end
 
@@ -171,7 +171,7 @@ defmodule Module do
       Foo.__info__(:data) #=> [value: 1]
 
   """
-  def merge_data(module, data), do:
+  def merge_data(module, data) do
     assert_not_compiled!(:merge_data, module)
 
     table      = data_table_for(module)
@@ -199,11 +199,11 @@ defmodule Module do
       end
 
   """
-  def add_doc(_module, _line, kind, _tuple, nil) when kind in [:defp, :defmacrop], do:
+  def add_doc(_module, _line, kind, _tuple, nil) when kind in [:defp, :defmacrop] do
     :ok
   end
 
-  def add_doc(_module, _line, kind, _tuple, _doc) when kind in [:defp, :defmacrop], do:
+  def add_doc(_module, _line, kind, _tuple, _doc) when kind in [:defp, :defmacrop] do
     { :error, :private_doc }
   end
 
@@ -237,7 +237,7 @@ defmodule Module do
       end
 
   """
-  def function_defined?(module, tuple) when is_tuple(tuple), do:
+  def function_defined?(module, tuple) when is_tuple(tuple) do
     assert_not_compiled!(:function_defined?, module)
     table = function_table_for(module)
     ETS.lookup(table, tuple) != []
@@ -256,7 +256,7 @@ defmodule Module do
       end
 
   """
-  def function_defined?(module, tuple, kind), do:
+  def function_defined?(module, tuple, kind) do
     List.member? defined_functions(module, kind), tuple
   end
 
@@ -271,7 +271,7 @@ defmodule Module do
       end
 
   """
-  def defined_functions(module), do:
+  def defined_functions(module) do
     assert_not_compiled!(:defined_functions, module)
     table = function_table_for(module)
     lc { tuple, _, _, _, _, _ } in ETS.tab2list(table), do: tuple
@@ -290,7 +290,7 @@ defmodule Module do
       end
 
   """
-  def defined_functions(module, kind), do:
+  def defined_functions(module, kind) do
     assert_not_compiled!(:defined_functions, module)
     table = function_table_for(module)
     lc { tuple, _, _, stored_kind, _, _ } in ETS.tab2list(table) when stored_kind == kind, do: tuple
@@ -301,7 +301,7 @@ defmodule Module do
   An overridable function is lazily defined, allowing a
   developer to customize it.
   """
-  def make_overridable(module, tuples), do:
+  def make_overridable(module, tuples) do
     assert_not_compiled!(:make_overridable, module)
     table = function_table_for(module)
     lc tuple in tuples, do:
@@ -330,12 +330,12 @@ defmodule Module do
   external usage called `MyLib`. It could be defined as:
 
       defmodule MyLib do
-        def __using__(target), do:
+        def __using__(target) do
           Module.merge_data target, some_data: nil
           Module.add_compile_callback(target, __MODULE__, :__callback__)
         end
 
-        defmacro __callback__(target), do:
+        defmacro __callback__(target) do
           value = Module.read_data(target, :some_data)
           quote do: (def my_lib_value, do: unquote(value))
         end
@@ -356,7 +356,7 @@ defmodule Module do
   In this example, the compilation callback reads the value and
   compile it to a function.
   """
-  def add_compile_callback(module, target, fun // :__compiling__), do:
+  def add_compile_callback(module, target, fun // :__compiling__) do
     assert_not_compiled!(:add_compile_callback, module)
     new   = { target, fun }
     table = data_table_for(module)
@@ -375,7 +375,7 @@ defmodule Module do
       end
 
   """
-  def add_attribute(module, key, value) when is_atom(key), do:
+  def add_attribute(module, key, value) when is_atom(key) do
     assert_not_compiled!(:add_attribute, module)
     table = data_table_for(module)
     attrs = ETS.lookup_element(table, :attributes, 2)
@@ -393,7 +393,7 @@ defmodule Module do
       end
 
   """
-  def delete_attribute(module, key) when is_atom(key), do:
+  def delete_attribute(module, key) when is_atom(key) do
     assert_not_compiled!(:delete_attribute, module)
     table = data_table_for(module)
     attrs = ETS.lookup_element(table, :attributes, 2)
@@ -415,7 +415,7 @@ defmodule Module do
       end
 
   """
-  def register_attribute(module, new), do:
+  def register_attribute(module, new) do
     assert_not_compiled!(:register_attribute, module)
     table = data_table_for(module)
     old = ETS.lookup_element(table, :registered_attributes, 2)
@@ -425,7 +425,7 @@ defmodule Module do
   @doc false
   # Used internally to compile documentation. This function
   # is private and must be used only internally.
-  def compile_doc(module, line, kind, pair), do:
+  def compile_doc(module, line, kind, pair) do
     doc = read_data(module, :doc)
     result = add_doc(module, line, kind, pair, doc)
     merge_data(module, doc: nil)
@@ -437,19 +437,19 @@ defmodule Module do
   defp normalize_data({ :on_load, atom }) when is_atom(atom), do: { :on_load, { atom, 0 } }
   defp normalize_data(else), do: else
 
-  defp data_table_for(module), do:
+  defp data_table_for(module) do
     list_to_atom Erlang.lists.concat([:d, module])
   end
 
-  defp function_table_for(module), do:
+  defp function_table_for(module) do
     list_to_atom Erlang.lists.concat([:f, module])
   end
 
-  defp docs_table_for(module), do:
+  defp docs_table_for(module) do
     list_to_atom Erlang.lists.concat([:o, module])
   end
 
-  defp assert_not_compiled!(fun, module), do:
+  defp assert_not_compiled!(fun, module) do
     compiled?(module) ||
       raise ArgumentError,
         message: "could not call #{fun} on module #{inspect module} because it was already compiled"

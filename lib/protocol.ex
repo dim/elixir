@@ -18,9 +18,9 @@ defmodule Protocol do
 
   * `__impl_for__!/1` - same as above but raises an error if an implementation is not found
   """
-  def defprotocol(name, [do: block]), do:
+  def defprotocol(name, [do: block]) do
     quote do:
-      defmodule unquote(name), do:
+      defmodule unquote(name) do
         # Remove "harmful" macros
         # We don't want to allow function definition inside protocols
         import Elixir.Builtin, except: [
@@ -51,7 +51,7 @@ defmodule Protocol do
   It also defines a `__impl__` function which
   returns the protocol being implemented.
   """
-  def defimpl(protocol, [do: block, for: for]), do:
+  def defimpl(protocol, [do: block, for: for]) do
     quote do:
       protocol = unquote(protocol)
       for      = unquote(for)
@@ -72,7 +72,7 @@ defmodule Protocol do
   Check if the given module is a protocol. Raises an error
   if not loaded or not a protocol.
   """
-  def assert_protocol(module), do:
+  def assert_protocol(module) do
     try do:
       module.__info__(:data)
     rescue:
@@ -93,7 +93,7 @@ defmodule Protocol do
   Raises an error if not.
 
   """
-  def assert_impl(impl, protocol), do:
+  def assert_impl(impl, protocol) do
     remaining = protocol.__protocol__(:functions) -- impl.__info__(:functions)
 
     if remaining != [], do:
@@ -105,12 +105,12 @@ defmodule Protocol do
   @doc """
   Defines meta information about the protocol and internal callbacks.
   """
-  def meta(module, functions, fallback), do:
+  def meta(module, functions, fallback) do
     contents = quote do:
       def __protocol__(:name),      do: __MODULE__
       def __protocol__(:functions), do: unquote(:lists.sort(functions))
 
-      def __impl_for__(arg), do:
+      def __impl_for__(arg) do
         case __raw_impl__(arg), do:
           __MODULE__.Record ->
             target = Module.concat(__MODULE__, :erlang.element(1, arg))
@@ -125,7 +125,7 @@ defmodule Protocol do
         end
       end
 
-      def __impl_for__!(arg), do:
+      def __impl_for__!(arg) do
         if module = __impl_for__(arg), do:
           module
         else:
@@ -144,14 +144,14 @@ defmodule Protocol do
   the module to dispatch to. Returns module.Record for records
   which should be properly handled by the dispatching function.
   """
-  def impl_for(module, conversions), do:
+  def impl_for(module, conversions) do
     contents = lc kind in conversions, do: each_impl_for(kind, conversions)
 
     # If we don't implement all protocols and any is not in the
     # list, we need to add a final clause that returns nil.
     if !L.member({ Any, :is_any }, conversions) && length(conversions) < 10, do:
       contents = contents ++ [quote do:
-        defp __raw_impl__(_), do:
+        defp __raw_impl__(_) do
           nil
         end
       end]
@@ -164,7 +164,7 @@ defmodule Protocol do
   Returns the default conversions according to the given
   only/except options.
   """
-  def conversions_for(module, only, except), do:
+  def conversions_for(module, only, except) do
     kinds = all_types
 
     conversions =
@@ -189,7 +189,7 @@ defmodule Protocol do
 
   ## Helpers
 
-  defp all_types, do:
+  defp all_types do
     [
       { Record,    :is_record },
       { Tuple,     :is_tuple },
@@ -207,13 +207,13 @@ defmodule Protocol do
 
   # Returns a quoted expression that allow to checks
   # if a variable named first is built in or not.
-  defp is_builtin?([{h,_}]), do:
+  defp is_builtin?([{h,_}]) do
     quote do:
       first == unquote(h)
     end
   end
 
-  defp is_builtin?([{h,_}|t]), do:
+  defp is_builtin?([{h,_}|t]) do
     quote do:
       first == unquote(h) or unquote(is_builtin?(t))
     end
@@ -221,9 +221,9 @@ defmodule Protocol do
 
   # Specially handle tuples as they can also be record.
   # If this is the case, module.Record will be returned.
-  defp each_impl_for({ _, :is_record }, conversions), do:
+  defp each_impl_for({ _, :is_record }, conversions) do
     quote do:
-      defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)), do:
+      defp __raw_impl__(arg) when is_tuple(arg) and is_atom(:erlang.element(1, arg)) do
         first = :erlang.element(1, arg)
         case unquote(is_builtin?(conversions)), do:
           true  -> __MODULE__.Tuple
@@ -238,18 +238,18 @@ defmodule Protocol do
   end
 
   # Special case any as we don't need to generate a guard.
-  defp each_impl_for({ _, :is_any }, _), do:
+  defp each_impl_for({ _, :is_any }, _) do
     quote do:
-      defp __raw_impl__(_), do:
+      defp __raw_impl__(_) do
         __MODULE__.Any
       end
     end
   end
 
   # Generate all others protocols.
-  defp each_impl_for({ kind, fun }, _), do:
+  defp each_impl_for({ kind, fun }, _) do
     quote do:
-      defp __raw_impl__(arg) when unquote(fun).(arg), do:
+      defp __raw_impl__(arg) when unquote(fun).(arg) do
         Module.concat __MODULE__, unquote(kind)
       end
     end
@@ -259,7 +259,7 @@ end
 defmodule Protocol.DSL do
   @moduledoc false
 
-  defmacro def(expression), do:
+  defmacro def(expression) do
     { name, arity } =
       case expression, do:
         { _, _, args } when args == [] or is_atom(args) ->

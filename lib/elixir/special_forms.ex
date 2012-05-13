@@ -115,7 +115,7 @@ defmodule Elixir.SpecialForms do
       defmodule Math do
         import Keyword, only: [values: 1]
 
-        def some_function, do:
+        def some_function do
           # call values(orddict)
         end
       end
@@ -139,7 +139,7 @@ defmodule Elixir.SpecialForms do
   can import specific macros inside specific functions:
 
       defmodule Math do
-        def some_function, do:
+        def some_function do
           # 1) Disable `if/2` from Elixir.Builtin
           import Elixir.Builtin, except: [if: 2]
 
@@ -232,7 +232,7 @@ defmodule Elixir.SpecialForms do
   the macro is included. Consider the following example:
 
       defmodule Hygiene do
-        defmacro no_interference, do:
+        defmacro no_interference do
           quote do: a = 1
         end
       end
@@ -250,7 +250,7 @@ defmodule Elixir.SpecialForms do
   it with the help of the `var!` macro:
 
       defmodule NoHygiene do
-        defmacro interference, do:
+        defmacro interference do
           quote do: var!(a) = 1
         end
       end
@@ -471,7 +471,7 @@ defmodule Elixir.SpecialForms do
 
   A good example is the `is_exception/1` macro defined in Elixir:
 
-       defmacro is_exception(thing), do:
+       defmacro is_exception(thing) do
          quote do:
            quote do:
              is_tuple(unquote(thing)) and elem(unquote(thing), 2) == :__exception__

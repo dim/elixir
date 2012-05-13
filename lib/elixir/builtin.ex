@@ -954,7 +954,7 @@ defmodule Elixir.Builtin do
   Elixir module names can be dynamically generated. This is very
   useful for macros. For instance, one could write:
 
-      defmodule binary_to_atom("Foo\#{1}", :utf8), do:
+      defmodule binary_to_atom("Foo\#{1}", :utf8) do
         # contents ...
       end
 
@@ -977,7 +977,7 @@ defmodule Elixir.Builtin do
   A function that expects arguments can be defined as follow:
 
       defmodule Foo do
-        def sum(a, b), do:
+        def sum(a, b) do
           a + b
         end
       end
@@ -998,7 +998,7 @@ defmodule Elixir.Builtin do
   We can also use the atom format to define functions:
 
       defmodule Foo do
-        def :sum.(a, b), do:
+        def :sum.(a, b) do
           a + b
         end
       end
@@ -1012,10 +1012,10 @@ defmodule Elixir.Builtin do
   for each entry in the keyword, using the key as function name
   and the value as the value returned by the function:
 
-      defmacro defkv(keywords), do:
+      defmacro defkv(keywords) do
         Enum.map keywords, fn {k,v} ->
           quote do:
-            def unquote(k).(), do:
+            def unquote(k).() do
               unquote(v)
             end
           end
@@ -1048,7 +1048,7 @@ defmodule Elixir.Builtin do
   The most common mistake when using this macro is to pass the
   arguments without quoting:
 
-      def :some_function, [first_arg, second_arg], is_list(first_arg), do:
+      def :some_function, [first_arg, second_arg], is_list(first_arg) do
         # ...
       end
 
@@ -1060,7 +1060,7 @@ defmodule Elixir.Builtin do
       args   = quote(do: [first_arg, second_arg])
       guards = quote(do: is_list(first_arg))
 
-      def name, args, guards, do:
+      def name, args, guards do
         # ...
       end
 
@@ -1076,7 +1076,7 @@ defmodule Elixir.Builtin do
   ## Examples
 
       defmodule Foo do
-        def bar, do:
+        def bar do
           sum(1, 2)
         end
 
@@ -1146,7 +1146,7 @@ defmodule Elixir.Builtin do
       defrecord Config, [counter: 0, failures: []], moduledoc: "A simple record"
 
   """
-  defmacro defrecord(name, values, opts // [], do_block // []), do:
+  defmacro defrecord(name, values, opts // [], do_block // []) do
     Record.defrecord(name, values, Keyword.merge(opts, do_block))
   end
 
@@ -1155,7 +1155,7 @@ defmodule Elixir.Builtin do
   The defined record must implement `message/1` as API, otherwise
   an error is raised. Check exception.ex for examples.
   """
-  defmacro defexception(name, values, opts // [], do_block // []), do:
+  defmacro defexception(name, values, opts // [], do_block // []) do
     opts = Keyword.merge(opts, do_block)
     opts = Keyword.put(opts, :do, quote do:
       unquote(Keyword.get opts, :do)
@@ -1191,7 +1191,7 @@ defmodule Elixir.Builtin do
       is_exception(1)         #=> false
 
   """
-  defmacro is_exception(thing), do:
+  defmacro is_exception(thing) do
     quote do:
       in_guard do:
         is_tuple(unquote(thing)) and :erlang.element(2, unquote(thing)) == :__exception__
@@ -1215,7 +1215,7 @@ defmodule Elixir.Builtin do
       is_record(Config.new, List)   #=> false
 
   """
-  defmacro is_record(thing, kind), do:
+  defmacro is_record(thing, kind) do
     quote do:
       in_guard do:
         is_tuple(unquote(thing)) and :erlang.element(1, unquote(thing)) == unquote(kind)
@@ -1229,7 +1229,7 @@ defmodule Elixir.Builtin do
   @doc """
   Check if the given argument is a regex.
   """
-  defmacro is_regex(thing), do:
+  defmacro is_regex(thing) do
     quote do:
       is_record(unquote(thing), Regex)
     end
@@ -1337,7 +1337,7 @@ defmodule Elixir.Builtin do
   Finally, since records are simply tuples, one can add a default protocol
   implementation to any record by defining a default implementation for tuples.
   """
-  defmacro defprotocol(name, [do: block]), do:
+  defmacro defprotocol(name, [do: block]) do
     Protocol.defprotocol(name, [do: block])
   end
 
@@ -1345,7 +1345,7 @@ defmodule Elixir.Builtin do
   Defines an implementation for the given protocol. See
   `defprotocol/2` for examples.
   """
-  defmacro defimpl(name, opts, do_block // []), do:
+  defmacro defimpl(name, opts, do_block // []) do
     Protocol.defimpl(name, Keyword.merge(opts, do_block))
   end
 
@@ -1369,14 +1369,14 @@ defmodule Elixir.Builtin do
       #=> [3,2,1]
 
   """
-  defmacro defdelegate(tuples, to: target), do:
+  defmacro defdelegate(tuples, to: target) do
     lc { name, arity } in tuples, do:
       args = lc i in :lists.seq(1, arity), do:
         { binary_to_atom(<<?x, i + 64>>, :utf8), 0, :quoted }
       end
 
       quote do:
-        def unquote(name).(unquote_splicing(args)), do:
+        def unquote(name).(unquote_splicing(args)) do
           apply unquote(target), unquote(name), [unquote_splicing(args)]
         end
       end
@@ -1388,7 +1388,7 @@ defmodule Elixir.Builtin do
   An overridable function is lazily defined, allowing a
   developer to customize it.
   """
-  defmacro defoverridable(tuples), do:
+  defmacro defoverridable(tuples) do
     quote do:
       Module.make_overridable(__MODULE__, unquote(tuples))
     end
@@ -1403,7 +1403,7 @@ defmodule Elixir.Builtin do
       defmodule AssertionTest do
         use ExUnit.Case
 
-        def test_always_pass, do:
+        def test_always_pass do
           true = true
         end
       end
@@ -1416,7 +1416,7 @@ defmodule Elixir.Builtin do
         require ExUnit.Case
         ExUnit.Case.__using__(AssertionTest)
 
-        def test_always_pass, do:
+        def test_always_pass do
           true = true
         end
       end
@@ -1433,7 +1433,7 @@ defmodule Elixir.Builtin do
       #=> ":foo"
 
   """
-  defmacro inspect(arg), do:
+  defmacro inspect(arg) do
     quote do: __MAIN__.Binary.Inspect.inspect(unquote(arg))
   end
 
@@ -1474,7 +1474,7 @@ defmodule Elixir.Builtin do
       #=> "foo"
 
   """
-  defmacro to_binary(arg), do:
+  defmacro to_binary(arg) do
     quote do: __MAIN__.Binary.Chars.to_binary(unquote(arg))
   end
 
@@ -1487,7 +1487,7 @@ defmodule Elixir.Builtin do
       #=> 'foo'
 
   """
-  defmacro to_char_list(arg), do:
+  defmacro to_char_list(arg) do
     quote do: __MAIN__.List.Chars.to_char_list(unquote(arg))
   end
 
@@ -1501,7 +1501,7 @@ defmodule Elixir.Builtin do
      elem(tuple, 1) #=> :foo
 
   """
-  defmacro elem(tuple, index), do:
+  defmacro elem(tuple, index) do
     quote do: :erlang.element(unquote(index), unquote(tuple))
   end
 
@@ -1515,7 +1515,7 @@ defmodule Elixir.Builtin do
      setelem(tuple, 1, :baz) #=> { :baz, :bar, 3 }
 
   """
-  defmacro setelem(tuple, index, value), do:
+  defmacro setelem(tuple, index, value) do
     quote do: :erlang.setelement(unquote(index), unquote(tuple), unquote(value))
   end
 
@@ -1529,7 +1529,7 @@ defmodule Elixir.Builtin do
       5 div 2 #=> 2
 
   """
-  defmacro div(left, right), do:
+  defmacro div(left, right) do
     quote do: __op__ :div, unquote(left), unquote(right)
   end
 
@@ -1543,7 +1543,7 @@ defmodule Elixir.Builtin do
       5 rem 2 #=> 1
 
   """
-  defmacro rem(left, right), do:
+  defmacro rem(left, right) do
     quote do: __op__ :rem, unquote(left), unquote(right)
   end
 
@@ -1568,12 +1568,12 @@ defmodule Elixir.Builtin do
       Enum.filter list, match?({:a, x } when x < 2, &1)
 
   """
-  defmacro match?({ :_, _, atom }, _right) when is_atom(atom), do:
+  defmacro match?({ :_, _, atom }, _right) when is_atom(atom) do
     # Special case underscore since it always matches.
     true
   end
 
-  defmacro match?(left, right), do:
+  defmacro match?(left, right) do
     quote do:
       case unquote(right), do:
         unquote(left) ->
@@ -1838,7 +1838,7 @@ defmodule Elixir.Builtin do
   macro.
 
   """
-  defmacro if(condition, [{:do,do_clause}|tail]), do:
+  defmacro if(condition, [{:do,do_clause}|tail]) do
     else_clause = Keyword.get(tail, :else, nil)
 
     quote do:
@@ -1865,7 +1865,7 @@ defmodule Elixir.Builtin do
       end
 
   """
-  defmacro cond([do: { :"->", _, pairs }]), do:
+  defmacro cond([do: { :"->", _, pairs }]) do
     [{ condition, clause }|t] = List.reverse pairs
 
     new_acc = quote do:
@@ -1882,7 +1882,7 @@ defmodule Elixir.Builtin do
   unless a value evalutes to true. Check `if` for examples
   and documentation.
   """
-  defmacro unless(clause, options), do:
+  defmacro unless(clause, options) do
     quote do: if(!unquote(clause), unquote(options))
   end
 
@@ -1920,7 +1920,7 @@ defmodule Elixir.Builtin do
   the first value from the right side. Otherwise,
   it will raise a CaseClauseError.
   """
-  defmacro destructure(left, right) when is_list(left), do:
+  defmacro destructure(left, right) when is_list(left) do
     List.foldl left, right, fn item, acc ->
       quote do:
         case unquote(acc), do:
@@ -1943,7 +1943,7 @@ defmodule Elixir.Builtin do
       binary_to_atom "my_atom" #=> :my_atom
 
   """
-  defmacro binary_to_atom(some_binary), do:
+  defmacro binary_to_atom(some_binary) do
     quote do:
       binary_to_atom(unquote(some_binary), :utf8)
     end
@@ -1959,7 +1959,7 @@ defmodule Elixir.Builtin do
       binary_to_existing_atom "my_atom" #=> :my_atom
 
   """
-  defmacro binary_to_existing_atom(some_binary), do:
+  defmacro binary_to_existing_atom(some_binary) do
     quote do:
       binary_to_existing_atom(unquote(some_binary), :utf8)
     end
@@ -1974,7 +1974,7 @@ defmodule Elixir.Builtin do
       atom_to_binary :my_atom #=> "my_atom"
 
   """
-  defmacro atom_to_binary(some_atom), do:
+  defmacro atom_to_binary(some_atom) do
     quote do:
       atom_to_binary(unquote(some_atom), :utf8)
     end
@@ -1994,7 +1994,7 @@ defmodule Elixir.Builtin do
       x #=> "bar"
 
   """
-  defmacro :<>.(left, right), do:
+  defmacro :<>.(left, right) do
     concats = extract_concatenations({ :<>, 0, [left, right] })
     quote do: << unquote_splicing(concats) >>
   end
@@ -2015,7 +2015,7 @@ defmodule Elixir.Builtin do
   this operator accepts any expression as arguments,
   not only booleans, however it is not allowed in guards.
   """
-  defmacro :&&.(left, right), do:
+  defmacro :&&.(left, right) do
     quote do:
       case unquote(left), do:
         andand in [false, nil] ->
@@ -2042,7 +2042,7 @@ defmodule Elixir.Builtin do
   this operator accepts any expression as arguments,
   not only booleans, however it is not allowed in guards.
   """
-  defmacro :||.(left, right), do:
+  defmacro :||.(left, right) do
     quote do:
       case unquote(left), do:
         oror in [false, nil] ->
@@ -2068,7 +2068,7 @@ defmodule Elixir.Builtin do
       x == 1 or x == 2 or x == 3
 
   """
-  defmacro :in.(left, [h|t]), do:
+  defmacro :in.(left, [h|t]) do
     :lists.foldl fn x, acc ->
       { :or, 0, [acc, { :==, 0, [left, x] }] }
     end, { :==, 0, [left, h] }, t
@@ -2089,7 +2089,7 @@ defmodule Elixir.Builtin do
   """
 
   # Optimizes !! to avoid generating case twice.
-  defmacro :!.({:!, _, [expr]}), do:
+  defmacro :!.({:!, _, [expr]}) do
     quote do:
       case unquote(expr), do:
         false -> false
@@ -2099,7 +2099,7 @@ defmodule Elixir.Builtin do
     end
   end
 
-  defmacro :!.(expr), do:
+  defmacro :!.(expr) do
     quote do:
       case unquote(expr), do:
         false -> true
@@ -2128,11 +2128,11 @@ defmodule Elixir.Builtin do
       end
 
   """
-  def raise(msg) when is_binary(msg), do:
+  def raise(msg) when is_binary(msg) do
     :erlang.error RuntimeError.new(message: msg)
   end
 
-  def raise(exception), do:
+  def raise(exception) do
     raise(exception, [])
   end
 
@@ -2153,7 +2153,7 @@ defmodule Elixir.Builtin do
       raise ArgumentError, message: "Sample"
 
   """
-  def raise(exception, args), do:
+  def raise(exception, args) do
     :erlang.error exception.exception(args)
   end
 
@@ -2167,7 +2167,7 @@ defmodule Elixir.Builtin do
       %B(f\#{o}o)  #=> "f\\\#{o}o"
 
   """
-  defmacro __B__(string, []), do:
+  defmacro __B__(string, []) do
     string
   end
 
@@ -2181,7 +2181,7 @@ defmodule Elixir.Builtin do
       %b(f\#{:o}o)  #=> "foo"
 
   """
-  defmacro __b__({ :<<>>, line, pieces }, []), do:
+  defmacro __b__({ :<<>>, line, pieces }, []) do
     { :<<>>, line, Binary.unescape_tokens(pieces) }
   end
 
@@ -2195,7 +2195,7 @@ defmodule Elixir.Builtin do
       %C(f\#{o}o)  #=> 'f\\\#{o}o'
 
   """
-  defmacro __C__({ :<<>>, _line, [string] }, []), do:
+  defmacro __C__({ :<<>>, _line, [string] }, []) do
     binary_to_list(string)
   end
 
@@ -2212,11 +2212,11 @@ defmodule Elixir.Builtin do
 
   # We can skip the runtime conversion if we are
   # creating a binary made solely of series of chars.
-  defmacro __c__({ :<<>>, _line, [string] }, []) when is_list(string), do:
+  defmacro __c__({ :<<>>, _line, [string] }, []) when is_list(string) do
     Binary.unescape(string)
   end
 
-  defmacro __c__({ :<<>>, line, pieces }, []), do:
+  defmacro __c__({ :<<>>, line, pieces }, []) do
     binary = { :<<>>, line, Binary.unescape_tokens(pieces) }
     quote do: binary_to_list(unquote(binary))
   end
@@ -2229,7 +2229,7 @@ defmodule Elixir.Builtin do
       Regex.match? %r(foo), "foo"  #=> true
 
   """
-  defmacro __r__({ :<<>>, line, pieces }, options), do:
+  defmacro __r__({ :<<>>, line, pieces }, options) do
     binary = { :<<>>, line, Binary.unescape_tokens(pieces, Regex.unescape_map(&1)) }
     quote do: Regex.compile(unquote(binary), unquote(options))
   end
@@ -2238,21 +2238,21 @@ defmodule Elixir.Builtin do
 
   # Extracts concatenations in order to optimize many
   # concatenations into one single clause.
-  defp extract_concatenations({ :<>, _, [left, right] }), do:
+  defp extract_concatenations({ :<>, _, [left, right] }) do
     [wrap_concatenation(left) | extract_concatenations(right)]
   end
 
-  defp extract_concatenations(other), do:
+  defp extract_concatenations(other) do
     [wrap_concatenation(other)]
   end
 
   # If it is a binary, we don't need to add the binary
   # tag. This allows us to use <> function signatures.
-  defp wrap_concatenation(binary) when is_binary(binary), do:
+  defp wrap_concatenation(binary) when is_binary(binary) do
     binary
   end
 
-  defp wrap_concatenation(other), do:
+  defp wrap_concatenation(other) do
     { :|, 0, [other, :binary] }
   end
 
@@ -2267,7 +2267,7 @@ defmodule Elixir.Builtin do
   #         end
   #     end
   #
-  defp build_cond_clauses([{ condition, clause }|t], acc), do:
+  defp build_cond_clauses([{ condition, clause }|t], acc) do
     new_acc = quote do:
       case !unquote(condition), do:
         false -> unquote(clause)

@@ -3,23 +3,23 @@ defrecord Orddict.Record, data: nil
 defimpl Dict, for: Orddict.Record do
   refer Orddict.Record, as: O
 
-  def keys(O[data: data]), do:
+  def keys(O[data: data]) do
     lc { k, _ } in data, do: k
   end
 
-  def values(O[data: data]), do:
+  def values(O[data: data]) do
     lc { _, v } in data, do: v
   end
 
-  def size(O[data: data]), do:
+  def size(O[data: data]) do
     length(data)
   end
 
-  def has_key?(O[data: data], key), do:
+  def has_key?(O[data: data], key) do
     :orddict.is_key key, data
   end
 
-  def get(O[data: data], key, default // nil), do:
+  def get(O[data: data], key, default // nil) do
     case :orddict.find(key, data), do:
       {:ok, value} ->
         value
@@ -28,35 +28,35 @@ defimpl Dict, for: Orddict.Record do
     end
   end
 
-  def put(O[data: data], key, value), do:
+  def put(O[data: data], key, value) do
     O[data: :orddict.store key, value, data]
   end
 
-  def delete(O[data: data], key), do:
+  def delete(O[data: data], key) do
     O[data: :orddict.erase key, data]
   end
 
-  def merge(O[data: d1], O[data: d2]), do:
+  def merge(O[data: d1], O[data: d2]) do
     O[data: :orddict.merge fn _k, _v1, v2 -> v2 end, d1, d2]
   end
 
-  def merge(O[data: d1], O[data: d2], fun), do:
+  def merge(O[data: d1], O[data: d2], fun) do
     O[data: :orddict.merge fun, d1, d2]
   end
 
-  def update(O[data: data], key, fun), do:
+  def update(O[data: data], key, fun) do
     O[data: :orddict.update key, fun, data]
   end
 
-  def update(O[data: data], key, initial, fun), do:
+  def update(O[data: data], key, initial, fun) do
     O[data: :orddict.update key, fun, initial, data]
   end
 
-  def empty(_), do:
+  def empty(_) do
     O[data: []]
   end
 
-  def to_list(O[data: data]), do:
+  def to_list(O[data: data]) do
     data
   end
 end

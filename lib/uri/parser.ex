@@ -4,7 +4,7 @@ defmodule URI.Parser do
   Check URI.HTTP for a possible implementation.
   """
 
-  def behaviour_info(:callbacks), do:
+  def behaviour_info(:callbacks) do
     [parse: 1,
      default_port: 0]
   end

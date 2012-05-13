@@ -7,21 +7,21 @@ defmodule Code do
   @doc """
   Returns all the loaded files.
   """
-  def loaded_files, do:
+  def loaded_files do
     server_call :loaded
   end
 
   @doc """
   Appends a path to Erlang VM code path.
   """
-  def append_path(path), do:
+  def append_path(path) do
     Erlang.code.add_pathz(to_char_list(path))
   end
 
   @doc """
   Prepends a path to Erlang VM code path.
   """
-  def prepend_path(path), do:
+  def prepend_path(path) do
     Erlang.code.add_patha(to_char_list(path))
   end
 
@@ -41,7 +41,7 @@ defmodule Code do
       #=> { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
-  def eval(string, binding // [], opts // []), do:
+  def eval(string, binding // [], opts // []) do
     { value, binding, _scope } =
       Erlang.elixir.eval :unicode.characters_to_list(string), binding, opts
     { value, binding }
@@ -57,7 +57,7 @@ defmodule Code do
       #=> { 3, [ {:a, 1}, {:b, 2} ] }
 
   """
-  def eval_quoted(quoted, binding // [], opts // []), do:
+  def eval_quoted(quoted, binding // [], opts // []) do
     { value, binding, _scope } =
       Erlang.elixir.eval_quoted [quoted], binding, opts
     { value, binding }
@@ -71,7 +71,7 @@ defmodule Code do
   When loading a file, you may skip passing .exs as extension as Elixir
   automatically adds it for you.
   """
-  def load_file(file, relative_to // nil), do:
+  def load_file(file, relative_to // nil) do
     file = find_file(file, relative_to)
     server_call { :loaded, file }
     Erlang.elixir_compiler.file to_char_list(file)
@@ -86,7 +86,7 @@ defmodule Code do
   When requiring a file, you may skip passing .exs as extension as
   Elixir automatically adds it for you.
   """
-  def require_file(file, relative_to // nil), do:
+  def require_file(file, relative_to // nil) do
     file = find_file(file, relative_to)
 
     case server_call({ :loaded, file }), do:
@@ -101,7 +101,7 @@ defmodule Code do
   Loads the compilation options from the code server.
   Check compiler_options/1 for more information.
   """
-  def compiler_options, do:
+  def compiler_options do
     server_call :compiler_options
   end
 
@@ -117,7 +117,7 @@ defmodule Code do
   * ignore_module_conflict - when true, override modules that were already defined;
 
   """
-  def compiler_options(opts), do:
+  def compiler_options(opts) do
     server_call { :compiler_options, opts }
   end
 
@@ -128,7 +128,7 @@ defmodule Code do
 
   For compiling many files at once, check `Elixir.ParallelCompiler`.
   """
-  def compile_string(string, file // 'nofile'), do:
+  def compile_string(string, file // 'nofile') do
     Erlang.elixir_compiler.string :unicode.characters_to_list(string), to_char_list(file)
   end
 
@@ -139,7 +139,7 @@ defmodule Code do
   If it succeeds loading the module anyhow, it returns `{ :module, module }`.
   If not, returns `{ :error, reason }` with the error reason.
   """
-  def ensure_loaded(module) when is_atom(module), do:
+  def ensure_loaded(module) when is_atom(module) do
     Erlang.code.ensure_loaded(module)
   end
 
@@ -147,7 +147,7 @@ defmodule Code do
 
   # Finds the file given the relative_to path.
   # If the file is found, returns its path in binary, fails otherwise.
-  defp find_file(file, relative_to), do:
+  defp find_file(file, relative_to) do
     file = to_binary(file)
 
     file = if relative_to, do:
@@ -168,7 +168,7 @@ defmodule Code do
     end
   end
 
-  defp server_call(args), do:
+  defp server_call(args) do
     Erlang.gen_server.call(:elixir_code_server, args)
   end
 end

@@ -28,7 +28,7 @@ defmodule URI do
 
   Returns nil if the query string is malformed.
   """
-  def decode_query(q, dict // Orddict.new), do:
+  def decode_query(q, dict // Orddict.new) do
     if Regex.match?(%r/^\s*$/, q), do:
       dict
     else:
@@ -50,7 +50,7 @@ defmodule URI do
     end
   end
 
-  defp pair({k, v}), do:
+  defp pair({k, v}) do
     encode(to_binary(k)) <> "=" <> encode(to_binary(v))
   end
 
@@ -76,7 +76,7 @@ defmodule URI do
   defp escape_byte(c), do: "%" <> hex(c)
 
   defp hex(n) when n <= 9, do: <<n + ?0>>
-  defp hex(n) when n > 15, do:
+  defp hex(n) when n > 15 do
     hex(bsr(n, 4)) <> hex(band(n, 15))
   end
   defp hex(n), do: <<n + ?A - 10>>
@@ -84,11 +84,11 @@ defmodule URI do
   @doc """
   Unpercent (URL) decodes a URI.
   """
-  def decode(<<?%, hex1, hex2, tail |:binary >>), do:
+  def decode(<<?%, hex1, hex2, tail |:binary >>) do
     << bsl(hex2dec(hex1), 4) + hex2dec(hex2) >> <> decode(tail)
   end
 
-  def decode(<<head, tail |:binary >>), do:
+  def decode(<<head, tail |:binary >>) do
     <<check_plus(head)>> <> decode(tail)
   end
 
@@ -118,7 +118,7 @@ defmodule URI do
   for that particular scheme. Take a look at URI.HTTPS for an
   example of one of these extension modules.
   """
-  def parse(s), do:
+  def parse(s) do
     # From http://tools.ietf.org/html/rfc3986#appendix-B
     regex = %r/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
     parts = nillify(Regex.run(regex, s))
@@ -135,7 +135,7 @@ defmodule URI do
     scheme_specific(scheme, info)
   end
 
-  defp scheme_specific(scheme, info), do:
+  defp scheme_specific(scheme, info) do
     if scheme, do:
       module =
         try do:
@@ -154,12 +154,12 @@ defmodule URI do
     end
   end
 
-  defp default_port(info, module), do:
+  defp default_port(info, module) do
     if info.port, do: info, else: info.port(module.default_port)
   end
 
   # Split an authority into its userinfo, host and port parts.
-  defp split_authority(s), do:
+  defp split_authority(s) do
     s = s || ""
     components = Regex.run %r/(^(.*)@)?([^:]*)(:(\d*))?/, s
     destructure [_, _, userinfo, host, _, port], nillify(components)
@@ -169,7 +169,7 @@ defmodule URI do
 
   # Regex.run returns empty strings sometimes. We want
   # to replace those with nil for consistency.
-  defp nillify(l), do:
+  defp nillify(l) do
     lc s in l, do:
       if size(s) > 0, do:
         s
@@ -181,7 +181,7 @@ defmodule URI do
 
   # Reference parsers so the parse/1 doesn't fail
   # on safe_concat.
-  defp preload_parsers, do:
+  defp preload_parsers do
     parsers = [URI.FTP, URI.HTTP, URI.HTTPS, URI.LDAP, URI.SFTP, URI.TFTP]
     Enum.each parsers, Code.ensure_loaded(&1)
     :ok

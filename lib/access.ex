@@ -32,18 +32,18 @@ defimpl Access, for: Tuple do
       tuple[-1] #=> :c
 
   """
-  def access(tuple, integer) when is_integer(integer) and integer > 0 and integer <= tuple_size(tuple), do:
+  def access(tuple, integer) when is_integer(integer) and integer > 0 and integer <= tuple_size(tuple) do
     :erlang.element(integer, tuple)
   end
 
-  def access(tuple, integer) when is_integer(integer) and integer < 0, do:
+  def access(tuple, integer) when is_integer(integer) and integer < 0 do
     size     = tuple_size(tuple)
     position = integer + size + 1
     if position > size or position < 1,
       do: nil, else: :erlang.element(position, tuple)
   end
 
-  def access(_tuple, integer) when is_integer(integer), do:
+  def access(_tuple, integer) when is_integer(integer) do
     nil
   end
 end
@@ -75,13 +75,13 @@ defimpl Access, for: List do
 
   ## Atom
 
-  def access(list, atom) when is_atom(atom), do:
+  def access(list, atom) when is_atom(atom) do
     atom_access(list, atom)
   end
 
   ## Regex
 
-  def access(list, re) when is_regex(re), do:
+  def access(list, re) when is_regex(re) do
     case Erlang.re.run(list, Regex.re_pattern(re), [{ :capture, :first, :list }]), do:
       :nomatch -> nil
       { :match, [result] } -> result
@@ -112,7 +112,7 @@ defimpl Access, for: BitString do
 
   ## Regex
 
-  def access(binary, re) when is_binary(binary) and is_regex(re), do:
+  def access(binary, re) when is_binary(binary) and is_regex(re) do
     case Erlang.re.run(binary, Regex.re_pattern(re), [{ :capture, :first, :binary }]), do:
       :nomatch -> nil
       { :match, [result] } -> result
@@ -133,7 +133,7 @@ defimpl Access, for: Atom do
 
   ## Examples
 
-      def increment(State[counter: counter] = state), do:
+      def increment(State[counter: counter] = state) do
         state.counter(counter + 1)
       end
 
@@ -145,7 +145,7 @@ defimpl Access, for: Atom do
 
   The clause above is translated to:
 
-      def increment({ State, counter, _ } = state), do:
+      def increment({ State, counter, _ } = state) do
         state.counter(counter + 1)
       end
 
@@ -153,14 +153,14 @@ defimpl Access, for: Atom do
   faster read times. The same pattern can be used to create
   a new record:
 
-      def new_state(counter), do:
+      def new_state(counter) do
         State[counter: counter]
       end
 
   All fields not specified on creation defaults to their
   default value.
   """
-  def access(atom, keywords) when is_list(keywords), do:
+  def access(atom, keywords) when is_list(keywords) do
     atom.new(keywords)
   end
 end
@@ -172,7 +172,7 @@ defimpl Access, for: Function do
   is useful because it allows a function to be
   passed as argument in places a dict would also fit.
   """
-  def access(function, item), do:
+  def access(function, item) do
     function.(item)
   end
 end

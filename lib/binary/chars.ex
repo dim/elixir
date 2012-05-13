@@ -24,11 +24,11 @@ defimpl Binary.Chars, for: Atom do
   Convert the atom literally to a binary, except
   `nil` which is converted to an empty string.
   """
-  def to_binary(nil), do:
+  def to_binary(nil) do
     ""
   end
 
-  def to_binary(atom), do:
+  def to_binary(atom) do
     atom_to_binary(atom, :utf8)
   end
 end
@@ -37,7 +37,7 @@ defimpl Binary.Chars, for: BitString do
   @doc """
   Simply returns the binary itself.
   """
-  def to_binary(thing) when is_binary(thing), do:
+  def to_binary(thing) when is_binary(thing) do
     thing
   end
 end
@@ -55,7 +55,7 @@ defimpl Binary.Chars, for: List do
       to_binary ["foo", 'bar'] #=> "foobar"
 
   """
-  def to_binary(thing), do:
+  def to_binary(thing) do
     iolist_to_binary(thing)
   end
 end
@@ -64,11 +64,11 @@ defimpl Binary.Chars, for: Number do
   @doc """
   Simply converts the number (integer or a float) to a binary.
   """
-  def to_binary(thing) when is_integer(thing), do:
+  def to_binary(thing) when is_integer(thing) do
     list_to_binary integer_to_list(thing)
   end
 
-  def to_binary(thing), do:
+  def to_binary(thing) do
     list_to_binary float_to_list(thing)
   end
 end

@@ -23,7 +23,7 @@ defmodule EEx.Engine do
   @doc """
   The default implementation simply concatenates text to the buffer.
   """
-  def handle_text(buffer, text), do:
+  def handle_text(buffer, text) do
     quote do: unquote(buffer) <> unquote(text)
   end
 
@@ -35,7 +35,7 @@ defmodule EEx.Engine do
 
   All other markers are not implemented by this engine.
   """
-  def handle_expr(buffer, '=', expr), do:
+  def handle_expr(buffer, '=', expr) do
     quote do:
       tmp_1 = unquote(buffer)
       tmp_2 = to_binary(unquote(expr))
@@ -43,7 +43,7 @@ defmodule EEx.Engine do
     end
   end
 
-  def handle_expr(buffer, '', expr), do:
+  def handle_expr(buffer, '', expr) do
     quote do:
       tmp = unquote(buffer)
       unquote(expr)
@@ -51,7 +51,7 @@ defmodule EEx.Engine do
     end
   end
 
-  def behaviour_info(:callbacks), do:
+  def behaviour_info(:callbacks) do
     [handle_text: 2, handle_expr: 3]
   end
 end

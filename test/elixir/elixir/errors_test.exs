@@ -198,7 +198,7 @@ defmodule Elixir.ErrorsTest do
 
   ## Helpers
 
-  defp format_rescue(expr), do:
+  defp format_rescue(expr) do
     result = try do:
       Erlang.elixir.eval(expr, [])
       nil

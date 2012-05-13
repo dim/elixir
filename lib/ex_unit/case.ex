@@ -29,7 +29,7 @@ defmodule ExUnit.Case do
   """
 
   @doc false
-  defmacro __using__(module, opts // []), do:
+  defmacro __using__(module, opts // []) do
     if Keyword.get(opts, :sync, false), do:
       ExUnit.Server.add_sync_case(module)
     else:
@@ -62,7 +62,7 @@ defmodule ExUnit.Case do
       end
 
   """
-  defmacro test(message, contents), do:
+  defmacro test(message, contents) do
     contents =
       case contents, do:
         [do: block] ->

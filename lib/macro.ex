@@ -16,15 +16,15 @@ defmodule Macro do
       Macro.escape({ :a, :b, :c })
       #=> { :{}, 0, [:a, :b, :c] }
   """
-  def escape({ left, right }), do:
+  def escape({ left, right }) do
     { escape(left), escape(right) }
   end
 
-  def escape(tuple) when is_tuple(tuple), do:
+  def escape(tuple) when is_tuple(tuple) do
     { :{}, 0, escape(tuple_to_list(tuple)) }
   end
 
-  def escape(list) when is_list(list), do:
+  def escape(list) when is_list(list) do
     lc item in list, do: escape(item)
   end
 

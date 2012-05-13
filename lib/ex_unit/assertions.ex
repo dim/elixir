@@ -34,7 +34,7 @@ defmodule ExUnit.Assertions do
       assert true
 
   """
-  defmacro assert(expected), do:
+  defmacro assert(expected) do
     translate_assertion(expected)
   end
 
@@ -47,7 +47,7 @@ defmodule ExUnit.Assertions do
       assert false, "it will never be true"
 
   """
-  def assert(expected, message) when is_binary(message), do:
+  def assert(expected, message) when is_binary(message) do
     unless expected, do:
       raise ExUnit.AssertionError, message: message
     end
@@ -56,47 +56,47 @@ defmodule ExUnit.Assertions do
 
   ## START HELPERS
 
-  defmacrop negation?(op), do:
+  defmacrop negation?(op) do
     quote do: (var!(op) == :! or var!(op) == :not)
   end
 
-  defp translate_assertion({ :==, _, [left, right] }), do:
+  defp translate_assertion({ :==, _, [left, right] }) do
     { expected, actual } = guess_expected_and_actual(left, right)
     assert_operator :==, expected, actual, "equal to (==)"
   end
 
-  defp translate_assertion({ :<, _, [left, right] }), do:
+  defp translate_assertion({ :<, _, [left, right] }) do
     assert_operator :<, left, right, "less than"
   end
 
-  defp translate_assertion({ :>, _, [left, right] }), do:
+  defp translate_assertion({ :>, _, [left, right] }) do
     assert_operator :>, left, right, "more than"
   end
 
-  defp translate_assertion({ :<=, _, [left, right] }), do:
+  defp translate_assertion({ :<=, _, [left, right] }) do
     assert_operator :<=, left, right, "less than or equal to"
   end
 
-  defp translate_assertion({ :>=, _, [left, right] }), do:
+  defp translate_assertion({ :>=, _, [left, right] }) do
     assert_operator :>=, left, right, "more than or equal to"
   end
 
-  defp translate_assertion({ :===, _, [left, right] }), do:
+  defp translate_assertion({ :===, _, [left, right] }) do
     { expected, actual } = guess_expected_and_actual(left, right)
     assert_operator :===, expected, actual, "equal to (===)"
   end
 
-  defp translate_assertion({ :!==, _, [left, right] }), do:
+  defp translate_assertion({ :!==, _, [left, right] }) do
     { expected, actual } = guess_expected_and_actual(left, right)
     assert_operator :!==, expected, actual, "not equal to (!==)"
   end
 
-  defp translate_assertion({ :!=, _, [left, right] }), do:
+  defp translate_assertion({ :!=, _, [left, right] }) do
     { expected, actual } = guess_expected_and_actual(left, right)
     assert_operator :!=, expected, actual, "not equal to (!=)"
   end
 
-  defp translate_assertion({ :access, _, [container, base] }), do:
+  defp translate_assertion({ :access, _, [container, base] }) do
     quote do:
       container = unquote(container)
       base = unquote(base)
@@ -104,7 +104,7 @@ defmodule ExUnit.Assertions do
     end
   end
 
-  defp translate_assertion({ op, _, [{ :access, _, [container, base] }] }) when negation?(op), do:
+  defp translate_assertion({ op, _, [{ :access, _, [container, base] }] }) when negation?(op) do
     quote do:
       container = unquote(container)
       base = unquote(base)
@@ -112,14 +112,14 @@ defmodule ExUnit.Assertions do
     end
   end
 
-  defp translate_assertion(expected), do:
+  defp translate_assertion(expected) do
     quote do:
       value = unquote(expected)
       assert value, "Expected #{inspect value} to be true"
     end
   end
 
-  defp guess_expected_and_actual(left, right), do:
+  defp guess_expected_and_actual(left, right) do
     case right, do:
       { fun, i, _ } when is_integer(i) and (fun != :<<>> or fun != :{}) ->
         { left, right }
@@ -128,7 +128,7 @@ defmodule ExUnit.Assertions do
     end
   end
 
-  defp assert_operator(operator, expected, actual, text), do:
+  defp assert_operator(operator, expected, actual, text) do
     quote do:
       left  = unquote(expected)
       right = unquote(actual)
@@ -148,7 +148,7 @@ defmodule ExUnit.Assertions do
       assert_match { 1, _, 3 }, { 1, 2, 3 }
 
   """
-  defmacro assert_match(expected, received), do:
+  defmacro assert_match(expected, received) do
     quote do:
       try do:
         unquote(expected) = unquote(received)
@@ -169,7 +169,7 @@ defmodule ExUnit.Assertions do
       assert_member "foo", ["foo", "bar"]
 
   """
-  def assert_member(base, container, message // nil), do:
+  def assert_member(base, container, message // nil) do
     message = message || "Expected #{inspect container} to include #{inspect base}"
     assert(Enum.find(container, &1 == base), message)
   end
@@ -183,7 +183,7 @@ defmodule ExUnit.Assertions do
         1 + "test"
       end
   """
-  def assert_raise(exception, expected_message, function), do:
+  def assert_raise(exception, expected_message, function) do
     error = assert_raise(exception, function)
     assert error.message == expected_message
   end
@@ -198,19 +198,21 @@ defmodule ExUnit.Assertions do
       end
 
   """
-  def assert_raise(exception, function), do:
-    function.()
-    flunk "Expected #{inspect exception} exception but nothing was raised"
-  rescue:
-    error in [exception] -> error
-    error ->
-      name = error.__record__(:name)
+  def assert_raise(exception, function) do
+    try do:
+      function.()
+      flunk "Expected #{inspect exception} exception but nothing was raised"
+    rescue:
+      error in [exception] -> error
+      error ->
+        name = error.__record__(:name)
 
-      if name == ExUnit.AssertionError, do:
-        raise(error)
-      else:
-        flunk "Expected exception #{inspect exception}, got #{inspect name}"
-      end
+        if name == ExUnit.AssertionError, do:
+          raise(error)
+        else:
+          flunk "Expected exception #{inspect exception}, got #{inspect name}"
+        end
+    end
   end
 
   @doc """
@@ -222,7 +224,7 @@ defmodule ExUnit.Assertions do
       assert_empty [1, 2]
 
   """
-  def assert_empty(enum, message // nil), do:
+  def assert_empty(enum, message // nil) do
     message = message || "Expected #{inspect enum} to be empty"
     assert Enum.empty?(enum), message
   end
@@ -231,7 +233,7 @@ defmodule ExUnit.Assertions do
   Asserts the `value` is nil.
 
   """
-  def assert_nil(value, message // nil), do:
+  def assert_nil(value, message // nil) do
     message = message || "Expected #{inspect value} to be nil"
     assert value == nil, message
   end
@@ -245,7 +247,7 @@ defmodule ExUnit.Assertions do
       assert_in_delta 10, 15, 4
 
   """
-  def assert_in_delta(expected, received, delta, message // nil), do:
+  def assert_in_delta(expected, received, delta, message // nil) do
     diff = abs(expected - received)
     message = message ||
       "Expected |#{inspect expected} - #{inspect received}| (#{inspect diff}) to be < #{inspect delta}"
@@ -262,7 +264,7 @@ defmodule ExUnit.Assertions do
       end
 
   """
-  def assert_throw(expected, function), do:
+  def assert_throw(expected, function) do
     assert_catch(:throw, expected, function)
   end
 
@@ -276,7 +278,7 @@ defmodule ExUnit.Assertions do
       end
 
   """
-  def assert_exit(expected, function), do:
+  def assert_exit(expected, function) do
     assert_catch(:exit, expected, function)
   end
 
@@ -290,18 +292,20 @@ defmodule ExUnit.Assertions do
       end
 
   """
-  def assert_error(expected, function), do:
+  def assert_error(expected, function) do
     assert_catch(:error, expected, function)
   end
 
-  defp assert_catch(expected_type, expected_value, function), do:
-    function.()
-    flunk "Expected #{expected_type} #{inspect expected_value}, got nothing"
-  catch:
-    ^expected_type | ^expected_value ->
-      expected_value
-    ^expected_type | actual_value ->
-      flunk "Expected #{expected_type} #{inspect expected_value}, got #{inspect actual_value}"
+  defp assert_catch(expected_type, expected_value, function) do
+    try do:
+      function.()
+      flunk "Expected #{expected_type} #{inspect expected_value}, got nothing"
+    catch:
+      ^expected_type | ^expected_value ->
+        expected_value
+      ^expected_type | actual_value ->
+        flunk "Expected #{expected_type} #{inspect expected_value}, got #{inspect actual_value}"
+    end
   end
 
   @doc """
@@ -312,7 +316,7 @@ defmodule ExUnit.Assertions do
       refute false
 
   """
-  def refute(not_expected, message // nil), do:
+  def refute(not_expected, message // nil) do
     message = message || "Expected #{inspect not_expected} to be false"
     not assert(!not_expected, message)
   end
@@ -326,7 +330,7 @@ defmodule ExUnit.Assertions do
       refute_match { 1, _, 3 }, { 1, 2, 3 }
 
   """
-  defmacro refute_match(expected, received), do:
+  defmacro refute_match(expected, received) do
     quote do:
       try do:
         unquote(expected) = unquote(received)
@@ -346,7 +350,7 @@ defmodule ExUnit.Assertions do
       refute_empty [1, 2]
 
   """
-  def refute_empty(enum, message // nil), do:
+  def refute_empty(enum, message // nil) do
     message = message || "Expected #{inspect enum} to not be empty"
     refute Enum.empty?(enum), message
   end
@@ -354,7 +358,7 @@ defmodule ExUnit.Assertions do
   @doc """
   Asserts the `value` is not nil.
   """
-  def refute_nil(value, message // nil), do:
+  def refute_nil(value, message // nil) do
     message = message || "Expected #{inspect value} to not be nil"
     refute value == nil, message
   end
@@ -368,7 +372,7 @@ defmodule ExUnit.Assertions do
       refute_in_delta 10, 11, 2
 
   """
-  def refute_in_delta(expected, received, delta, message // nil), do:
+  def refute_in_delta(expected, received, delta, message // nil) do
     diff = abs(expected - received)
     message = message ||
       "Expected |#{inspect expected} - #{inspect received}| (#{inspect diff}) to not be < #{inspect delta}"
@@ -384,7 +388,7 @@ defmodule ExUnit.Assertions do
       refute_member "baz", ["foo", "bar"]
 
   """
-  def refute_member(base, container, message // nil), do:
+  def refute_member(base, container, message // nil) do
     message = message || "Expected #{inspect container} to not include #{inspect base}"
     refute(Enum.find(container, &1 == base), message)
   end
@@ -397,7 +401,7 @@ defmodule ExUnit.Assertions do
       flunk "This should raise an error"
 
   """
-  def flunk(message // "Epic Fail!"), do:
+  def flunk(message // "Epic Fail!") do
     assert false, message
   end
 end

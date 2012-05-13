@@ -3,18 +3,18 @@ Code.require_file "../test_helper", __FILE__
 defmodule ModuleTest.ToBeUsed do
   def value, do: 1
 
-  defmacro __using__(target, _), do:
+  defmacro __using__(target, _) do
     Module.merge_data target, has_callback: false
     Module.add_compile_callback(target, __MODULE__)
     Module.add_compile_callback(target, __MODULE__, :callback)
     quote do: (def line, do: __LINE__)
   end
 
-  def __compiling__(target), do:
+  def __compiling__(target) do
     Module.merge_data target, compiling: true
   end
 
-  defmacro callback(target), do:
+  defmacro callback(target) do
     value = Module.read_data(target, :has_callback)
     quote do:
       @has_callback true

@@ -41,12 +41,12 @@ defmodule RecordTest do
     refute is_record(RecordTest.FileInfo.new, List)
   end
 
-  defp file_info, do:
+  defp file_info do
     { :ok, file_info } = Erlang.file.read_file_info(__FILE__)
     file_info
   end
 
-  defp a_list, do:
+  defp a_list do
     [:a, :b, :c]
   end
 end

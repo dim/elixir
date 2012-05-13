@@ -7,42 +7,42 @@ defmodule Bitwise do
   @doc """
   Bitwise not.
   """
-  defmacro bnot(expr), do:
+  defmacro bnot(expr) do
     quote do: __op__ :bnot, unquote(expr)
   end
 
   @doc """
   Bitwise and.
   """
-  defmacro band(left, right), do:
+  defmacro band(left, right) do
     quote do: __op__ :band, unquote(left), unquote(right)
   end
 
   @doc """
   Bitwise or.
   """
-  defmacro bor(left, right), do:
+  defmacro bor(left, right) do
     quote do: __op__ :bor, unquote(left), unquote(right)
   end
 
   @doc """
   Bitwise xor.
   """
-  defmacro bxor(left, right), do:
+  defmacro bxor(left, right) do
     quote do: __op__ :bxor, unquote(left), unquote(right)
   end
 
   @doc """
   Arithmetic bitshift left.
   """
-  defmacro bsl(left, right), do:
+  defmacro bsl(left, right) do
     quote do: __op__ :bsl, unquote(left), unquote(right)
   end
 
   @doc """
   Arithmetic bitshift right.
   """
-  defmacro bsr(left, right), do:
+  defmacro bsr(left, right) do
     quote do: __op__ :bsr, unquote(left), unquote(right)
   end
 end
