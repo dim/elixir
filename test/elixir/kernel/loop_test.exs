@@ -40,26 +40,28 @@ defmodule Kernel.LoopTest do
     assert fun.([], []) == 2
   end
 
-  test :do_argless_loop, do:
-    Process.self <- 1
-    Process.self <- 2
-    Process.self <- 3
+  test :do_argless_loop do
+    try do:
+      Process.self <- 1
+      Process.self <- 2
+      Process.self <- 3
 
-    result = loop do:
-      receive do:
-        x -> Process.put x, -x; recur
-      after:
-        0 -> :ok
+      result = loop do:
+        receive do:
+          x -> Process.put x, -x; recur
+        after:
+          0 -> :ok
+        end
       end
-    end
 
-    assert result == :ok
-    assert Process.get(1) == -1
-    assert Process.get(2) == -2
-    assert Process.get(3) == -3
-  after:
-    Process.delete(1)
-    Process.delete(2)
-    Process.delete(3)
+      assert result == :ok
+      assert Process.get(1) == -1
+      assert Process.get(2) == -2
+      assert Process.get(3) == -3
+    after:
+      Process.delete(1)
+      Process.delete(2)
+      Process.delete(3)
+    end
   end
 end

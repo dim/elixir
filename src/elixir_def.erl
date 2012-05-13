@@ -74,8 +74,7 @@ store_definition(Kind, Line, Module, Name, Args, Guards, RawExpr, RawS) ->
 
   case RawExpr of
     skip_definition -> Expr = nil;
-    [{ do, Expr }] -> [];
-    _ -> Expr = { 'try', Line, [RawExpr] }
+    [{ do, Expr }] -> []
   end,
 
   { Function, Defaults, TS } = translate_definition(Kind, Line, Name, Args, Guards, Expr, S),

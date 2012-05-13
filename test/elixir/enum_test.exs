@@ -3,21 +3,25 @@ Code.require_file "../test_helper", __FILE__
 defmodule EnumTest.Common do
   use ExUnit.Case
 
-  test :times_with_arity_0, do:
-    Process.put(:times_with_arity, nil)
-    assert Enum.times(0, fn do: Process.put(:times_with_arity, :ok)) == 0
-    assert Process.get(:times_with_arity) == nil
-    assert Enum.times(3, fn do: Process.put(:times_with_arity, :ok)) == 3
-    assert Process.get(:times_with_arity) == :ok
-  after:
-    Process.delete(:times_with_arity)
+  test :times_with_arity_0 do
+    try do:
+      Process.put(:times_with_arity, nil)
+      assert Enum.times(0, fn do: Process.put(:times_with_arity, :ok)) == 0
+      assert Process.get(:times_with_arity) == nil
+      assert Enum.times(3, fn do: Process.put(:times_with_arity, :ok)) == 3
+      assert Process.get(:times_with_arity) == :ok
+    after:
+      Process.delete(:times_with_arity)
+    end
   end
 
-  test :times_with_arity_1, do:
-    assert Enum.times(5, fn(x, do: Process.put(:times_with_arity, x))) == 5
-    assert Process.get(:times_with_arity) == 5
-  after:
-    Process.delete(:times_with_arity)
+  test :times_with_arity_1 do
+    try do:
+      assert Enum.times(5, fn(x, do: Process.put(:times_with_arity, x))) == 5
+      assert Process.get(:times_with_arity) == 5
+    after:
+      Process.delete(:times_with_arity)
+    end
   end
 
   test :times_with_arity_2, do:
@@ -81,13 +85,15 @@ defmodule EnumTest.List do
     refute Enum.empty?([1,2,3])
   end
 
-  test :each, do:
-    assert Enum.each([], fn(x, do: x)) == []
+  test :each do
+    try do:
+      assert Enum.each([], fn(x, do: x)) == []
 
-    assert Enum.each([1,2,3], fn(x, do: Process.put(:enum_test_each, x * 2))) == [1,2,3]
-    assert Process.get(:enum_test_each) == 6
-  after:
-    Process.delete(:enum_test_each)
+      assert Enum.each([1,2,3], fn(x, do: Process.put(:enum_test_each, x * 2))) == [1,2,3]
+      assert Process.get(:enum_test_each) == 6
+    after:
+      Process.delete(:enum_test_each)
+    end
   end
 
   test :filter, do:
@@ -230,19 +236,21 @@ defmodule EnumTest.Dict.Common do
         refute Enum.empty?(unquote(module).new [a: 1])
       end
 
-      test :each, do:
-        empty_dict = unquote(module).new
-        assert empty_dict == Enum.each(empty_dict, fn(x, do: x))
+      test :each do
+        try do:
+          empty_dict = unquote(module).new
+          assert empty_dict == Enum.each(empty_dict, fn(x, do: x))
 
-        dict = unquote(module).new [{"one",1}, {"two",2}, {"three",3}]
-        assert dict == Enum.each(dict, fn({k, v}, do: Process.put(k, v * 2)))
-        assert 2 == Process.get("one")
-        assert 4 == Process.get("two")
-        assert 6 == Process.get("three")
-      after:
-        Process.delete("one")
-        Process.delete("two")
-        Process.delete("three")
+          dict = unquote(module).new [{"one",1}, {"two",2}, {"three",3}]
+          assert dict == Enum.each(dict, fn({k, v}, do: Process.put(k, v * 2)))
+          assert 2 == Process.get("one")
+          assert 4 == Process.get("two")
+          assert 6 == Process.get("three")
+        after:
+          Process.delete("one")
+          Process.delete("two")
+          Process.delete("three")
+        end
       end
 
       test :filter, do:
