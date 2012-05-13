@@ -1,6 +1,6 @@
 import Elixir.Builtin, except: [access: 2]
 
-defprotocol Access, do:
+defprotocol Access do
   @moduledoc """
   The Access protocol is the underlying protocol invoked
   when the brackets syntax is used. For instance, `foo[bar]`
@@ -19,7 +19,7 @@ defprotocol Access, do:
   def access(element, qualifier)
 end
 
-defimpl Access, for: Tuple, do:
+defimpl Access, for: Tuple do
   @doc """
   Access the tuple via an integer. Negative indexes
   performs an inverted lookup, for example, -1 can be

@@ -1146,8 +1146,8 @@ defmodule Elixir.Builtin do
       defrecord Config, [counter: 0, failures: []], moduledoc: "A simple record"
 
   """
-  defmacro defrecord(name, values, opts // []), do:
-    Record.defrecord(name, values, opts)
+  defmacro defrecord(name, values, opts // [], do_block // []), do:
+    Record.defrecord(name, values, Keyword.merge(opts, do_block))
   end
 
   @doc """
@@ -1345,8 +1345,8 @@ defmodule Elixir.Builtin do
   Defines an implementation for the given protocol. See
   `defprotocol/2` for examples.
   """
-  defmacro defimpl(name, [do: _, for: _] = opts), do:
-    Protocol.defimpl(name, opts)
+  defmacro defimpl(name, opts, do_block // []), do:
+    Protocol.defimpl(name, Keyword.merge(opts, do_block))
   end
 
   @doc """
