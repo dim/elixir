@@ -1,6 +1,6 @@
 defrecord Orddict.Record, data: nil
 
-defimpl Dict, for: Orddict.Record, do:
+defimpl Dict, for: Orddict.Record do
   refer Orddict.Record, as: O
 
   def keys(O[data: data]), do:

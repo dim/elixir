@@ -1,6 +1,6 @@
 import Elixir.Builtin, except: [inspect: 1]
 
-defprotocol Binary.Inspect, do:
+defprotocol Binary.Inspect do
   @moduledoc """
   The `Binary.Inspect` protocol is responsible for
   converting any structure to a Binary for textual
@@ -15,7 +15,7 @@ defprotocol Binary.Inspect, do:
   def inspect(thing)
 end
 
-defimpl Binary.Inspect, for: Atom, do:
+defimpl Binary.Inspect, for: Atom do
   @doc """
   Represents the atom as an Elixir term.
   The atoms false, true and nil are simply
@@ -76,7 +76,7 @@ defimpl Binary.Inspect, for: Atom, do:
   defp valid_identifier?(else), do: else
 end
 
-defimpl Binary.Inspect, for: BitString, do:
+defimpl Binary.Inspect, for: BitString do
   @doc %B"""
   Represents the string as itself escaping
   all necessary characters.
@@ -112,7 +112,7 @@ defimpl Binary.Inspect, for: BitString, do:
   defp replace([], acc),                    do: acc
 end
 
-defimpl Binary.Inspect, for: List, do:
+defimpl Binary.Inspect, for: List do
 
   @doc %B"""
   Represents a list checking if it can be printed or not.
@@ -157,7 +157,7 @@ defimpl Binary.Inspect, for: List, do:
   end
 end
 
-defimpl Binary.Inspect, for: Tuple, do:
+defimpl Binary.Inspect, for: Tuple do
   @doc """
   Inspect tuples. If the tuple represents a record,
   it shows it nicely formatted using the access syntax.
@@ -209,7 +209,7 @@ defimpl Binary.Inspect, for: Tuple, do:
   end
 end
 
-defimpl Binary.Inspect, for: Number, do:
+defimpl Binary.Inspect, for: Number do
   @doc """
   Represents the number as a binary.
 
@@ -227,7 +227,7 @@ defimpl Binary.Inspect, for: Number, do:
   end
 end
 
-defimpl Binary.Inspect, for: Regex, do:
+defimpl Binary.Inspect, for: Regex do
   @doc %B"""
   Represents the Regex using the `%r""` syntax.
 
@@ -241,7 +241,7 @@ defimpl Binary.Inspect, for: Regex, do:
   end
 end
 
-defimpl Binary.Inspect, for: Any, do:
+defimpl Binary.Inspect, for: Any do
   @doc """
   For all other terms not implemented, we use the default
   Erlang representation.

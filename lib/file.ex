@@ -34,7 +34,7 @@ defmodule File do
   `:universal`, or `:posix`. Default is `:local`.
   """
 
-  defexception Error, [reason: nil, action: "", path: nil], do:
+  defexception Error, [reason: nil, action: "", path: nil] do
     def message(exception), do:
       formatted = list_to_binary(F.format_error(exception.reason))
       "could not #{exception.action} #{exception.path}: #{formatted}"

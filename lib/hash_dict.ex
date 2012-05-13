@@ -1,6 +1,6 @@
 defrecord HashDict.Record, data: nil
 
-defimpl Dict, for: HashDict.Record, do:
+defimpl Dict, for: HashDict.Record do
   refer HashDict.Record, as: HD
 
   def keys(HD[data: data]), do:

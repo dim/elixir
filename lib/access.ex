@@ -48,7 +48,7 @@ defimpl Access, for: Tuple do
   end
 end
 
-defimpl Access, for: List, do:
+defimpl Access, for: List do
   @doc """
   Access the list via a predicate.
 
@@ -96,7 +96,7 @@ defimpl Access, for: List, do:
   defp atom_access([], _),                        do: nil
 end
 
-defimpl Access, for: BitString, do:
+defimpl Access, for: BitString do
   @doc """
   Access the binary via a predicate.
 
@@ -120,7 +120,7 @@ defimpl Access, for: BitString, do:
   end
 end
 
-defimpl Access, for: Atom, do:
+defimpl Access, for: Atom do
   @doc """
   Access the atom via keywords. Different from other
   implementations, the Access protocol for atoms is
@@ -165,7 +165,7 @@ defimpl Access, for: Atom, do:
   end
 end
 
-defimpl Access, for: Function, do:
+defimpl Access, for: Function do
   @doc """
   The Access protocol for functions simply invokes
   the function passing the item as argument. This

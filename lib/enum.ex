@@ -41,7 +41,7 @@ defprotocol Enum.Iterator, do:
   def iterator(collection)
 end
 
-defprotocol Enum.OrdIterator, do:
+defprotocol Enum.OrdIterator do
   @moduledoc """
   This protocol is invoked by some functions in Enum which
   requires an ordered collection to function correctly. For
@@ -868,13 +868,13 @@ defmodule Enum do
   end
 end
 
-defimpl Enum.Iterator, for: List, do:
+defimpl Enum.Iterator, for: List do
   def iterator(list),  do: { iterate(&1), iterate(list) }
   defp iterate([h|t]), do: { h, t }
   defp iterate([]),    do: :stop # The :stop atom is the end of the iteration.
 end
 
-defimpl Enum.OrdIterator, for: List, do:
+defimpl Enum.OrdIterator, for: List do
   def iterator(list), do:
     Enum.Iterator.List.iterator(list)
   end
@@ -882,17 +882,17 @@ defimpl Enum.OrdIterator, for: List, do:
   def to_list(h, next), do: [h|next]
 end
 
-defimpl Enum.Iterator, for: HashDict.Record, do:
+defimpl Enum.Iterator, for: HashDict.Record do
   def iterator(dict), do: Enum.Iterator.List.iterator(to_list(dict))
   defp to_list(dict), do: Dict.HashDict.Record.to_list(dict)
 end
 
-defimpl Enum.Iterator, for: Orddict.Record, do:
+defimpl Enum.Iterator, for: Orddict.Record do
   def iterator(dict), do: Enum.Iterator.List.iterator(to_list(dict))
   defp to_list(dict), do: Dict.Orddict.Record.to_list(dict)
 end
 
-defimpl Enum.OrdIterator, for: Orddict.Record, do:
+defimpl Enum.OrdIterator, for: Orddict.Record do
   def iterator(dict), do:
     Enum.Iterator.Orddict.Record.iterator(dict)
   end
