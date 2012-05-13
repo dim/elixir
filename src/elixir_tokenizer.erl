@@ -500,8 +500,25 @@ tokenize_call_identifier(Kind, Line, Atom, Rest) ->
   case Rest of
     [$(|_] -> { paren_identifier, Line, Atom };
     [$[|_] -> { bracket_identifier, Line, Atom };
-    _      -> { Kind, Line, Atom }
+    _ ->
+      case next_is_block(Rest) of
+        []              -> { Kind, Line, Atom };
+        BlockIdentifier -> { BlockIdentifier, Line, Atom }
+      end
   end.
+
+next_is_block([Space|Tokens]) when Space == $\t; Space == $\s ->
+  next_is_block(Tokens);
+
+next_is_block([$d,$o,H|_]) when
+  ?is_digit(H); ?is_upcase(H); ?is_downcase(H); H == $_; H == $: ->
+  [];
+
+next_is_block([$d,$o|_]) ->
+  do_identifier;
+
+next_is_block(_) ->
+  [].
 
 % Terminator
 terminator($() -> $);
@@ -510,13 +527,19 @@ terminator(${) -> $};
 terminator($<) -> $>;
 terminator(O) -> O.
 
-% Lambda
-keyword(Line, identifier, 'fn')       -> { 'fn', Line };
-keyword(Line, paren_identifier, 'fn') -> { 'fn_paren', Line };
-keyword(Line, identifier, Other)      -> keyword(Other) andalso { Other, Line };
-keyword(_, _, _)                      -> false.
+% Keywords check
+
+keyword(Line, Identifier, Other) when Identifier ==  identifier; Identifier == do_identifier ->
+  keyword(Other) andalso { Other, Line };
+
+keyword(Line, paren_identifier, 'fn') ->
+  { 'fn_paren', Line };
+
+keyword(_, _, _) -> false.
 
 % Keywords
+keyword('fn')      -> true;
+keyword('do')      -> true;
 keyword('end')     -> true;
 keyword('true')    -> true;
 keyword('false')   -> true;

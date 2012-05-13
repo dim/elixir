@@ -1838,13 +1838,13 @@ defmodule Elixir.Builtin, do:
   macro.
 
   """
-  defmacro if(condition, [{:do,do}|tail]), do:
-    else = Keyword.get(tail, :else, nil)
+  defmacro if(condition, [{:do,do_clause}|tail]), do:
+    else_clause = Keyword.get(tail, :else, nil)
 
     quote do:
       case !unquote(condition), do:
-        false -> unquote(do)
-        true  -> unquote(else)
+        false -> unquote(do_clause)
+        true  -> unquote(else_clause)
       end
     end
   end
