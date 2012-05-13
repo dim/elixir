@@ -3,18 +3,18 @@ Code.require_file "../../test_helper", __FILE__
 defmodule Kernel.CaseTest do
   use ExUnit.Case
 
-  test :nested_case, do:
+  deftest :nested_case do
     assert get_case == 2
   end
 
-  test :nested_variables, do:
+  deftest :nested_variables do
     assert vars_case(400, 1) == { 400, 1 }
     assert vars_case(401, 1) == { 400, -1 }
     assert vars_case(0, -1)  == { 0, -1 }
     assert vars_case(-1, -1) == { 0, 1 }
   end
 
-  test :match_with_in, do:
+  deftest :match_with_in do
     assert(case 3, do:
       x in [1,2,3] ->
         true
@@ -30,7 +30,7 @@ defmodule Kernel.CaseTest do
     end)
   end
 
-  test :in_operator_outside_case, do:
+  deftest :in_operator_outside_case do
     x = 1
     y = 4
     assert x in [1,2,3]

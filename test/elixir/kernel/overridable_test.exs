@@ -91,49 +91,49 @@ defmodule Kernel.OverridableTest do
   require Kernel.Overridable, as: Overridable
   use ExUnit.Case
 
-  test "overridable is made concrete if no other is defined", do:
+  deftest "overridable is made concrete if no other is defined" do
     assert Overridable.sample == 1
   end
 
-  test "overridable overridden with super", do:
+  deftest "overridable overridden with super" do
     assert Overridable.with_super == 3
   end
 
-  test "overridable overridden without super", do:
+  deftest "overridable overridden without super" do
     assert Overridable.without_super == :without_super
   end
 
-  test "overridable overriden with nested super", do:
+  deftest "overridable overriden with nested super" do
     assert Overridable.explicit_nested_super == { { { false, 2 }, true, 1 }, true, 0 }
   end
 
-  test "overridable node overriden with nested super", do:
+  deftest "overridable node overriden with nested super" do
     assert Overridable.implicit_nested_super == { { false, 1 }, true, 0 }
   end
 
-  test "calling super with explicit args", do:
+  deftest "calling super with explicit args" do
     assert Overridable.super_with_explicit_args(1, 2) == 5
   end
 
-  test "calling super with implicit args", do:
+  deftest "calling super with implicit args" do
     assert Overridable.super_with_implicit_args(1, 2) == 6
   end
 
-  test "function without overridable returns false for super?", do:
+  deftest "function without overridable returns false for super?" do
     assert Overridable.no_overridable == { :no_overridable, false }
   end
 
-  test "overridable with many clauses", do:
+  deftest "overridable with many clauses" do
     assert Overridable.many_clauses(0) == 11
     assert Overridable.many_clauses(1) == 13
     assert Overridable.many_clauses(2) == 17
   end
 
-  test "overridable definitions are private", do:
+  deftest "overridable definitions are private" do
     refute_member {:"OVERRIDABLE-0-with_super",0}, Overridable.__info__(:exports)
   end
 
-  test "invalid super call", do:
+  deftest "invalid super call" do
     try do:
       Erlang.elixir.eval 'defmodule Foo.Forwarding do\ndef bar, do: 1\ndefoverridable [bar: 0]\ndef foo, do: super\nend', []
       flunk "expected eval to fail"

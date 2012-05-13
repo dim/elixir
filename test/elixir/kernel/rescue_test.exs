@@ -3,7 +3,7 @@ Code.require_file "../../test_helper", __FILE__
 defmodule Kernel.RescueTest do
   use ExUnit.Case
 
-  test :rescue_with_underscore_no_exception, do:
+  deftest :rescue_with_underscore_no_exception do
     result = try do:
       RescueUndefinedModule.go
     rescue:
@@ -13,7 +13,7 @@ defmodule Kernel.RescueTest do
     assert result
   end
 
-  test :rescue_with_higher_precedence_than_catch, do:
+  deftest :rescue_with_higher_precedence_than_catch do
     result = try do:
       RescueUndefinedModule.go
     catch:
@@ -25,7 +25,7 @@ defmodule Kernel.RescueTest do
     assert result
   end
 
-  test :rescue_runtime_error, do:
+  deftest :rescue_runtime_error do
     result = try do:
       raise "an exception"
     rescue:
@@ -47,7 +47,7 @@ defmodule Kernel.RescueTest do
     refute result
   end
 
-  test :rescue_named_runtime_error, do:
+  deftest :rescue_named_runtime_error do
     result = try do:
       raise "an exception"
     rescue:
@@ -59,7 +59,7 @@ defmodule Kernel.RescueTest do
     assert result == "an exception"
   end
 
-  test :rescue_argument_error_from_elixir, do:
+  deftest :rescue_argument_error_from_elixir do
     result = try do:
      raise ArgumentError, message: ""
     rescue:
@@ -69,7 +69,7 @@ defmodule Kernel.RescueTest do
     assert result
   end
 
-  test :rescue_argument_error_and_undefined_function_error, do:
+  deftest :rescue_argument_error_and_undefined_function_error do
     named = ArgumentError
 
     result = try do:
@@ -83,7 +83,7 @@ defmodule Kernel.RescueTest do
     assert result == "didn't catch it"
   end
 
-  test :rescue_named_with_underscore, do:
+  deftest :rescue_named_with_underscore do
     result = try do:
       raise "an exception"
     rescue:
@@ -93,7 +93,7 @@ defmodule Kernel.RescueTest do
     assert result == "an exception"
   end
 
-  test :rescue_defined_variable, do:
+  deftest :rescue_defined_variable do
     var = Protocol.UndefinedError[protocol: Foo]
 
     result = try do:
@@ -105,7 +105,7 @@ defmodule Kernel.RescueTest do
     assert result, "Expected to rescue with success"
   end
 
-  test :rescue_named_defined_variable, do:
+  deftest :rescue_named_defined_variable do
     expected = RuntimeError
 
     result = try do:
@@ -119,7 +119,7 @@ defmodule Kernel.RescueTest do
     assert result == "an exception"
   end
 
-  test :wrap_custom_erlang_error, do:
+  deftest :wrap_custom_erlang_error do
     result = try do:
       :erlang.error(:sample)
     rescue:
@@ -129,7 +129,7 @@ defmodule Kernel.RescueTest do
     assert result == "erlang error: :sample"
   end
 
-  test :undefined_function_error, do:
+  deftest :undefined_function_error do
     result = try do:
       DoNotExist.for_sure()
     rescue:
@@ -139,7 +139,7 @@ defmodule Kernel.RescueTest do
     assert result == "undefined function: DoNotExist.for_sure/0"
   end
 
-  test :function_clause_error, do:
+  deftest :function_clause_error do
     result = try do:
       zero(1)
     rescue:
@@ -149,7 +149,7 @@ defmodule Kernel.RescueTest do
     assert result == "no function clause matching: Kernel.RescueTest.zero(1)"
   end
 
-  test :badarg_error, do:
+  deftest :badarg_error do
     result = try do:
       :erlang.error(:badarg)
     rescue:
@@ -159,7 +159,7 @@ defmodule Kernel.RescueTest do
     assert result == "argument error"
   end
 
-  test :tuple_badarg_error, do:
+  deftest :tuple_badarg_error do
     result = try do:
       :erlang.error({ :badarg, [1,2,3] })
     rescue:
@@ -169,7 +169,7 @@ defmodule Kernel.RescueTest do
     assert result == "argument error: [1,2,3]"
   end
 
-  test :badarith_error, do:
+  deftest :badarith_error do
     result = try do:
       :erlang.error(:badarith)
     rescue:
@@ -179,7 +179,7 @@ defmodule Kernel.RescueTest do
     assert result == "bad argument in arithmetic expression"
   end
 
-  test :badarity_error, do:
+  deftest :badarity_error do
     fun    = fn(x, do: x)
     string = "bad arity error: #{inspect(fun)} called with [1,2]"
 
@@ -192,7 +192,7 @@ defmodule Kernel.RescueTest do
     assert result == string
   end
 
-  test :badfun_error, do:
+  deftest :badfun_error do
     x = :example
     result = try do:
       x.(2)
@@ -203,7 +203,7 @@ defmodule Kernel.RescueTest do
     assert result == "bad function: :example"
   end
 
-  test :badmatch_error, do:
+  deftest :badmatch_error do
     x = :example
     result = try do:
       ^x = :other
@@ -214,7 +214,7 @@ defmodule Kernel.RescueTest do
     assert result == "no match of right hand side value: :other"
   end
 
-  test :case_clause_error, do:
+  deftest :case_clause_error do
     x = :example
     result = try do:
       case :other, do:
@@ -227,7 +227,7 @@ defmodule Kernel.RescueTest do
     assert result == "no case clause matching: :other"
   end
 
-  test :undefined_function_error_from_expected_variable, do:
+  deftest :undefined_function_error_from_expected_variable do
     expected = UndefinedFunctionError
     result = try do:
       DoNotExist.for_sure()
@@ -238,7 +238,7 @@ defmodule Kernel.RescueTest do
     assert result == "undefined function: DoNotExist.for_sure/0"
   end
 
-  test :undefined_function_error_as_erlang_error, do:
+  deftest :undefined_function_error_as_erlang_error do
     result = try do:
       DoNotExist.for_sure()
     rescue:
@@ -248,7 +248,7 @@ defmodule Kernel.RescueTest do
     assert result == "undefined function: DoNotExist.for_sure/0"
   end
 
-  test :pattern_matching, do:
+  deftest :pattern_matching do
     result = try do:
       raise Protocol.UndefinedError, protocol: Foo
     rescue:

@@ -5,7 +5,7 @@ defmodule Kernel.ImportOnlyTest do
 
   import Erlang.lists, only: [flatten: 1]
 
-  test :import_erlang, do:
+  deftest :import_erlang do
     assert flatten([1,[2],3]) == [1,2,3]
   end
 end
@@ -15,7 +15,7 @@ defmodule Kernel.ImportAllTest do
 
   import Erlang.lists
 
-  test :import_erlang, do:
+  deftest :import_erlang do
     assert flatten([1,[2],3]) == [1,2,3]
   end
 end
@@ -25,7 +25,7 @@ defmodule Kernel.ImportExceptTest do
 
   import Erlang.lists, except: [each: 2]
 
-  test :import_erlang, do:
+  deftest :import_erlang do
     assert flatten([1,[2],3]) == [1,2,3]
   end
 end
@@ -36,7 +36,7 @@ defmodule Kernel.ImportTwiceWithExceptTest do
   import Erlang.lists, except: [flatten: 1]
   import Erlang.lists, except: [each: 2]
 
-  test :import_erlang, do:
+  deftest :import_erlang do
     assert flatten([1,[2],3]) == [1,[2],3]
   end
 
@@ -53,13 +53,13 @@ defmodule Kernel.ImportMacrosTest do
 
   import :macros, Bitwise
 
-  test :import_true, do:
+  deftest :import_true do
     assert band(1, 1) == 1
     assert bor(0, 1) == 1
     assert bnot(0) == -1
   end
 
-  test :function_import_with_only, do:
+  deftest :function_import_with_only do
     import :macros, Bitwise, except: [bnot: 1]
     import :macros, Kernel.MessedBitwise, only: [bnot: 1]
     assert bnot(0) == 0
@@ -68,7 +68,7 @@ defmodule Kernel.ImportMacrosTest do
 
   # This test is asserting that the requires done
   # inside the function do not affect outer ones.
-  test :import_true_not_affected, do:
+  deftest :import_true_not_affected do
     assert band(1, 1) == 1
     assert bor(0, 1) == 1
     assert bnot(0) == -1

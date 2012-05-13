@@ -57,12 +57,12 @@ defmodule ExUnit.Case do
 
   ## Examples
 
-      test "true is equal to true", do:
+      deftest "true is equal to true" do
         assert true == true
       end
 
   """
-  defmacro test(message, [do: block]) do
+  defmacro deftest(message, [do: block]) do
     contents =
       quote do:
         unquote(block)

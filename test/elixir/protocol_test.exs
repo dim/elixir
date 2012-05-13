@@ -42,7 +42,7 @@ end
 defmodule ProtocolTest do
   use ExUnit.Case
 
-  test :protocol_with_all, do:
+  deftest :protocol_with_all do
     assert_undef(ProtocolTest.WithAll, Atom, :foo)
     assert_undef(ProtocolTest.WithAll, Function, fn(x, do: x))
     assert_undef(ProtocolTest.WithAll, Number, 1)
@@ -59,7 +59,7 @@ defmodule ProtocolTest do
     assert_undef(ProtocolTest.WithAll, Reference, make_ref)
   end
 
-  test :protocol_with_except, do:
+  deftest :protocol_with_except do
     assert_undef(ProtocolTest.WithExcept, Any, :foo)
     assert_undef(ProtocolTest.WithExcept, Any, 1)
     assert_undef(ProtocolTest.WithExcept, Any, [1,2,3])
@@ -67,12 +67,12 @@ defmodule ProtocolTest do
     assert_undef(ProtocolTest.WithExcept, Tuple, {})
   end
 
-  test :protocol_with_only, do:
+  deftest :protocol_with_only do
     assert_undef ProtocolTest.WithOnly, Function, fn(x, do: x)
     assert ProtocolTest.WithOnly.blank(ProtocolTest.Foo.new) == true
   end
 
-  test :protocol_with_only_with_undefined, do:
+  deftest :protocol_with_only_with_undefined do
     assert ProtocolTest.WithOnly.__impl_for__(:foo) == nil
 
     assert_raise Protocol.UndefinedError, "protocol ProtocolTest.WithOnly not implemented for :foo", fn ->
@@ -80,12 +80,12 @@ defmodule ProtocolTest do
     end
   end
 
-  test :protocol_with_record, do:
+  deftest :protocol_with_record do
     true  = ProtocolTest.WithAll.blank(ProtocolTest.Foo.new)
     false = ProtocolTest.WithAll.blank(ProtocolTest.Foo.new(a: 1))
   end
 
-  test :protocol_for, do:
+  deftest :protocol_for do
     assert_protocol_for(ProtocolTest.WithAll, Atom, :foo)
     assert_protocol_for(ProtocolTest.WithAll, Function, fn(x, do: x))
     assert_protocol_for(ProtocolTest.WithAll, Number, 1)
@@ -102,7 +102,7 @@ defmodule ProtocolTest do
     assert_protocol_for(ProtocolTest.WithAll, Reference, make_ref)
   end
 
-  test :protocol_with_two_items, do:
+  deftest :protocol_with_two_items do
     assert ProtocolTest.Plus.plus(1) == 2
     assert ProtocolTest.Plus.plus(1, 2) == 3
   end

@@ -5,7 +5,7 @@ defmodule Kernel.DocTest do
   # server state, we need to run it in sync.
   use ExUnit.Case, sync: true
 
-  test :compiled_docs, do:
+  deftest :compiled_docs do
     tmp  = File.expand_path("../../tmp", __FILE__)
     path = File.expand_path("../../fixtures/compiled_with_docs.ex", __FILE__)
 
@@ -25,7 +25,7 @@ defmodule Kernel.DocTest do
     end
   end
 
-  test :compiled_no_docs, do:
+  deftest :compiled_no_docs do
     assert __MODULE__.__info__(:docs) == nil
     assert __MODULE__.__info__(:moduledoc) == nil
   end

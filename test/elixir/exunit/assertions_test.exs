@@ -9,11 +9,11 @@ refer ExUnit.AssertionsTest.Value
 defmodule ExUnit.AssertionsTest do
   use ExUnit.Case, sync: false
 
-  test :assert_when_value_is_true, do:
+  deftest :assert_when_value_is_true do
     true = assert true
   end
 
-  test :assert_when_value_is_false do
+  deftest :assert_when_value_is_false do
     try do:
       "This should never be tested" = assert false
     rescue:
@@ -22,7 +22,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_with_message_when_value_is_false do
+  deftest :assert_with_message_when_value_is_false do
     try do:
       "This should never be tested" = assert false, "This should be true"
     rescue:
@@ -31,7 +31,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_with_equality do
+  deftest :assert_with_equality do
     try do:
       "This should never be tested" = assert 1 + 1 == 1
     rescue:
@@ -40,7 +40,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_with_equality_in_reverse do
+  deftest :assert_with_equality_in_reverse do
     try do:
       "This should never be tested" = assert 1 == 1 + 1
     rescue:
@@ -49,11 +49,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_when_value_is_false, do:
+  deftest :refute_when_value_is_false do
     false = refute false
   end
 
-  test :refute_when_value_is_true do
+  deftest :refute_when_value_is_true do
     try do:
       "This should never be tested" = refute true
     rescue:
@@ -62,7 +62,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_with_message_when_value_is_true do
+  deftest :refute_with_message_when_value_is_true do
     try do:
       "This should never be tested" = refute true, "This should be false"
     rescue:
@@ -71,12 +71,12 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_match_when_equal, do:
+  deftest :assert_match_when_equal do
     assert_match({ 2, 1 }, Value.tuple)
     true = assert_match({ 2, 1 }, Value.tuple)
   end
 
-  test :assert_match_when_different do
+  deftest :assert_match_when_different do
     try do:
       "This should never be tested" = assert_match({_, 2}, Value.tuple)
     rescue:
@@ -85,11 +85,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_member_when_is_member, do:
+  deftest :assert_member_when_is_member do
     true = assert_member('foo', ['foo', 'bar'])
   end
 
-  test :assert_member_when_is_not_member do
+  deftest :assert_member_when_is_not_member do
     try do:
       "This should never be tested" = assert_member('foo', 'bar')
     rescue:
@@ -98,7 +98,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_member_with_message_when_is_not_member do
+  deftest :assert_member_with_message_when_is_not_member do
     try do:
       "This should never be tested" = assert_member('foo', 'bar', "This should be included")
     rescue:
@@ -107,11 +107,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_member_when_is_not_member, do:
+  deftest :refute_member_when_is_not_member do
     false = refute_member('baz', ['foo', 'bar'])
   end
 
-  test :refute_member_when_is_member do
+  deftest :refute_member_when_is_member do
     try do:
       "This should never be tested" = refute_member('foo', ['foo', 'bar'])
     rescue:
@@ -120,7 +120,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_member_with_message_when_is_member do
+  deftest :refute_member_with_message_when_is_member do
     try do:
       "This should never be tested" = refute_member('foo', ['foo', 'bar'], "This should be included")
     rescue:
@@ -129,11 +129,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_access_when_is_member, do:
+  deftest :assert_access_when_is_member do
     true = assert "abc"[%r(b)]
   end
 
-  test :assert_access_when_is_not_member do
+  deftest :assert_access_when_is_not_member do
     try do:
       "This should never be tested" = assert {1,2,3}[10]
     rescue:
@@ -142,7 +142,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_access_with_message_when_is_not_member do
+  deftest :assert_access_with_message_when_is_not_member do
     try do:
       "This should never be tested" = assert({1,2,3}[10], "should access")
     rescue:
@@ -151,11 +151,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_no_access_when_is_not_member, do:
+  deftest :assert_no_access_when_is_not_member do
     true = assert !{1,2,3}[10]
   end
 
-  test :assert_no_access_when_is_member do
+  deftest :assert_no_access_when_is_member do
     try do:
       "This should never be tested" = assert !{1,2,3}[1]
     rescue:
@@ -164,7 +164,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_no_access_with_message_when_is_member do
+  deftest :assert_no_access_with_message_when_is_member do
     try do:
       "This should never be tested" = assert !{1,2,3}[1], "This should be included"
     rescue:
@@ -173,7 +173,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_raise_when_no_error do
+  deftest :assert_raise_when_no_error do
     try do:
       "This should never be tested" = assert_raise ArgumentError, fn ->
         # nothing
@@ -184,7 +184,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_raise_when_error, do:
+  deftest :assert_raise_when_error do
     error = assert_raise ArgumentError, fn ->
       raise ArgumentError, message: "test error"
     end
@@ -192,7 +192,7 @@ defmodule ExUnit.AssertionsTest do
     "test error" = error.message
   end
 
-  test :assert_raise_when_other_error do
+  deftest :assert_raise_when_other_error do
     try do:
       "This should never be tested" = assert_raise ArgumentError, fn ->
         Certainly.Undefined.function(1,2,3)
@@ -203,7 +203,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_raise_when_erlang_error do
+  deftest :assert_raise_when_erlang_error do
     try do:
       assert_raise SyntaxError, fn ->
         List.flatten(1)
@@ -214,11 +214,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_operator_greater_pass, do:
+  deftest :assert_operator_greater_pass do
     true = assert 2 > 1
   end
 
-  test :assert_operator_greater_fail do
+  deftest :assert_operator_greater_fail do
     try do:
       "This should never be tested" = assert 1 > 2
     rescue:
@@ -227,11 +227,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_operator_less_or_equal_than_pass, do:
+  deftest :assert_operator_less_or_equal_than_pass do
     true = assert 1 <= 2
   end
 
-  test :assert_operator_less_or_equal_than_fail do
+  deftest :assert_operator_less_or_equal_than_fail do
     try do:
       "This should never be tested" = assert 2 <= 1
     rescue:
@@ -240,12 +240,12 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_operator_with_expressions, do:
+  deftest :assert_operator_with_expressions do
     greater = 5
     true = assert 1 + 2 < greater
   end
 
-  test :assert_operator_with_message do
+  deftest :assert_operator_with_message do
     try do:
       "This should never be tested" = assert 1 > 2, "assertion"
     rescue:
@@ -254,11 +254,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_empty_when_empty, do:
+  deftest :assert_empty_when_empty do
     true = assert_empty []
   end
 
-  test :assert_empty_when_not_empty do
+  deftest :assert_empty_when_not_empty do
     try do:
       "This should never be tested" = assert_empty [1, 2]
     rescue:
@@ -267,7 +267,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_empty_with_message do
+  deftest :assert_empty_with_message do
     try do:
       "This should never be tested" = assert_empty [1, 2], "test message"
     rescue:
@@ -276,11 +276,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_empty_when_not_empty, do:
+  deftest :refute_empty_when_not_empty do
     false = refute_empty [1, 2]
   end
 
-  test :refute_empty_when_empty do
+  deftest :refute_empty_when_empty do
     try do:
       "This should never be tested" = refute_empty []
     rescue:
@@ -289,7 +289,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_empty_with_message do
+  deftest :refute_empty_with_message do
     try do:
       "This should never be tested" = refute_empty [], "test message"
     rescue:
@@ -298,11 +298,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_nil_when_nil, do:
+  deftest :assert_nil_when_nil do
     true = assert_nil nil
   end
 
-  test :assert_nil_when_not_nil do
+  deftest :assert_nil_when_not_nil do
     try do:
       "This should never be tested" = assert_nil true
     rescue:
@@ -311,7 +311,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_nil_with_message do
+  deftest :assert_nil_with_message do
     try do:
       "This should never be tested" = assert_nil false, "test message"
     rescue:
@@ -320,11 +320,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_nil_when_not_nil, do:
+  deftest :refute_nil_when_not_nil do
     false = refute_nil true
   end
 
-  test :refute_nil_when_nil do
+  deftest :refute_nil_when_nil do
     try do:
       "This should never be tested" = refute_nil nil
     rescue:
@@ -333,7 +333,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_nil_with_message do
+  deftest :refute_nil_with_message do
     try do:
       "This should never be tested" = refute_nil nil, "test message"
     rescue:
@@ -342,11 +342,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_in_delta_pass, do:
+  deftest :assert_in_delta_pass do
     true = assert_in_delta(1.1, 1.2, 0.2)
   end
 
-  test :assert_in_delta_fail do
+  deftest :assert_in_delta_fail do
     try do:
       "This should never be tested" = assert_in_delta(10, 12, 1)
     rescue:
@@ -355,7 +355,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_in_delta_with_message do
+  deftest :assert_in_delta_with_message do
     try do:
       "This should never be tested" = assert_in_delta(10, 12, 1, "test message")
     rescue:
@@ -364,11 +364,11 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_in_delta_pass, do:
+  deftest :refute_in_delta_pass do
     false = refute_in_delta(1.1, 1.5, 0.2)
   end
 
-  test :refute_in_delta_fail do
+  deftest :refute_in_delta_fail do
     try do:
       "This should never be tested" = refute_in_delta(10, 11, 2)
     rescue:
@@ -377,7 +377,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :refute_in_delta_with_message do
+  deftest :refute_in_delta_with_message do
     try do:
       "This should never be tested" = refute_in_delta(10, 11, 2, "test message")
     rescue:
@@ -386,7 +386,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_throw_when_no_throw do
+  deftest :assert_throw_when_no_throw do
     try do:
       "This should never be tested" = assert_throw 1, fn ->
         # nothing
@@ -397,13 +397,13 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_throw_when_throw, do:
+  deftest :assert_throw_when_throw do
     1 = assert_throw 1, fn ->
       throw 1
     end
   end
 
-  test :assert_throw_when_other_throw do
+  deftest :assert_throw_when_other_throw do
     try do:
       "This should never be tested" = assert_throw 1, fn ->
         throw 2
@@ -414,7 +414,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_exit_when_no_exit do
+  deftest :assert_exit_when_no_exit do
     try do:
       "This should never be tested" = assert_exit 1, fn ->
         # nothing
@@ -425,13 +425,13 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_exit_when_exit, do:
+  deftest :assert_exit_when_exit do
     1 = assert_exit 1, fn ->
       exit 1
     end
   end
 
-  test :assert_exit_when_other_exit do
+  deftest :assert_exit_when_other_exit do
     try do:
       "This should never be tested" = assert_exit 1, fn ->
         exit 2
@@ -442,13 +442,13 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :assert_error_when_error, do:
+  deftest :assert_error_when_error do
     :function_clause = assert_error :function_clause, fn ->
       List.flatten(1)
     end
   end
 
-  test :flunk do
+  deftest :flunk do
     try do:
       "This should never be tested" = flunk
     rescue:
@@ -457,7 +457,7 @@ defmodule ExUnit.AssertionsTest do
     end
   end
 
-  test :flunk_with_message do
+  deftest :flunk_with_message do
     try do:
       "This should never be tested" = flunk "This should raise an error"
     rescue:

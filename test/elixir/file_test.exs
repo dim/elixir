@@ -3,7 +3,7 @@ Code.require_file "../test_helper", __FILE__
 defmodule FileTest do
   use ExUnit.Case
 
-  test :expand_path_with_binary, do:
+  deftest :expand_path_with_binary do
     assert File.expand_path("/foo/bar") == "/foo/bar"
     assert File.expand_path("/foo/bar/") == "/foo/bar"
     assert File.expand_path("/foo/bar/.") == "/foo/bar"
@@ -19,20 +19,20 @@ defmodule FileTest do
     assert File.expand_path("bar/../bar", "foo") == full
   end
 
-  test :expand_path_with_list, do:
+  deftest :expand_path_with_list do
     assert File.expand_path('/foo/bar') == '/foo/bar'
     assert File.expand_path('/foo/bar/') == '/foo/bar'
     assert File.expand_path('/foo/bar/.') == '/foo/bar'
     assert File.expand_path('/foo/bar/../bar') == '/foo/bar'
   end
 
-  test :regular, do:
+  deftest :regular do
     assert File.regular?(__FILE__)
     assert File.regular?(binary_to_list(__FILE__))
     refute File.regular?("#{__FILE__}.unknown")
   end
 
-  test :exists, do:
+  deftest :exists do
     assert File.exists?(__FILE__)
     assert File.exists?(File.expand_path("../fixtures/foo.txt", __FILE__))
     assert File.exists?(File.expand_path("../fixtures/", __FILE__))
@@ -41,7 +41,7 @@ defmodule FileTest do
     refute File.exists?("_missing.txt")
   end
 
-  test :basename_with_binary, do:
+  deftest :basename_with_binary do
     assert File.basename("foo") == "foo"
     assert File.basename("/foo/bar") == "bar"
     assert File.basename("/") == ""
@@ -51,7 +51,7 @@ defmodule FileTest do
     assert File.basename("~/for/bar.old.ex", ".ex") == "bar.old"
   end
 
-  test :basename_with_list, do:
+  deftest :basename_with_list do
     assert File.basename('foo') == 'foo'
     assert File.basename('/foo/bar') == 'bar'
     assert File.basename('/') == ''
@@ -61,53 +61,53 @@ defmodule FileTest do
     assert File.basename('~/for/bar.old.ex', '.ex') == 'bar.old'
   end
 
-  test :join_with_binary, do:
+  deftest :join_with_binary do
     assert File.join([""]) == ""
     assert File.join(["foo"]) == "foo"
     assert File.join(["/", "foo", "bar"]) == "/foo/bar"
     assert File.join(["~", "foo", "bar"]) == "~/foo/bar"
   end
 
-  test :join_with_list, do:
+  deftest :join_with_list do
     assert File.join(['']) == ''
     assert File.join(['foo']) == 'foo'
     assert File.join(['/', 'foo', 'bar']) == '/foo/bar'
     assert File.join(['~', 'foo', 'bar']) == '~/foo/bar'
   end
 
-  test :join_two_with_binary, do:
+  deftest :join_two_with_binary do
     assert File.join("/foo", "bar") == "/foo/bar"
     assert File.join("~", "foo") == "~/foo"
   end
 
-  test :join_two_with_list, do:
+  deftest :join_two_with_list do
     assert File.join('/foo', 'bar') == '/foo/bar'
     assert File.join('~', 'foo') == '~/foo'
   end
 
-  test :split_with_binary, do:
+  deftest :split_with_binary do
     assert File.split("") == ["/"]
     assert File.split("foo") == ["foo"]
     assert File.split("/foo/bar") == ["/", "foo", "bar"]
   end
 
-  test :split_with_list, do:
+  deftest :split_with_list do
     assert File.split('') == ''
     assert File.split('foo') == ['foo']
     assert File.split('/foo/bar') == ['/', 'foo', 'bar']
   end
 
-  test :read_with_binary, do:
+  deftest :read_with_binary do
     assert_match { :ok, "FOO\n" }, File.read(File.expand_path("../fixtures/foo.txt", __FILE__))
     assert_match { :error, :enoent }, File.read(File.expand_path("../fixtures/missing.txt", __FILE__))
   end
 
-  test :read_with_list, do:
+  deftest :read_with_list do
     assert_match { :ok, "FOO\n" }, File.read(File.expand_path('../fixtures/foo.txt', __FILE__))
     assert_match { :error, :enoent }, File.read(File.expand_path('../fixtures/missing.txt', __FILE__))
   end
 
-  test :read!, do:
+  deftest :read! do
     assert File.read!(File.expand_path("../fixtures/foo.txt", __FILE__)) == "FOO\n"
     expected_message = "could not read file fixtures/missing.txt: no such file or directory"
 
@@ -116,20 +116,20 @@ defmodule FileTest do
     end
   end
 
-  test :read_info, do:
+  deftest :read_info do
     {:ok, info} = File.read_info(__FILE__)
     assert info.mtime
   end
 
-  test :read_info!, do:
+  deftest :read_info! do
     assert File.read_info!(__FILE__).mtime
   end
 
-  test :read_info_with_invalid_file, do:
+  deftest :read_info_with_invalid_file do
     assert_match { :error, _ }, File.read_info("./invalid_file")
   end
 
-  test :read_info_with_invalid_file!, do:
+  deftest :read_info_with_invalid_file! do
     assert_raise File.Error, fn ->
       File.read_info!("./invalid_file")
     end

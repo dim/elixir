@@ -3,15 +3,15 @@ Code.require_file "../../test_helper", __FILE__
 defmodule EEx.SmartEngineTest do
   use ExUnit.Case
 
-  test "evaluates simple string", do:
+  deftest "evaluates simple string" do
     assert_eval "foo bar", "foo bar"
   end
 
-  test "evaluates with assigns", do:
+  deftest "evaluates with assigns" do
     assert_eval "1", "<%= @foo %>", assigns: [foo: 1]
   end
 
-  test "evaluates with loops", do:
+  deftest "evaluates with loops" do
     assert_eval "1\n2\n3\n", "<%= for x in [1,2,3] do %><%= x %>\n<% end %>"
   end
 

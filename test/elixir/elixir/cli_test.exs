@@ -5,7 +5,7 @@ require Erlang.os, as: OS
 defmodule Elixir.CLI.InitTest do
   use ExUnit.Case
 
-  test :code_init, do:
+  deftest :code_init do
     assert OS.cmd('bin/elixir -e "IO.puts 1 + 2"') == '3\n'
 
     result = OS.cmd('bin/elixir -e "IO.puts inspect(System.argv)" test/elixir/fixtures/init_sample.exs -o 1 2 3')
@@ -16,7 +16,7 @@ end
 defmodule Elixir.CLI.OptionParsingTest do
   use ExUnit.Case
 
-  test :path, do:
+  deftest :path do
     list = OS.cmd('bin/elixir -e "IO.inspect Erlang.code.get_path" -pa "*" -pz "ebin/*"')
     { path, _ } = Code.eval list, []
 
@@ -32,7 +32,7 @@ defmodule Elixir.CLI.OptionParsingTest do
     assert_member File.expand_path('ebin/__MAIN__'), path
   end
 
-  test :require, do:
+  deftest :require do
     options = ['-r', 'lib/list/*', '-r', '/never/gonna/*/up']
     { config, _argv } = Elixir.CLI.process_options(options, Elixir.CLI.Config.new)
     assert_member {:require, 'lib/list/chars.ex'}, config.commands
@@ -42,7 +42,7 @@ end
 defmodule Elixir.CLI.AtExitTest do
   use ExUnit.Case
 
-  test :at_exit, do:
+  deftest :at_exit do
     assert OS.cmd('bin/elixir test/elixir/fixtures/at_exit.exs') ==
       'goodbye cruel world with status 0\n'
   end
@@ -51,7 +51,7 @@ end
 defmodule Elixir.CLI.ErrorTest do
   use ExUnit.Case
 
-  test :code_error, do:
+  deftest :code_error do
     assert Erlang.string.str('** (throw) 1', OS.cmd('bin/elixir -e "throw 1"')) == 0
     assert Erlang.string.str('** (ErlangError) erlang error: 1', OS.cmd('bin/elixir -e "error 1"')) == 0
 
@@ -63,7 +63,7 @@ end
 defmodule Elixir.CLI.SyntaxErrorTest do
   use ExUnit.Case
 
-  test :syntax_code_error, do:
+  deftest :syntax_code_error do
     message = '** (TokenMissingError) nofile:1: syntax error: expression is incomplete'
     assert Erlang.string.str(message, OS.cmd('bin/elixir -e "[1,2"')) == 0
     message = '** (SyntaxError) nofile:1: syntax error before: \'end\''
@@ -74,7 +74,7 @@ end
 defmodule Elixir.CLI.CompileTest do
   use ExUnit.Case
 
-  test :compile_code do
+  deftest :compile_code do
     try do:
       assert OS.cmd('bin/elixirc test/elixir/fixtures/compile_sample.exs -o test/tmp/') ==
         'Compiled test/elixir/fixtures/compile_sample.exs\n'
@@ -88,7 +88,7 @@ end
 defmodule Elixir.CLI.ParallelCompilerTest do
   use ExUnit.Case
 
-  test :compile_code do
+  deftest :compile_code do
     try do:
       output = OS.cmd('bin/elixirc test/elixir/fixtures/parallel_compiler -o test/tmp/')
       assert Erlang.string.str(output, 'message_from_foo') > 0,
@@ -100,7 +100,7 @@ defmodule Elixir.CLI.ParallelCompilerTest do
     end
   end
 
-  test :deadlock_failure, do:
+  deftest :deadlock_failure do
     output = OS.cmd('bin/elixirc test/elixir/fixtures/parallel_deadlock -o test/tmp/')
     foo = '== Compilation error on file test/elixir/fixtures/parallel_deadlock/foo.ex (undefined module Bar) =='
     bar = '== Compilation error on file test/elixir/fixtures/parallel_deadlock/bar.ex (undefined module Foo) =='
