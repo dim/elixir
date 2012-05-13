@@ -18,7 +18,7 @@ function_assignment_test() ->
   3 = Fun().
 
 function_stab_end_test() ->
-  {_, [{a, Fun}]} = eval("a = => 1 + 2 end"),
+  {_, [{a, Fun}]} = eval("a = fn -> 1 + 2 end"),
   3 = Fun().
 
 function_with_args_test() ->
@@ -37,10 +37,10 @@ function_apply_test() ->
   {3,_} = eval("a = fn do: 3; apply a, []").
 
 function_apply_with_args_test() ->
-  {3,_} = eval("a = => (b) b + 2 end; apply a, [1]").
+  {3,_} = eval("a = fn b -> b + 2 end; apply a, [1]").
 
 function_apply_and_clojure_test() ->
-  {3,_} = eval("b = 1; a = => b + 2 end; apply a, []").
+  {3,_} = eval("b = 1; a = fn -> b + 2 end; apply a, []").
 
 %% Function calls
 
@@ -73,6 +73,4 @@ require_partial_application_test() ->
 
 import_partial_application_test() ->
   { Fun, _ } = eval("is_atom(&1)"),
-  io:format("~p~n", [Fun]),
-  io:format("~p~n", [fun is_atom/1]),
   Fun = fun erlang:is_atom/1.

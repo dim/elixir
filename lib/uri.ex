@@ -36,7 +36,7 @@ defmodule URI, do:
       impl  = Dict.__impl_for__!(dict)
 
       try do:
-        List.foldl parts, dict, => (kvstr, acc)
+        List.foldl parts, dict, fn kvstr, acc ->
           case Regex.split(%r/=/, kvstr), do:
             [ key, value ] when key != "" ->
               impl.put acc, decode(key), decode(value)

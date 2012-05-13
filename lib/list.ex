@@ -95,10 +95,10 @@ defmodule List, do:
 
   ## Examples
 
-      List.foldl [5,5], 10, => (x, acc) x + acc end
+      List.foldl [5,5], 10, fn x, acc -> x + acc end
       #=> 20
 
-      List.foldl [1,2,3,4], 0, => (x, acc) x - acc end
+      List.foldl [1,2,3,4], 0, fn x, acc -> x - acc end
       #=> 2
 
   """
@@ -112,7 +112,7 @@ defmodule List, do:
 
   ## Examples
 
-      List.foldr [1,2,3,4], 0, => (x, acc) x - acc end
+      List.foldr [1,2,3,4], 0, fn x, acc -> x - acc end
       #=> -2
 
   """
@@ -291,7 +291,7 @@ defmodule List, do:
 
   ## Examples
 
-      List.sort [3, 4, 2, 1, 7], => (a, b) b <= a end
+      List.sort [3, 4, 2, 1, 7], fn a, b -> b <= a end
       #=> [7, 4, 3, 2, 1]
 
   """
@@ -448,7 +448,7 @@ defmodule List, do:
   end
 
   defp do_zip(list, acc), do:
-    converter = => (x, acc) do_zip_each(to_list(x), acc) end
+    converter = fn x, acc -> do_zip_each(to_list(x), acc) end
     {mlist, heads} = :lists.mapfoldl converter, [], list
 
     case heads, do:

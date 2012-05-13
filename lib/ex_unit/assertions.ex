@@ -179,7 +179,7 @@ defmodule ExUnit.Assertions, do:
 
   ## Examples
 
-      assert_raise ArithmeticError, "bad argument in arithmetic expression", =>
+      assert_raise ArithmeticError, "bad argument in arithmetic expression", fn ->
         1 + "test"
       end
   """
@@ -193,7 +193,7 @@ defmodule ExUnit.Assertions, do:
 
   ## Examples
 
-      assert_raise ArithmeticError, =>
+      assert_raise ArithmeticError, fn ->
         1 + "test"
       end
 
@@ -257,7 +257,7 @@ defmodule ExUnit.Assertions, do:
 
   ## Examples
 
-      assert_throw 1, =>
+      assert_throw 1, fn ->
         throw 1
       end
 
@@ -271,7 +271,7 @@ defmodule ExUnit.Assertions, do:
 
   ## Examples
 
-      assert_exit 1, =>
+      assert_exit 1, fn ->
         exit 1
       end
 
@@ -285,7 +285,7 @@ defmodule ExUnit.Assertions, do:
 
   ## Examples
 
-      assert_error :function_clause, =>
+      assert_error :function_clause, fn ->
         List.flatten(1)
       end
 

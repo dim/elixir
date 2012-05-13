@@ -45,7 +45,7 @@ defmodule Elixir.IEx, do:
       delegate_locals_to: __MODULE__
     )
     config = Elixir.IEx.Config.new(io: io, binding: binding, scope: scope)
-    function = => do_loop(config) end
+    function = fn -> do_loop(config) end
     Erlang.user_drv.start([:"tty_sl -c -e", {:erlang, :spawn, [function]}])
   end
 

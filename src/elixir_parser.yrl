@@ -3,7 +3,7 @@
 
 Nonterminals
   grammar expr_list
-  expr bracket_expr call_expr max_expr
+  expr bracket_expr call_expr max_expr fn_expr fn_block
   base_expr op_expr
   comma_separator
   add_op mult_op unary_op addadd_op multmult_op bin_concat_op
@@ -20,7 +20,6 @@ Nonterminals
   parens_call dot_op dot_identifier dot_ref
   dot_paren_identifier dot_punctuated_identifier dot_bracket_identifier
   var list bracket_access bit_string tuple
-  lambda lambda_op lambda_paren_op fn_expr fn_block
   .
 
 Terminals
@@ -33,7 +32,7 @@ Terminals
   'true' 'false' 'nil'
   '=' '+' '-' '*' '/' '++' '--' '**' '//'
   '(' ')' '[' ']' '{' '}' '<<' '>>'
-  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->' '=>' '=>('
+  eol ','  '&' '|'  '.' '^' '@' '<-' '<>' '->'
   '&&' '||' '!'
   .
 
@@ -135,26 +134,11 @@ base_expr -> bin_string  : build_bin_string('$1').
 base_expr -> list_string : build_list_string('$1').
 base_expr -> bit_string : '$1'.
 base_expr -> '&' : '$1'.
-base_expr -> lambda : '$1'.
 base_expr -> sigil : build_sigil('$1').
 
 %% Lambdas
 
-lambda -> lambda_paren_op ')' close_paren grammar 'end' :
-  { 'fn', ?line('$1'), [[{do,build_block('$4', false)}]] }.
-
-lambda -> lambda_paren_op call_args_comma_expr close_paren grammar 'end' :
-  { 'fn', ?line('$1'), '$2' ++ [[{do,build_block('$4', false)}]] }.
-
-lambda -> lambda_op grammar 'end' :
-  { 'fn', ?line('$1'), [[{do,build_block('$2', false)}]] }.
-
-lambda_op -> '=>' : '$1'.
-
-lambda_paren_op -> '=>(' : '$1'.
-lambda_paren_op -> '=>(' eol : '$1'.
-
-fn_block -> '->' grammar 'end' : [{do,build_block('$1',false)}].
+fn_block -> '->' grammar 'end' : [{do,build_block('$2',false)}].
 
 %% Helpers
 

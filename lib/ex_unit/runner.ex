@@ -61,7 +61,7 @@ defmodule ExUnit.Runner, do:
   # Spawn each test case in a new process.
   defp spawn_case(test_case), do:
     pid = Process.self
-    spawn_link => run_tests(pid, test_case) end
+    spawn_link fn -> run_tests(pid, test_case) end
   end
 
   defp run_tests(pid, test_case), do:

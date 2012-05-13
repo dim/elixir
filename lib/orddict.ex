@@ -37,7 +37,7 @@ defimpl Dict, for: Orddict.Record, do:
   end
 
   def merge(O[data: d1], O[data: d2]), do:
-    O[data: :orddict.merge => (_k, _v1, v2) v2 end, d1, d2]
+    O[data: :orddict.merge fn _k, _v1, v2 -> v2 end, d1, d2]
   end
 
   def merge(O[data: d1], O[data: d2], fun), do:

@@ -332,7 +332,7 @@ defmodule Elixir.SpecialForms, do:
   it is recommend to use it only with the stab operator in order to
   avoid ambiguity. For example, consider this case:
 
-      Enum.map [1,2,3], => (x)
+      Enum.map [1,2,3], fn x ->
         x * 2
       end
 
